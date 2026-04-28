@@ -11,11 +11,13 @@ project:
 book:
   title: "Thermal Ecology in R"
   author: "Nicholas Wu"
-  date: "4/17/2026"
+  date: today
   reader-mode: true
   page-navigation: true
   back-to-top-navigation: true
   search: true
+  site-url: https://nicholaswunz.github.io/thermal_ecology_R/
+  repo-url: https://github.com/nicholaswunz/thermal_ecology_R
   
   page-footer:
     border: true
