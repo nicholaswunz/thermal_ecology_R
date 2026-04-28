@@ -1,0 +1,89 @@
+# Welcome {.unnumbered}
+
+This book is a practical guide for working with data related to the field of
+thermal ecology using R. It focuses specifically on the processes and challenges 
+you'll face with such data.
+
+```{r}
+#| include: false
+#| message: false
+#| warning: false
+
+
+library(gh)
+library(tidyverse)
+library(lubridate)
+library(stringr)
+
+#releases <- gh("GET /repos/AtlasOfLivingAustralia/cleaning_data/releases", 
+#   owner = "AtlasOfLivingAustralia",
+#   repo = "cleaning_data")
+
+#release_number <- releases[[1]][["tag_name"]] |>
+#  stringr::str_sub(start = 2) # remove "v"
+
+date_rendered <- lubridate::today() %>%
+  lubridate::stamp("1 March, 1999")()
+
+```
+
+
+**This book was last rendered on `{r} date_rendered`.**
+
+## 1. Environmental Data
+
+Learn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.
+
+- Own data loggers
+
+- Climatology database
+
+- Microclimate database
+
+- Detecting heatwaves/cold spells
+
+## 2. Physiological Data
+
+- Thermal performance curves
+
+- Respirometry
+
+- Thermal-death-time curves
+
+- Q10s and rates of change
+
+
+## 3. Behavioural Data
+
+- Torpor/arousal patterns
+
+- Thermal images
+
+- Thermoregulation
+
+
+## 4. Comparative Data
+
+- Effect sizes
+
+- Comparative analysis
+
+- Scaling relationships
+
+
+## 5. Simulation
+
+- Operative temeprature models
+
+- Dynamic Energy Budget
+
+
+## 6. Other
+
+- Repeatability 
+
+
+## Acknowledgements
+
+This book was inspired by the [Cleaning Biodiversity Data in R](https://cleaning-data-r.ala.org.au/) book. This book is a collaborative effort by members of the [Thermal Ecology Alliance](https://www.thermalecologyalliance.org/).
+
