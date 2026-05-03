@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Thermal Ecology in R",
     "section": "",
-    "text": "Welcome\nThis book is a practical guide for working with data related to the field of thermal ecology using R. It focuses specifically on the processes and challenges you’ll face with such data.",
+    "text": "Welcome\nThis book is a practical guide for working with data related to the field of thermal ecology using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.",
     "crumbs": [
       "Welcome"
     ]
