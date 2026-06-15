@@ -1,9 +1,5 @@
 # Welcome {.unnumbered}
 
-This book is a practical guide for working with data related to the field of
-thermal ecology using R. It focuses specifically on the processes and challenges 
-you'll face with such data, and provides best practices for reporting.
-
 ```{r}
 #| include: false
 #| message: false
@@ -13,8 +9,24 @@ library(tidyverse)
 library(lubridate)
 library(stringr)
 
-
 ```
+
+This book is a practical guide for anyone working with thermal ecological data 
+using R. It focuses specifically on the processes and challenges you'll face with 
+such data, and provides best practices for reporting.
+
+The intended audience is for graduate students new to thermal ecology and experts
+in the field who are unfamiliar with R. This book will mainly follow the [`tidyverse`](https://style.tidyverse.org/) 
+syntax for consistency in learning experience. 
+
+If you are new with R and not use basis data manipulation and coding, I have a 
+series of [tutorials](https://nicholaswu.quarto.pub/ecs200/) for undergraduate 
+students working with ecological data. Most relevant for this audience is week 
+1–4 contents (quality check, tidy data, diversity indices, and descriptive stats).
+
+The tutorials teach you how to check for the quality of the raw data you imported, 
+the steps to correct errors in the raw data, how transform raw data to something 
+usable for analysis, and get familiar with clean code.
 
 ## 1. Environmental Data
 
@@ -27,7 +39,7 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 - Online microclimate data
 
-- Detecting heatwaves/cold spells
+- Detecting heatwaves/cold spells with `heatwaveR`
 
 ## 2. Physiological Data
 
@@ -60,7 +72,7 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 ## 5. Simulation
 
-- Operative temeprature models
+- Operative temperature models
 
 - Dynamic Energy Budget
 

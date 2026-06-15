@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Thermal Ecology in R",
     "section": "",
-    "text": "Welcome\nThis book is a practical guide for working with data related to the field of thermal ecology using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.",
+    "text": "Welcome\nThis book is a practical guide for anyone working with thermal ecological data using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.\nThe intended audience is for graduate students new to thermal ecology and experts in the field who are unfamiliar with R. This book will mainly follow the tidyverse syntax for consistency in learning experience.\nIf you are new with R and not use basis data manipulation and coding, I have a series of tutorials for undergraduate students working with ecological data. Most relevant for this audience is week 1–4 contents (quality check, tidy data, diversity indices, and descriptive stats).\nThe tutorials teach you how to check for the quality of the raw data you imported, the steps to correct errors in the raw data, how transform raw data to something usable for analysis, and get familiar with clean code.",
     "crumbs": [
       "Welcome"
     ]
@@ -14,7 +14,7 @@
     "href": "index.html#environmental-data",
     "title": "Thermal Ecology in R",
     "section": "1. Environmental Data",
-    "text": "1. Environmental Data\nLearn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.\n\nData loggers\nOnline climatology data\nOnline microclimate data\nDetecting heatwaves/cold spells",
+    "text": "1. Environmental Data\nLearn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.\n\nData loggers\nOnline climatology data\nOnline microclimate data\nDetecting heatwaves/cold spells with heatwaveR",
     "crumbs": [
       "Welcome"
     ]
@@ -84,8 +84,9 @@
     "href": "intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n1 + 1\n\n[1] 2\n\n\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. (USA) 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
+    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n1 + 1\n\n[1] 2\n\n\n\n\n\n\nKnuth, D. E. (1984). Literate programming. Comput. J. 27, 97–111.",
     "crumbs": [
+      "Environmental Data",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
   },

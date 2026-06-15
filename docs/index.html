@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nicholas Wu">
-<meta name="dcterms.date" content="2026-06-15">
 
 <title>Thermal Ecology in R</title>
 <style>
@@ -45,7 +44,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ad6f99253afcc0453c26067b8b89ecc8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-87f1e3aac7f6e6e62305f242b34f8653.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -126,24 +125,45 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Environmental Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">References</span></a>
-  </div>
-</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Physiological Data</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Behavioural Data</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Comparative Data</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Simulation</span></span>
+  </li>
     </ul>
     </div>
 </nav>
@@ -189,7 +209,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 15, 2026</p>
+      <p class="date">15th Jun 2026</p>
     </div>
   </div>
   
@@ -203,7 +223,10 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="welcome" class="level1 unnumbered">
 <h1 class="unnumbered">Welcome</h1>
-<p>This book is a practical guide for working with data related to the field of thermal ecology using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.</p>
+<p>This book is a practical guide for anyone working with thermal ecological data using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.</p>
+<p>The intended audience is for graduate students new to thermal ecology and experts in the field who are unfamiliar with R. This book will mainly follow the <a href="https://style.tidyverse.org/"><code>tidyverse</code></a> syntax for consistency in learning experience.</p>
+<p>If you are new with R and not use basis data manipulation and coding, I have a series of <a href="https://nicholaswu.quarto.pub/ecs200/">tutorials</a> for undergraduate students working with ecological data. Most relevant for this audience is week 1–4 contents (quality check, tidy data, diversity indices, and descriptive stats).</p>
+<p>The tutorials teach you how to check for the quality of the raw data you imported, the steps to correct errors in the raw data, how transform raw data to something usable for analysis, and get familiar with clean code.</p>
 <section id="environmental-data" class="level2">
 <h2 class="anchored" data-anchor-id="environmental-data">1. Environmental Data</h2>
 <p>Learn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.</p>
@@ -211,7 +234,7 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Data loggers</p></li>
 <li><p>Online climatology data</p></li>
 <li><p>Online microclimate data</p></li>
-<li><p>Detecting heatwaves/cold spells</p></li>
+<li><p>Detecting heatwaves/cold spells with <code>heatwaveR</code></p></li>
 </ul>
 </section>
 <section id="physiological-data" class="level2">
