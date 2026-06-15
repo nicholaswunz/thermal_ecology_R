@@ -1,0 +1,54 @@
+# Respirometry {.unnumbered}
+
+Authors: Nicholas Wu
+
+Estimating metabolic rate
+
+
+# Aquatic Respirometry {.unnumbered}
+
+We will use the [`respR`](https://januarharianto.github.io/respR/) 
+package to illustrate how to process and tidy raw oxygen traces from a respirometry 
+experiment. The package has also been peer reviewed and published in 
+[Methods in Ecology and Evolution](https://doi.org/10.1111/2041-210X.13162). 
+
+The tutorial will use data from a close-chamber respiromety experiment, but the 
+package is able to handle intermittent-flow and open-flow respirometry, and critical
+oxygen values (P~crit~).
+
+## Setting up {.unnumbered}
+
+Load R packages and set up directory and load your raw data. At minimum, the raw
+data should contain a time column and the oxygen column. In this example, we have
+xxxx.
+
+```{r, warning=FALSE, message=FALSE}
+#install.packages("respR")
+
+# Load libraries
+library(respR)
+library(tidyverse)
+
+# load data
+
+
+```
+
+
+## Workflow {.unnumbered}
+
+### Quality check {.unnumbered}
+
+### Calculate O~2~ uptake rate {.unnumbered}
+
+### Background O~2~ rate {.unnumbered}
+
+### Conversions {.unnumbered}
+
+### Final O~2~ uptake rate {.unnumbered}
+
+
+If you have some raw oxygen traces that you would like to be implemented in `respR`,
+please contact the package maintainer Nicholas Carey.
+
+

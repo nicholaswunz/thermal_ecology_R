@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nicholas Wu">
 
-<title>Thermal Ecology in R</title>
+<title>Respirometry – Thermal Ecology in R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -34,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./intro.html" rel="next">
+<link href="./summary.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -86,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Welcome</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./phys_respirometry.html">Physiological Data</a></li><li class="breadcrumb-item"><a href="./phys_respirometry.html">Respirometry</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -125,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
@@ -163,7 +197,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./phys_respirometry.html" class="sidebar-item-text sidebar-link">
+  <a href="./phys_respirometry.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Respirometry</span></a>
   </div>
 </li>
@@ -191,16 +225,16 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
+  <li><a href="#aquatic-respirometry" id="toc-aquatic-respirometry" class="nav-link active" data-scroll-target="#aquatic-respirometry">Aquatic Respirometry</a>
   <ul class="collapse">
-  <li><a href="#environmental-data" id="toc-environmental-data" class="nav-link" data-scroll-target="#environmental-data">Environmental Data</a></li>
-  <li><a href="#physiological-data" id="toc-physiological-data" class="nav-link" data-scroll-target="#physiological-data">Physiological Data</a></li>
-  <li><a href="#behavioural-data" id="toc-behavioural-data" class="nav-link" data-scroll-target="#behavioural-data">Behavioural Data</a></li>
-  <li><a href="#comparative-data" id="toc-comparative-data" class="nav-link" data-scroll-target="#comparative-data">Comparative Data</a></li>
-  <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation">Simulation</a></li>
-  <li><a href="#other" id="toc-other" class="nav-link" data-scroll-target="#other">Other</a>
+  <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a>
   <ul class="collapse">
-  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
+  <li><a href="#quality-check" id="toc-quality-check" class="nav-link" data-scroll-target="#quality-check">Quality check</a></li>
+  <li><a href="#calculate-o2-uptake-rate" id="toc-calculate-o2-uptake-rate" class="nav-link" data-scroll-target="#calculate-o2-uptake-rate">Calculate O<sub>2</sub> uptake rate</a></li>
+  <li><a href="#background-o2-rate" id="toc-background-o2-rate" class="nav-link" data-scroll-target="#background-o2-rate">Background O<sub>2</sub> rate</a></li>
+  <li><a href="#conversions" id="toc-conversions" class="nav-link" data-scroll-target="#conversions">Conversions</a></li>
+  <li><a href="#final-o2-uptake-rate" id="toc-final-o2-uptake-rate" class="nav-link" data-scroll-target="#final-o2-uptake-rate">Final O<sub>2</sub> uptake rate</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -209,28 +243,16 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./phys_respirometry.html">Physiological Data</a></li><li class="breadcrumb-item"><a href="./phys_respirometry.html">Respirometry</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Thermal Ecology in R</h1>
+<h1 class="title">Respirometry</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nicholas Wu </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">15th Jun 2026</p>
-    </div>
-  </div>
   
     
   </div>
@@ -240,62 +262,42 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="welcome" class="level1 unnumbered">
-<h1 class="unnumbered">Welcome</h1>
-<p>This book is a practical guide for anyone working with thermal ecological data using R. It focuses specifically on the processes and challenges you’ll face with such data, and provides best practices for reporting.</p>
-<p>The intended audience is for graduate students new to thermal ecology and experts in the field who are unfamiliar with R. This book will mainly follow the <a href="https://style.tidyverse.org/"><code>tidyverse</code></a> syntax for consistency in learning experience.</p>
-<p>If you are new with R and not use basis data manipulation and coding, I have a series of <a href="https://nicholaswu.quarto.pub/ecs200/">tutorials</a> for undergraduate students working with ecological data. Most relevant for this audience is week 1–4 contents (quality check, tidy data, diversity indices, and descriptive stats).</p>
-<p>The tutorials teach you how to check for the quality of the raw data you imported, the steps to correct errors in the raw data, how transform raw data to something usable for analysis, and get familiar with clean code.</p>
-<section id="environmental-data" class="level2">
-<h2 class="anchored" data-anchor-id="environmental-data">Environmental Data</h2>
-<p>Learn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.</p>
-<ul>
-<li>Data loggers (to do)</li>
-<li>Online climatology data (to do)</li>
-<li>Online microclimate data (to do)</li>
-<li>Detecting heatwaves/cold spells with <code>heatwaveR</code> (to do)</li>
-</ul>
+<p>Authors: Nicholas Wu</p>
+<p>Estimating metabolic rate</p>
+<section id="aquatic-respirometry" class="level1 unnumbered">
+<h1 class="unnumbered">Aquatic Respirometry</h1>
+<p>We will use the <a href="https://januarharianto.github.io/respR/"><code>respR</code></a> package to illustrate how to process and tidy raw oxygen traces from a respirometry experiment. The package has also been peer reviewed and published in <a href="https://doi.org/10.1111/2041-210X.13162">Methods in Ecology and Evolution</a>.</p>
+<p>The tutorial will use data from a close-chamber respiromety experiment, but the package is able to handle intermittent-flow and open-flow respirometry, and critical oxygen values (P<sub>crit</sub>).</p>
+<section id="setting-up" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="setting-up">Setting up</h2>
+<p>Load R packages and set up directory and load your raw data. At minimum, the raw data should contain a time column and the oxygen column. In this example, we have xxxx.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("respR")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(respR)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-<section id="physiological-data" class="level2">
-<h2 class="anchored" data-anchor-id="physiological-data">Physiological Data</h2>
-<ul>
-<li>Thermal performance curves (to do)</li>
-<li><a href="./phys_respirometry.html">Respirometry</a> (10% complete)</li>
-<li>Thermal-death-time curves (to do)</li>
-<li>Q10s and rates of change (to do)</li>
-</ul>
+<section id="workflow" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="workflow">Workflow</h2>
+<section id="quality-check" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="quality-check">Quality check</h3>
 </section>
-<section id="behavioural-data" class="level2">
-<h2 class="anchored" data-anchor-id="behavioural-data">Behavioural Data</h2>
-<ul>
-<li>Torpor/arousal patterns (to do)</li>
-<li>Thermal images (to do)</li>
-<li>Thermoregulation (to do)</li>
-</ul>
+<section id="calculate-o2-uptake-rate" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="calculate-o2-uptake-rate">Calculate O<sub>2</sub> uptake rate</h3>
 </section>
-<section id="comparative-data" class="level2">
-<h2 class="anchored" data-anchor-id="comparative-data">Comparative Data</h2>
-<ul>
-<li>Effect sizes (to do)</li>
-<li>Comparative analysis (to do)</li>
-<li>Scaling relationships (to do)</li>
-</ul>
+<section id="background-o2-rate" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="background-o2-rate">Background O<sub>2</sub> rate</h3>
 </section>
-<section id="simulation" class="level2">
-<h2 class="anchored" data-anchor-id="simulation">Simulation</h2>
-<ul>
-<li>Operative temperature models (to do)</li>
-<li>Dynamic Energy Budget (to do)</li>
-</ul>
+<section id="conversions" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="conversions">Conversions</h3>
 </section>
-<section id="other" class="level2">
-<h2 class="anchored" data-anchor-id="other">Other</h2>
-<ul>
-<li>Repeatability (to do)</li>
-</ul>
-<section id="acknowledgements" class="level3">
-<h3 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h3>
-<p>This book was inspired by the <a href="https://cleaning-data-r.ala.org.au/">Cleaning Biodiversity Data in R</a> book. This book is a collaborative effort by members of the <a href="https://www.thermalecologyalliance.org/">Thermal Ecology Alliance</a>.</p>
+<section id="final-o2-uptake-rate" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="final-o2-uptake-rate">Final O<sub>2</sub> uptake rate</h3>
+<p>If you have some raw oxygen traces that you would like to be implemented in <code>respR</code>, please contact the package maintainer Nicholas Carey.</p>
 
 
 </section>
@@ -705,11 +707,11 @@ ul.task-list li input[type="checkbox"] {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./summary.html" class="pagination-link" aria-label="Summary">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./intro.html" class="pagination-link" aria-label="Introduction">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

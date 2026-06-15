@@ -28,61 +28,46 @@ The tutorials teach you how to check for the quality of the raw data you importe
 the steps to correct errors in the raw data, how transform raw data to something 
 usable for analysis, and get familiar with clean code.
 
-## 1. Environmental Data
+## Environmental Data
 
 Learn how to load and clean raw data from own data loggers, access climate 
 databases and microclimate simulations, and calculating metrics of heatwaves.
 
-- Data loggers
+- Data loggers (to do)
+- Online climatology data (to do)
+- Online microclimate data (to do)
+- Detecting heatwaves/cold spells with `heatwaveR` (to do)
 
-- Online climatology data
+## Physiological Data
 
-- Online microclimate data
+- Thermal performance curves (to do)
+- [Respirometry](phys_respirometry.qmd) (10% complete)
+- Thermal-death-time curves (to do)
+- Q10s and rates of change (to do)
 
-- Detecting heatwaves/cold spells with `heatwaveR`
+## Behavioural Data
 
-## 2. Physiological Data
+- Torpor/arousal patterns (to do)
+- Thermal images (to do)
+- Thermoregulation (to do)
 
-- Thermal performance curves
+## Comparative Data
 
-- Respirometry
+- Effect sizes (to do)
+- Comparative analysis (to do)
+- Scaling relationships (to do)
 
-- Thermal-death-time curves
+## Simulation
 
-- Q10s and rates of change
+- Operative temperature models (to do)
+- Dynamic Energy Budget (to do)
 
+## Other
 
-## 3. Behavioural Data
-
-- Torpor/arousal patterns
-
-- Thermal images
-
-- Thermoregulation
-
-
-## 4. Comparative Data
-
-- Effect sizes
-
-- Comparative analysis
-
-- Scaling relationships
+- Repeatability (to do)
 
 
-## 5. Simulation
-
-- Operative temperature models
-
-- Dynamic Energy Budget
-
-
-## 6. Other
-
-- Repeatability 
-
-
-## Acknowledgements
+### Acknowledgements
 
 This book was inspired by the [Cleaning Biodiversity Data in R](https://cleaning-data-r.ala.org.au/) book. 
 This book is a collaborative effort by members of the [Thermal Ecology Alliance](https://www.thermalecologyalliance.org/).

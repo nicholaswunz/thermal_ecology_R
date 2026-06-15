@@ -13,8 +13,8 @@
     "objectID": "index.html#environmental-data",
     "href": "index.html#environmental-data",
     "title": "Thermal Ecology in R",
-    "section": "1. Environmental Data",
-    "text": "1. Environmental Data\nLearn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.\n\nData loggers\nOnline climatology data\nOnline microclimate data\nDetecting heatwaves/cold spells with heatwaveR",
+    "section": "Environmental Data",
+    "text": "Environmental Data\nLearn how to load and clean raw data from own data loggers, access climate databases and microclimate simulations, and calculating metrics of heatwaves.\n\nData loggers (to do)\nOnline climatology data (to do)\nOnline microclimate data (to do)\nDetecting heatwaves/cold spells with heatwaveR (to do)",
     "crumbs": [
       "Welcome"
     ]
@@ -23,8 +23,8 @@
     "objectID": "index.html#physiological-data",
     "href": "index.html#physiological-data",
     "title": "Thermal Ecology in R",
-    "section": "2. Physiological Data",
-    "text": "2. Physiological Data\n\nThermal performance curves\nRespirometry\nThermal-death-time curves\nQ10s and rates of change",
+    "section": "Physiological Data",
+    "text": "Physiological Data\n\nThermal performance curves (to do)\nRespirometry (10% complete)\nThermal-death-time curves (to do)\nQ10s and rates of change (to do)",
     "crumbs": [
       "Welcome"
     ]
@@ -33,8 +33,8 @@
     "objectID": "index.html#behavioural-data",
     "href": "index.html#behavioural-data",
     "title": "Thermal Ecology in R",
-    "section": "3. Behavioural Data",
-    "text": "3. Behavioural Data\n\nTorpor/arousal patterns\nThermal images\nThermoregulation",
+    "section": "Behavioural Data",
+    "text": "Behavioural Data\n\nTorpor/arousal patterns (to do)\nThermal images (to do)\nThermoregulation (to do)",
     "crumbs": [
       "Welcome"
     ]
@@ -43,8 +43,8 @@
     "objectID": "index.html#comparative-data",
     "href": "index.html#comparative-data",
     "title": "Thermal Ecology in R",
-    "section": "4. Comparative Data",
-    "text": "4. Comparative Data\n\nEffect sizes\nComparative analysis\nScaling relationships",
+    "section": "Comparative Data",
+    "text": "Comparative Data\n\nEffect sizes (to do)\nComparative analysis (to do)\nScaling relationships (to do)",
     "crumbs": [
       "Welcome"
     ]
@@ -53,8 +53,8 @@
     "objectID": "index.html#simulation",
     "href": "index.html#simulation",
     "title": "Thermal Ecology in R",
-    "section": "5. Simulation",
-    "text": "5. Simulation\n\nOperative temeprature models\nDynamic Energy Budget",
+    "section": "Simulation",
+    "text": "Simulation\n\nOperative temperature models (to do)\nDynamic Energy Budget (to do)",
     "crumbs": [
       "Welcome"
     ]
@@ -63,8 +63,8 @@
     "objectID": "index.html#other",
     "href": "index.html#other",
     "title": "Thermal Ecology in R",
-    "section": "6. Other",
-    "text": "6. Other\n\nRepeatability",
+    "section": "Other",
+    "text": "Other\n\nRepeatability (to do)\n\n\nAcknowledgements\nThis book was inspired by the Cleaning Biodiversity Data in R book. This book is a collaborative effort by members of the Thermal Ecology Alliance.",
     "crumbs": [
       "Welcome"
     ]
@@ -108,6 +108,39 @@
     "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. (USA) 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
     "crumbs": [
       "References"
+    ]
+  },
+  {
+    "objectID": "phys_respirometry.html",
+    "href": "phys_respirometry.html",
+    "title": "Respirometry",
+    "section": "",
+    "text": "Aquatic Respirometry\nAuthors: Nicholas Wu\nEstimating metabolic rate\nWe will use the respR package to illustrate how to process and tidy raw oxygen traces from a respirometry experiment. The package has also been peer reviewed and published in Methods in Ecology and Evolution.\nThe tutorial will use data from a close-chamber respiromety experiment, but the package is able to handle intermittent-flow and open-flow respirometry, and critical oxygen values (Pcrit).",
+    "crumbs": [
+      "Physiological Data",
+      "Respirometry"
+    ]
+  },
+  {
+    "objectID": "phys_respirometry.html#setting-up",
+    "href": "phys_respirometry.html#setting-up",
+    "title": "Respirometry",
+    "section": "Setting up",
+    "text": "Setting up\nLoad R packages and set up directory and load your raw data. At minimum, the raw data should contain a time column and the oxygen column. In this example, we have xxxx.\n\n#install.packages(\"respR\")\n\n# Load libraries\nlibrary(respR)\nlibrary(tidyverse)\n\n# load data",
+    "crumbs": [
+      "Physiological Data",
+      "Respirometry"
+    ]
+  },
+  {
+    "objectID": "phys_respirometry.html#workflow",
+    "href": "phys_respirometry.html#workflow",
+    "title": "Respirometry",
+    "section": "Workflow",
+    "text": "Workflow\n\nQuality check\n\n\nCalculate O2 uptake rate\n\n\nBackground O2 rate\n\n\nConversions\n\n\nFinal O2 uptake rate\nIf you have some raw oxygen traces that you would like to be implemented in respR, please contact the package maintainer Nicholas Carey.",
+    "crumbs": [
+      "Physiological Data",
+      "Respirometry"
     ]
   }
 ]

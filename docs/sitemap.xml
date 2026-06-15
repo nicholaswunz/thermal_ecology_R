@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nicholaswunz.github.io/thermal_ecology_R/index.html</loc>
-    <lastmod>2026-06-15T13:05:15.373Z</lastmod>
+    <lastmod>2026-06-15T13:41:29.812Z</lastmod>
   </url>
   <url>
     <loc>https://nicholaswunz.github.io/thermal_ecology_R/intro.html</loc>
@@ -15,5 +15,9 @@
   <url>
     <loc>https://nicholaswunz.github.io/thermal_ecology_R/references.html</loc>
     <lastmod>2026-05-03T13:08:55.405Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nicholaswunz.github.io/thermal_ecology_R/phys_respirometry.html</loc>
+    <lastmod>2026-06-15T13:38:22.686Z</lastmod>
   </url>
 </urlset>

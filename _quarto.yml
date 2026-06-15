@@ -19,13 +19,12 @@ book:
   search: true
   site-url: https://nicholaswunz.github.io/thermal_ecology_R/
   repo-url: https://github.com/nicholaswunz/thermal_ecology_R
-  
+  sidebar: 
+    logo: https://raw.githubusercontent.com/nicholaswunz/thermal_ecology_R/e38e0b4da3cda8ecb6d098d216a06fb3d2a8514c/images/tea-logo.svg
   page-footer:
     border: true
     right: |
       This book was built with <a href="https://quarto.org/">Quarto</a>. This work is licensed under a [CC-BY-NC-ND 4.0 Int License](https://creativecommons.org/licenses/by-nc-nd/4.0/)
-
-  
   
   chapters:
     - index.qmd
@@ -34,8 +33,8 @@ book:
       - intro.qmd
       - summary.qmd
     - part: "Physiological Data"
-      #chapters:
-      #- intro.qmd
+      chapters:
+      - phys_respirometry.qmd
       #- summary.qmd
     - part: "Behavioural Data"
       #chapters:
