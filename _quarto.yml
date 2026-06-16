@@ -37,8 +37,8 @@ book:
       - phys_respirometry.qmd
       #- summary.qmd
     - part: "Behavioural Data"
-      #chapters:
-      #- intro.qmd
+      chapters:
+      - behav_torpor.qmd
       #- summary.qmd
     - part: "Comparative Data"
       #chapters:
@@ -51,7 +51,7 @@ book:
 appendices:
     - references.qmd
 
-bibliography: references.bib
+bibliography: ./bib/references.bib
 csl: ./bib/the-journal-of-experimental-biology.csl
 link-citations: true
 

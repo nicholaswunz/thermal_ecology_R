@@ -1,35 +1,107 @@
 {
     "sources": [
         {
-            "DOI": "10.1093/comjnl/27.2.97",
-            "ISSN": "0010-4620",
-            "URL": "https://doi.org/10.1093/comjnl/27.2.97",
+            "DOI": "doi.org/10.1111/2041-210X.13185",
             "author": [
                 {
-                    "family": "Knuth",
-                    "given": "Donald E."
+                    "family": "Blasco-Moreno",
+                    "given": "Anabel"
+                },
+                {
+                    "family": "Pérez-Casany",
+                    "given": "Marta"
+                },
+                {
+                    "family": "Puig",
+                    "given": "Pedro"
+                },
+                {
+                    "family": "Morante",
+                    "given": "Maria"
+                },
+                {
+                    "family": "Castells",
+                    "given": "Eva"
                 }
             ],
-            "container-title": "Comput. J.",
-            "id": "knuth84",
-            "issue": "2",
+            "container-title": "Methods in Ecology and Evolution",
+            "genre": "Journal Article",
+            "id": "Blasco2019",
             "issued": {
                 "date-parts": [
                     [
-                        1984,
-                        5
+                        2019
                     ]
                 ]
             },
-            "page": "97-111",
-            "publisher": "Oxford University Press, Inc.",
-            "publisher-place": "USA",
-            "title": "Literate programming",
+            "page": "949-959",
+            "publisher": "Wiley Online Library",
+            "title": "What does a zero mean? Understanding false, random and structural zeros in ecology",
             "type": "article-journal",
-            "volume": "27"
+            "volume": "10"
+        },
+        {
+            "DOI": "doi.org/10.1016/j.jtherbio.2022.103396",
+            "author": [
+                {
+                    "family": "Fjelldal",
+                    "given": "Mari Aas"
+                },
+                {
+                    "family": "Stawski",
+                    "given": "Clare"
+                },
+                {
+                    "family": "Sørås",
+                    "given": "Rune"
+                },
+                {
+                    "family": "Wright",
+                    "given": "Jonathan"
+                }
+            ],
+            "container-title": "Journal of Thermal Biology",
+            "genre": "Journal Article",
+            "id": "Fjelldal2023",
+            "issued": {
+                "date-parts": [
+                    [
+                        2023
+                    ]
+                ]
+            },
+            "page": "103396",
+            "publisher": "Elsevier",
+            "title": "Determining the different phases of torpor from skin-or body temperature data in heterotherms",
+            "type": "article-journal",
+            "volume": "111"
+        },
+        {
+            "DOI": "doi.org/10.1086/521085",
+            "author": [
+                {
+                    "family": "Willis",
+                    "given": "Craig KR"
+                }
+            ],
+            "container-title": "Physiological and Biochemical Zoology",
+            "genre": "Journal Article",
+            "id": "Willis2007",
+            "issued": {
+                "date-parts": [
+                    [
+                        2007
+                    ]
+                ]
+            },
+            "page": "643-651",
+            "publisher": "The University of Chicago Press",
+            "title": "An energy-based body temperature threshold between torpor and normothermia for small mammals",
+            "type": "article-journal",
+            "volume": "80"
         }
     ],
     "project_biblios": [
-        "references.bib"
+        "./bib/references.bib"
     ]
 }

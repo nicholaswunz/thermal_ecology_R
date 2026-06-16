@@ -47,7 +47,7 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 ## Behavioural Data
 
-- Torpor/arousal patterns (to do)
+- [Torpor/arousal patterns](behav_torpor.qmd) (to do)
 - Thermal images (to do)
 - Thermoregulation (to do)
 
@@ -66,8 +66,13 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 - Repeatability (to do)
 
+# Contributions
 
-### Acknowledgements
+If you would like to contribute to an existing tutorial or a new tutorial, please
+contact me here: nicholas.wu@murdoch.edu.au
+
+
+# Acknowledgements
 
 This book was inspired by the [Cleaning Biodiversity Data in R](https://cleaning-data-r.ala.org.au/) book. 
 This book is a collaborative effort by members of the [Thermal Ecology Alliance](https://www.thermalecologyalliance.org/).

@@ -18,9 +18,14 @@ oxygen values (P~crit~).
 
 ## Setting up {.unnumbered}
 
-Load R packages and set up directory and load your raw data. At minimum, the raw
-data should contain a time column and the oxygen column. In this example, we have
-xxxx.
+Load R packages and set up directory and load your raw data. 
+
+At minimum, the raw data should contain: 
+
+- a time column
+- an oxygen column. 
+
+In this example, we have xxxx.
 
 ```{r, warning=FALSE, message=FALSE}
 #install.packages("respR")
