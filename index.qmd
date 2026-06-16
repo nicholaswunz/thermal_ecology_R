@@ -47,7 +47,7 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 ## Behavioural Data
 
-- [Torpor/arousal patterns](behav_torpor.qmd) (to do)
+- [Torpor/arousal patterns](behav_torpor.qmd) (50% complete)
 - Thermal images (to do)
 - Thermoregulation (to do)
 
