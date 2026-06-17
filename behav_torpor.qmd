@@ -76,20 +76,21 @@ tsk_all_raw <- bind_rows(tsk_plecotus_raw, tsk_myotis_raw, tsk_eptesicus_raw)
 
 Visualise raw temperature traces for 18 individual *Plecotus auritus* from the year 2019 only.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
-#| fig-height: 8
+#| fig-height: 10
 
 tsk_plecotus_raw %>%
   filter(year == 2019) %>%
   mutate(date_time = lubridate::dmy_hm(date_time)) %>%
   ggplot(aes(x = date_time, y = Tb, group = ID)) +
+  geom_line(aes(y = Ta), colour = "grey", linetype = "dashed") +
   geom_line() +
   labs(x = NULL, y = expression(italic("T")["skin"]~"(°C)")) +
   theme_bw() +
   theme(axis.text.y = element_text(colour = "black"),
         axis.text.x = element_text(colour = "black")) +
-  facet_wrap(~ ID, ncol = 4)
+  facet_wrap(~ ID, ncol = 3, scales = "free_x")
 
 ```
 
@@ -106,7 +107,7 @@ tsk_plecotus_raw %>%
   ggplot(aes(x = date_time, y = Tb)) +
   geom_line(aes(y = Ta), colour = "grey", linetype = "dashed") +
   geom_line() +
-  labs(title = "ID = PaurF236",
+  labs(subtitle = "ID = PaurF236",
        x = NULL, 
        y = expression(italic("T")["skin"]~"(°C)")) +
   theme_bw() +
@@ -1139,7 +1140,7 @@ Plot for all 18 individuals.
 
 ```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
-#| fig-height: 8
+#| fig-height: 10
 
 tsk_plecotus_final %>%
   filter(year == 2019) %>%
@@ -1154,7 +1155,7 @@ tsk_plecotus_final %>%
   theme(axis.text.y = element_text(colour = "black"),
         axis.text.x = element_text(colour = "black"),
         legend.position = "bottom") +
-  facet_wrap(~ ID, ncol = 4)
+  facet_wrap(~ ID, ncol = 3, scales = "free_x")
 
 ```
 
@@ -1172,10 +1173,10 @@ tsk_plecotus_final %>%
          state = factor(state, levels = c("Euthermic", "Entering", "Entering_within",
                                           "Torpor", "Exiting", "Exiting_within", "NA"))) %>%
   ggplot(aes(x = date_time, y = Tb)) +
+  geom_hline(yintercept = 30.1, linetype = "dotted", linewidth = 0.5) +
   geom_line(aes(y = Ta), colour = "grey", linetype = "dashed") +
-  geom_line(aes(colour = state, group = 1)) +
-  geom_hline(yintercept = 30.1, linetype = "dashed") +
-  labs(title = "ID = PaurF236",
+  geom_line(aes(colour = state, group = 1), linewidth = 0.8) +
+  labs(subtitle = "ID = PaurF236",
        x = NULL, 
        y = expression(italic("T")["skin"]~"(°C)")) +
   theme_bw() +
