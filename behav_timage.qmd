@@ -1,4 +1,4 @@
-# Thermal images {.unnumbered}
+# Thermal Images {.unnumbered}
 
 Authors: Nicholas Wu
 
@@ -31,7 +31,10 @@ and their environment.
 ## Camera considerations
 
 When buying a thermal camera for thermal ecology work of obtaining actual **temperature**
-profiles** (e.g. heat loss or skin surface temperature)
+**profiles** (e.g. heat loss or skin surface temperature), then the following features 
+are important:
+
+- to do
 
 When buying a thermal camera for **detecting and counting endotherms in the field** 
 (actual temperature is not essential but distinguishing against background is) 
@@ -59,12 +62,12 @@ field of view, bat length, and the camera resolution to help inform you if the
 camera specification and set up are suitable for detecting bats.
 
 
-# Thermal images
+# Thermal Images
 
 ## Setting up {.unnumbered}
 
 
-# Thermal footage
+# Thermal Footage
 
 ## Setting up {.unnumbered}
 
