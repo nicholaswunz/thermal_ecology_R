@@ -96,7 +96,7 @@ tsk_plecotus_raw %>%
 Here is a close up on one of the individuals (PaurF236) with the inclusion of 
 air temperature (T~a~) represented as a dashed grey line.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
 #| fig-height: 3
 
@@ -923,7 +923,7 @@ sensitivity_data_ALL_summary <- sensitivity_testing_torpor_all_phases %>%
 
 Plot results
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
 #| fig-height: 4
 
@@ -1022,7 +1022,7 @@ sensitivity_data_ALL_summary_within <- sensitivity_testing_torpor_within %>%
 
 Plot results
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
 #| fig-height: 8
 
@@ -1137,7 +1137,7 @@ tsk_plecotus_final <- torpor_phase_function(0.6, 1.5)
 
 Plot for all 18 individuals. 
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
 #| fig-height: 8
 
@@ -1158,9 +1158,11 @@ tsk_plecotus_final %>%
 
 ```
 
-Plot for one individual (ID = PaurF236).
+Plot for one individual (ID = PaurF236). Horizontal dashed line represent the 
+torpor threshold for this individual. Grey line represents the recorded air 
+temperature.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 #| fig-width: 9
 #| fig-height: 4
 
@@ -1172,6 +1174,7 @@ tsk_plecotus_final %>%
   ggplot(aes(x = date_time, y = Tb)) +
   geom_line(aes(y = Ta), colour = "grey", linetype = "dashed") +
   geom_line(aes(colour = state, group = 1)) +
+  geom_hline(yintercept = 30.1, linetype = "dashed") +
   labs(title = "ID = PaurF236",
        x = NULL, 
        y = expression(italic("T")["skin"]~"(°C)")) +
