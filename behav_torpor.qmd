@@ -1,6 +1,6 @@
 # Torpor/Arousal {.unnumbered}
 
-Authors: Nicholas Wu
+Authors: Nicholas Wu, Mari Fjelldal
 
 Quantifying torpor and arousal patterns from raw temperature traces.
 

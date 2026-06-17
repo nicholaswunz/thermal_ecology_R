@@ -19,8 +19,8 @@ The intended audience is for graduate students new to thermal ecology and expert
 in the field who are unfamiliar with R. This book will mainly follow the [`tidyverse`](https://style.tidyverse.org/) 
 syntax for consistency in learning experience. 
 
-If you are new with R and not use basis data manipulation and coding, I have a 
-series of [tutorials](https://nicholaswu.quarto.pub/ecs200/) for undergraduate 
+If you are new with R and not familiar with basic data manipulation and coding, 
+I have a series of [tutorials](https://nicholaswu.quarto.pub/ecs200/) for undergraduate 
 students working with ecological data. Most relevant for this audience is week 
 1–4 contents (quality check, tidy data, diversity indices, and descriptive stats).
 
@@ -40,6 +40,9 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 ## Physiological Data
 
+Learn how to load and clean raw physiological data and calculate various physiological
+metrics.
+
 - Thermal performance curves (to do)
 - [Respirometry](phys_respirometry.qmd) (10% complete)
 - Thermal-death-time curves (to do)
@@ -47,17 +50,26 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 
 ## Behavioural Data
 
+Learn how to load and clean raw data and calculate various thermal or behavioural 
+metrics.
+
 - [Torpor/arousal patterns](behav_torpor.qmd) (50% complete)
 - Thermal images (to do)
 - Thermoregulation (to do)
 
 ## Comparative Data
 
+Learn how to load and clean raw comparative data used for comparative analysis or 
+meta-analysis.
+
 - Effect sizes (to do)
 - Comparative analysis (to do)
 - Scaling relationships (to do)
 
 ## Simulation
+
+Learn how to simulate ectotherm and endotherm operative temperatures under any 
+scenario.
 
 - Operative temperature models (to do)
 - Dynamic Energy Budget (to do)

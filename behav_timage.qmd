@@ -1,0 +1,80 @@
+# Thermal images {.unnumbered}
+
+Authors: Nicholas Wu
+
+Working with thermal images from thermal cameras.
+
+We will use the [`ThermImageJ`](https://github.com/gtatters/ThermImageJ) 
+package to illustrate how to process and tidy raw thermal image traces.  
+
+
+## Background {.unnumbered}
+
+
+### Resolution 
+
+
+### Thermal sensitivity
+
+Thermal sensitivity is another way of referring to Noise Equivalent Temperature 
+Difference (NETD), which is the smallest temperature difference you can see when 
+using a thermal device. This value is often measured in milliKelvin (mK). 
+Essentially, it serves as an electronic noise rating for the system.
+
+Ideally, you would want your thermal camera to have the lowest mK as possible. 
+The **lower the NETD, the better the sensor can register small temperature differences**. 
+By having a higher NETD we lose clarity in the image which would impact the performance 
+of analytics and the ability to distinguish temeprature profiles between small ectotherms 
+and their environment.
+
+
+## Camera considerations
+
+When buying a thermal camera for thermal ecology work of obtaining actual **temperature**
+profiles** (e.g. heat loss or skin surface temperature)
+
+When buying a thermal camera for **detecting and counting endotherms in the field** 
+(actual temperature is not essential but distinguishing against background is) 
+then the following features are important:
+
+- **Sampling frequency of 30 Hz or higher**: Faster moving animals like bats exit their 
+roosts very quickly during emergence (20 - 50 km/h). A camera with less than 20 Hz 
+(e.g., 15 fps) misses frames, thus increases the risk of missing rapid movements.
+
+- **Thermal sensitivity (NETD) <30 mK**: Small mammals (rodents or bats around 10 m away) 
+or median-sized animals (e.g. koala) from above canopy drone footage may have body 
+temperature profiles that may blend with the thermal noise. A thermal camera with 
+NETD >80 mK specifications will result in noisy and unclear images making it harder 
+to count animals relative to background noise.
+
+- **Field of view**: Wide FOV (e.g. 90°) are more suitable for drone footage attempting to 
+detect medium to large animals. 
+
+- **Resolution** minimum of 320×240 px for medium to large animals and >640×320 px for 
+small animals.
+
+Here is an example [simulator](https://trackbats.com/en/guides/camera-simulator/) 
+for detecting bats based on the distance of the camera to the emergence site, camera 
+field of view, bat length, and the camera resolution to help inform you if the 
+camera specification and set up are suitable for detecting bats.
+
+
+# Thermal images
+
+## Setting up {.unnumbered}
+
+
+# Thermal footage
+
+## Setting up {.unnumbered}
+
+
+# Citation
+
+When using functions from this tutorial, please cite the xxx.
+
+# References
+
+<div id="refs"></div>
+
+<br>

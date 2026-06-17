@@ -39,7 +39,7 @@ book:
     - part: "Behavioural Data"
       chapters:
       - behav_torpor.qmd
-      #- summary.qmd
+      - behav_timage.qmd
     - part: "Comparative Data"
       #chapters:
       #- intro.qmd
