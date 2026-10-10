@@ -36,7 +36,7 @@ databases and microclimate simulations, and calculating metrics of heatwaves.
 - Data loggers (to do)
 - Online climatology data (to do)
 - Online microclimate data (to do)
-- Detecting heatwaves/cold spells with `heatwaveR` (to do)
+- [Detecting heatwaves/cold spells with `heatwaveR`](env_heatwaves.qmd) (90% complete)
 
 ## Physiological Data
 
@@ -44,7 +44,7 @@ Learn how to load and clean raw physiological data and calculate various physiol
 metrics.
 
 - Thermal performance curves (to do)
-- [Respirometry](phys_respirometry.qmd) (10% complete)
+- [Respirometry with `respR``](phys_respirometry.qmd) (90% complete)
 - Thermal-death-time curves (to do)
 - Q10s and rates of change (to do)
 
@@ -53,7 +53,7 @@ metrics.
 Learn how to load and clean raw data and calculate various thermal or behavioural 
 metrics.
 
-- [Torpor/arousal patterns](behav_torpor.qmd) (50% complete)
+- [Torpor/arousal patterns](behav_torpor.qmd) (80% complete)
 - Thermal images (to do)
 - Thermoregulation (to do)
 

@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Heatwaves and Cold-spells – Thermal Ecology in R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./phys_respirometry.html" rel="next">
+<link href="./intro.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-87f1e3aac7f6e6e62305f242b34f8653.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.usefathom.com/script.js" data-site="QDWZORBB" defer=""></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Environmental Data</a></li><li class="breadcrumb-item"><a href="./env_heatwaves.html">Heatwaves and Cold-spells</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="https://raw.githubusercontent.com/nicholaswunz/thermal_ecology_R/e38e0b4da3cda8ecb6d098d216a06fb3d2a8514c/images/tea-logo.svg" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="https://raw.githubusercontent.com/nicholaswunz/thermal_ecology_R/e38e0b4da3cda8ecb6d098d216a06fb3d2a8514c/images/tea-logo.svg" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Thermal Ecology in R</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/nicholaswunz/thermal_ecology_R" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Environmental Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./env_heatwaves.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Heatwaves and Cold-spells</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Physiological Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./phys_respirometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Respirometry</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Behavioural Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./behav_torpor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Torpor/Arousal</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./behav_timage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Thermal Images</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Comparative Data</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Simulation</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a>
+  <ul class="collapse">
+  <li><a href="#what-is-a-heatwave" id="toc-what-is-a-heatwave" class="nav-link" data-scroll-target="#what-is-a-heatwave">What is a heatwave?</a></li>
+  <li><a href="#why-are-heatwaves-important-in-thermal-ecology" id="toc-why-are-heatwaves-important-in-thermal-ecology" class="nav-link" data-scroll-target="#why-are-heatwaves-important-in-thermal-ecology">Why are heatwaves important in thermal ecology?</a></li>
+  <li><a href="#why-a-structured-reproducible-workflow" id="toc-why-a-structured-reproducible-workflow" class="nav-link" data-scroll-target="#why-a-structured-reproducible-workflow">Why a structured, reproducible workflow?</a></li>
+  </ul></li>
+  <li><a href="#common-problems" id="toc-common-problems" class="nav-link" data-scroll-target="#common-problems">Common problems</a></li>
+  <li><a href="#example-workflow" id="toc-example-workflow" class="nav-link" data-scroll-target="#example-workflow">Example Workflow</a></li>
+  <li><a href="#activities" id="toc-activities" class="nav-link" data-scroll-target="#activities">Activities</a></li>
+  <li><a href="#reporting-the-workflow" id="toc-reporting-the-workflow" class="nav-link" data-scroll-target="#reporting-the-workflow">Reporting the Workflow</a></li>
+  <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats">Caveats</a>
+  <ul class="collapse">
+  <li><a href="#activities-biological-impact" id="toc-activities-biological-impact" class="nav-link" data-scroll-target="#activities-biological-impact">Activities: biological impact</a></li>
+  </ul></li>
+  <li><a href="#citation" id="toc-citation" class="nav-link" data-scroll-target="#citation">Citation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Environmental Data</a></li><li class="breadcrumb-item"><a href="./env_heatwaves.html">Heatwaves and Cold-spells</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Heatwaves and Cold-spells</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Authors: Nicholas Wu</p>
+<p>Detecting, describing and classifying extreme temperature events with a structured, reproducible workflow following the <a href="https://robwschlegel.github.io/heatwaveR/"><code>heatwaveR</code></a> package R <span class="citation" data-cites="Schlegel2018">(<a href="#ref-Schlegel2018" role="doc-biblioref">Schlegel and Smit, 2018</a>)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Workshop overview
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>By the end of this workshop you will be able to:</strong></p>
+<ol type="1">
+<li>Explain how heatwaves and cold-spells are defined, and recognise the common problems that change the number and size of detected events.</li>
+<li>Detect and describe events in <strong>daily</strong> and <strong>hourly</strong> temperature data with the <a href="https://robwschlegel.github.io/heatwaveR/"><code>heatwaveR</code></a> package <span class="citation" data-cites="Schlegel2018">(<a href="#ref-Schlegel2018" role="doc-biblioref">Schlegel and Smit, 2018</a>)</span>.</li>
+<li>Classify event severity and scale the workflow to many locations (gridded data).</li>
+<li>Report the workflow and interpret events in terms of <strong>biological impact</strong>, e.g.&nbsp;with thermal-death-time models.</li>
+</ol>
+</div>
+</div>
+<section id="background" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="background">Background</h2>
+<section id="what-is-a-heatwave" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="what-is-a-heatwave">What is a heatwave?</h3>
+<p>In everyday language a heatwave is “a run of unusually hot days”. To compare events between places, seasons and decades we need a precise, <em>relative</em> definition. In a <strong>relative</strong> definition, “unusually hot” means hot <em>for that place and time of year</em>, so a 25 °C day can be a heatwave in winter but not in summer.</p>
+<p>For the ocean, <span class="citation" data-cites="Hobday2016">Hobday et al. (<a href="#ref-Hobday2016" role="doc-biblioref">2016</a>)</span> defined a <strong>marine heatwave (MHW)</strong> as a <em>prolonged discrete anomalously warm water event</em> and operationalised it as at least <strong>5 consecutive days</strong> above a <strong>seasonally varying 90th percentile threshold</strong>, calculated from a <strong>30-year baseline (climatology) period</strong>, with events separated by <strong>2 days or fewer joined together</strong> (<a href="#fig-hw-metrics" class="quarto-xref">Figure&nbsp;<span>1</span></a>). The same algorithm, with the 10th percentile and temperatures <em>below</em> the threshold, detects <strong>marine cold-spells (MCS)</strong> <span class="citation" data-cites="Schlegel2017 Schlegel2021">(<a href="#ref-Schlegel2017" role="doc-biblioref">Schlegel et al., 2017</a>; <a href="#ref-Schlegel2021" role="doc-biblioref">Schlegel et al., 2021</a>)</span>. <span class="citation" data-cites="Hobday2018">Hobday et al. (<a href="#ref-Hobday2018" role="doc-biblioref">2018</a>)</span> then named events by their <strong>category</strong>: how many multiples of the threshold–climatology difference the peak exceeds (I Moderate, II Strong, III Severe, IV Extreme).</p>
+<div id="fig-hw-metrics" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Annotated temperature time series showing climatology, threshold, an event shaded by category, duration, maximum intensity, onset and decline rates, and how gaps and short spikes are treated.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hw-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/hw_metrics.svg" class="img-fluid figure-img" style="width:100.0%" alt="Annotated temperature time series showing climatology, threshold, an event shaded by category, duration, maximum intensity, onset and decline rates, and how gaps and short spikes are treated.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hw-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Anatomy of a heatwave following <span class="citation" data-cites="Hobday2016">Hobday et al. (<a href="#ref-Hobday2016" role="doc-biblioref">2016</a>)</span> and <span class="citation" data-cites="Hobday2018">Hobday et al. (<a href="#ref-Hobday2018" role="doc-biblioref">2018</a>)</span>. The climatology (grey) is the seasonal mean and the threshold (green) the seasonally varying 90th percentile of the baseline period. An event needs ≥ 5 days above the threshold; short spikes are ignored and gaps of ≤ 2 days are bridged. Event metrics are measured relative to the climatology, and the category depends on how many multiples of the threshold–climatology difference the temperature reaches.
+</figcaption>
+</figure>
+</div>
+<p>For the atmosphere, there is no single universal definition. Definitions use daily maximum (Tmax), minimum (Tmin) or mean temperature, relative (percentile) or absolute thresholds, heat-stress indices that combine temperature and humidity, and minimum durations that are usually <strong>3 days</strong> <span class="citation" data-cites="Perkins2013 Perkins2015 Nairn2015">(<a href="#ref-Nairn2015" role="doc-biblioref">Nairn and Fawcett, 2015</a>; <a href="#ref-Perkins2015" role="doc-biblioref">Perkins, 2015</a>; <a href="#ref-Perkins2013" role="doc-biblioref">Perkins and Alexander, 2013</a>)</span>. <span class="citation" data-cites="Perkins2013">Perkins and Alexander (<a href="#ref-Perkins2013" role="doc-biblioref">2013</a>)</span> recommended describing heatwaves with a small set of metrics (number, frequency, duration, amplitude and magnitude), which maps closely onto the metrics in <a href="#fig-hw-metrics" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
+<p>The table below summarises the main metrics returned by <code>heatwaveR</code>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Meaning</th>
+<th>Units (daily data)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>duration</code></td>
+<td>Days from start to end of the event</td>
+<td>days</td>
+</tr>
+<tr class="even">
+<td><code>intensity_max</code></td>
+<td>Peak temperature anomaly relative to the climatology</td>
+<td>°C</td>
+</tr>
+<tr class="odd">
+<td><code>intensity_mean</code></td>
+<td>Mean anomaly over the event</td>
+<td>°C</td>
+</tr>
+<tr class="even">
+<td><code>intensity_cumulative</code></td>
+<td>Sum of daily anomalies (area under the curve)</td>
+<td>°C × days</td>
+</tr>
+<tr class="odd">
+<td><code>rate_onset</code>, <code>rate_decline</code></td>
+<td>How fast the event developed and decayed</td>
+<td>°C day<sup>-1</sup></td>
+</tr>
+<tr class="even">
+<td><code>*_relThresh</code>, <code>*_abs</code></td>
+<td>Same intensities relative to the threshold, or as absolute temperatures</td>
+<td>°C</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="why-are-heatwaves-important-in-thermal-ecology" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="why-are-heatwaves-important-in-thermal-ecology">Why are heatwaves important in thermal ecology?</h3>
+<p>Extreme events, not just gradual warming, drive many of the biggest ecological responses to climate change <span class="citation" data-cites="Harris2018">(<a href="#ref-Harris2018" role="doc-biblioref"><span class="nocase">Harris et al.</span>, 2018</a>)</span>. Marine heatwaves have become longer and more frequent over the past century <span class="citation" data-cites="Oliver2018">(<a href="#ref-Oliver2018" role="doc-biblioref">Oliver et al., 2018</a>)</span>, and they cause mass mortality, range shifts and loss of habitat-forming species <span class="citation" data-cites="Smale2019 Smith2023">(<a href="#ref-Smale2019" role="doc-biblioref"><span class="nocase">Smale et al.</span>, 2019</a>; <a href="#ref-Smith2023" role="doc-biblioref">Smith et al., 2023</a>)</span>. The 2011 Western Australian MHW, the dataset you will analyse below, contributed to a regime shift from kelp forests to seaweed turfs <span class="citation" data-cites="Wernberg2016">(<a href="#ref-Wernberg2016" role="doc-biblioref"><span class="nocase">Wernberg et al.</span>, 2016</a>)</span>. On land, heatwaves are projected to become more frequent, persistent and intense across almost all inhabited regions <span class="citation" data-cites="Domeisen2023">(<a href="#ref-Domeisen2023" role="doc-biblioref">Domeisen et al., 2023</a>)</span>.</p>
+</section>
+<section id="why-a-structured-reproducible-workflow" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="why-a-structured-reproducible-workflow">Why a structured, reproducible workflow?</h3>
+<p>The number, duration and intensity of events you detect depend on many choices: the dataset, the baseline period, the percentile, the minimum duration, how gaps and missing data are treated, and whether the time series is detrended. These choices are often under-reported, so results from different studies are hard to compare or synthesise <span class="citation" data-cites="Hobday2016 Schlegel2019 Amaya2023">(<a href="#ref-Amaya2023" role="doc-biblioref">Amaya et al., 2023</a>; <a href="#ref-Hobday2016" role="doc-biblioref">Hobday et al., 2016</a>; <a href="#ref-Schlegel2019" role="doc-biblioref">Schlegel et al., 2019</a>)</span>.</p>
+<p>A shared algorithm implemented in open code solves much of this. <code>heatwaveR</code> is the R implementation of the Hobday et al.&nbsp;definitions (a faster successor to the original Python and <code>RmarineHeatWaves</code> code), works on air and water temperatures, on daily and hourly data, and makes every parameter an explicit, reportable function argument <span class="citation" data-cites="Schlegel2018">(<a href="#ref-Schlegel2018" role="doc-biblioref">Schlegel and Smit, 2018</a>)</span>. Writing the workflow as code means you can rerun it when new data arrive, apply it identically to thousands of grid cells, and share it with your paper.</p>
+</section>
+</section>
+<section id="common-problems" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="common-problems">Common problems</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>Effect on detected events</th>
+<th>How to handle it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Short time series</strong> (&lt; 30 years)</td>
+<td>Unstable percentiles; thresholds too low or too high</td>
+<td>Use ≥ 30 years where possible; report the baseline; see <span class="citation" data-cites="Schlegel2019">Schlegel et al. (<a href="#ref-Schlegel2019" role="doc-biblioref">2019</a>)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Missing data</strong></td>
+<td>Events split into pieces or missed</td>
+<td>Report % missing; interpolate short gaps only (<code>maxPadLength</code>); see <span class="citation" data-cites="Schlegel2019">Schlegel et al. (<a href="#ref-Schlegel2019" role="doc-biblioref">2019</a>)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Long-term trend in the data</strong></td>
+<td>With a fixed baseline, late years are “always in a heatwave”</td>
+<td>Decide (and report) fixed vs.&nbsp;shifting baseline or detrending <span class="citation" data-cites="Amaya2023">(<a href="#ref-Amaya2023" role="doc-biblioref">Amaya et al., 2023</a>)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Choice of baseline period</strong></td>
+<td>Different baselines give different event counts</td>
+<td>Use a standard 30-year period (e.g.&nbsp;1982–2011 for OISST; WMO 1991–2020) and report it</td>
+</tr>
+<tr class="odd">
+<td><strong>Resolution</strong> (daily vs.&nbsp;hourly; satellite vs.&nbsp;in situ)</td>
+<td>Daily means hide extremes that organisms feel</td>
+<td>Match the data resolution to the biological question</td>
+</tr>
+<tr class="even">
+<td><strong>Definition choices</strong> (percentile, <code>minDuration</code>, <code>maxGap</code>)</td>
+<td>Event number and duration change</td>
+<td>Use established defaults (5/2 marine, 3/1 atmospheric) or justify alternatives</td>
+</tr>
+<tr class="odd">
+<td><strong>Events at the ends of the series</strong></td>
+<td><code>rate_onset</code>/<code>rate_decline</code> are <code>NA</code>; durations truncated</td>
+<td>Interpret edge events with care</td>
+</tr>
+<tr class="even">
+<td><strong>Hemisphere and season</strong></td>
+<td>Wrong season labels in <code>category()</code></td>
+<td>Set <code>S = TRUE</code> for the southern hemisphere</td>
+</tr>
+<tr class="odd">
+<td><strong>Relative vs.&nbsp;absolute stress</strong></td>
+<td>A “Severe” winter event may be biologically harmless</td>
+<td>Combine relative events with absolute, organism-specific thresholds (see Caveats)</td>
+</tr>
+</tbody>
+</table>
+<p>Without a reproducible workflow there are additional problems: thresholds computed once in a spreadsheet and copied between sites, baseline periods that silently differ between analyses, missing-data handling that is never documented, and results that cannot be updated when new data arrive.</p>
+</section>
+<section id="example-workflow" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="example-workflow">Example Workflow</h2>
+<p>At minimum, your data need:</p>
+<ul>
+<li>a <strong>date</strong> column (class <code>Date</code>, “YYYY-MM-DD”) for daily data, or a date-time column (class <code>POSIXct</code>, on the hour) for hourly data, named <code>t</code> by default; and</li>
+<li>a <strong>temperature</strong> column, named <code>temp</code> by default (other names can be passed with the <code>x</code> and <code>y</code> arguments).</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run once to install</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"heatwaveR"</span>, <span class="st">"maps"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># data wrangling and plotting</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(heatwaveR) <span class="co"># heatwave and cold-spell detection</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The workflow has three core steps: build a climatology and threshold with <code>ts2clm()</code>, detect events with <code>detect_event()</code>, and classify them with <code>category()</code>.</p>
+<p><code>heatwaveR</code> comes with four example datasets:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Content</th>
+<th>Period</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sst_WA</code></td>
+<td>Daily sea surface temperature (SST), Western Australia</td>
+<td>1982–2022</td>
+</tr>
+<tr class="even">
+<td><code>sst_NW_Atl</code></td>
+<td>Daily SST, Northwest Atlantic</td>
+<td>1982–2022</td>
+</tr>
+<tr class="odd">
+<td><code>sst_Med</code></td>
+<td>Daily SST, Mediterranean</td>
+<td>1982–2022</td>
+</tr>
+<tr class="even">
+<td><code>Algiers</code></td>
+<td>Daily air Tmax and Tmin, Algiers (Algeria)</td>
+<td>1961–2005</td>
+</tr>
+</tbody>
+</table>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="" aria-current="page">Daily data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Hourly data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Gridded data</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="import" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="import">Import</h2>
+<p>The example data are already loaded with the package. With your own data, the pattern is: read, fix column types, and aggregate to the resolution you need.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example only: a logger file with a date-time column and temperature</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>my_daily <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/my_logger.csv"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time =</span> <span class="fu">ymd_hms</span>(date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">t =</span> <span class="fu">as_date</span>(date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">temp =</span> <span class="fu">mean</span>(temp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sst_WA</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 14,975 × 2
+#&gt;    t           temp
+#&gt;    &lt;date&gt;     &lt;dbl&gt;
+#&gt;  1 1982-01-01  20.9
+#&gt;  2 1982-01-02  21.2
+#&gt;  3 1982-01-03  21.4
+#&gt;  4 1982-01-04  21.2
+#&gt;  5 1982-01-05  21.3
+#&gt;  6 1982-01-06  21.6
+#&gt;  7 1982-01-07  21.7
+#&gt;  8 1982-01-08  21.5
+#&gt;  9 1982-01-09  21.4
+#&gt; 10 1982-01-10  21.4
+#&gt; # ℹ 14,965 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="quality-check" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="quality-check">Quality check</h2>
+<p>Before detecting anything, check that the record is long enough, complete, regular and free of duplicates, and look at it.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>check_series <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">start      =</span> <span class="fu">min</span>(t),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">end        =</span> <span class="fu">max</span>(t),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">years      =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(end <span class="sc">-</span> start) <span class="sc">/</span> <span class="fl">365.25</span>, <span class="dv">1</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_days     =</span> <span class="fu">n</span>(),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_expected =</span> <span class="fu">as.numeric</span>(end <span class="sc">-</span> start) <span class="sc">+</span> <span class="dv">1</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_missing  =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(temp)) <span class="sc">+</span> (n_expected <span class="sc">-</span> n_days),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">n_dup      =</span> <span class="fu">sum</span>(<span class="fu">duplicated</span>(t)))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">check_series</span>(sst_WA)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 7
+#&gt;   start      end        years n_days n_expected n_missing n_dup
+#&gt;   &lt;date&gt;     &lt;date&gt;     &lt;dbl&gt;  &lt;int&gt;      &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
+#&gt; 1 1982-01-01 2022-12-31    41  14975      14975         0     0</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>wa_annual <span class="ot">&lt;-</span> sst_WA <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">year =</span> <span class="fu">year</span>(t)) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">temp =</span> <span class="fu">mean</span>(temp))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> sst_WA, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> temp), <span class="at">colour =</span> <span class="st">"grey70"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> wa_annual, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.Date</span>(<span class="fu">paste0</span>(year, <span class="st">"-07-01"</span>)), <span class="at">y =</span> temp)) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data =</span> wa_annual, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.Date</span>(<span class="fu">paste0</span>(year, <span class="st">"-07-01"</span>)), <span class="at">y =</span> temp),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"SST (°C)"</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-sst-wa" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sst-wa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-sst-wa-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sst-wa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Daily SST off Western Australia (grey) with annual means (black) and a linear trend (red).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The record is 41 years long with no gaps, which is ideal. Note the warming trend: with a fixed 1982–2011 baseline, warmer recent years will produce more events. This is not an error, but it is a decision to report (see Caveats).</p>
+</section>
+<section id="detect-events" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="detect-events">Detect events</h2>
+<section id="marine-heatwaves" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="marine-heatwaves">Marine heatwaves</h3>
+<p><code>ts2clm()</code> calculates, for each day of the year, the climatological mean (<code>seas</code>) and the 90th percentile threshold (<code>thresh</code>) from the baseline period, pooling values within ±5 days (<code>windowHalfWidth</code>) and smoothing with a 31-day moving average (<code>smoothPercentileWidth</code>). <code>detect_event()</code> then finds runs of days above the threshold.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ts_WA  <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(sst_WA, <span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1982-01-01"</span>, <span class="st">"2011-12-31"</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mhw_WA <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_WA)   <span class="co"># defaults: minDuration = 5, maxGap = 2</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ts_WA <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   doy          t  temp    seas  thresh
+#&gt; 1   1 1982-01-01 20.94 21.5621 22.8627
+#&gt; 2   2 1982-01-02 21.25 21.5874 22.8899
+#&gt; 3   3 1982-01-03 21.38 21.6133 22.9199
+#&gt; 4   4 1982-01-04 21.16 21.6396 22.9494
+#&gt; 5   5 1982-01-05 21.26 21.6658 22.9755
+#&gt; 6   6 1982-01-06 21.61 21.6912 22.9977</code></pre>
+</div>
+</div>
+<p><code>detect_event()</code> returns a list with a <code>climatology</code> data frame (the daily data with the threshold and event flags) and an <code>event</code> data frame (one row per event).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mhw_WA<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(event_no, duration, date_start, date_peak,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         intensity_max, intensity_cumulative) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(intensity_max)) <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   event_no duration date_start  date_peak intensity_max intensity_cumulative
+#&gt; 1       52      105 2010-12-24 2011-02-28        6.5798             293.2107
+#&gt; 2       41       35 2008-03-25 2008-04-14        3.8299              79.3307
+#&gt; 3       29       95 1999-05-13 1999-05-22        3.6390             240.2994
+#&gt; 4       60       14 2012-12-27 2012-12-31        3.4230              32.2560
+#&gt; 5       59      101 2012-01-10 2012-01-27        3.3804             214.0509</code></pre>
+</div>
+</div>
+<p>The largest event is the 2011 “Ningaloo Niño” heatwave. <code>event_line()</code> and <code>lolli_plot()</code> give quick visual summaries.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">event_line</span>(mhw_WA, <span class="at">spread =</span> <span class="dv">180</span>, <span class="at">metric =</span> intensity_max,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">start_date =</span> <span class="st">"1982-01-01"</span>, <span class="at">end_date =</span> <span class="st">"2014-12-31"</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-wa-event" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wa-event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-wa-event-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wa-event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The 2011 marine heatwave off Western Australia drawn with <code>event_line()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lolli_plot</span>(mhw_WA, <span class="at">metric =</span> intensity_max)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-wa-line" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wa-line-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-wa-line-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wa-line-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: All detected marine heatwave events off Western Australia drawn with <code>lolli_plot()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For full control, <code>geom_flame()</code> adds the event “flames” to any <code>ggplot</code>. In <strong>Fig. 5</strong>, the timespan is from the 11th November 2010 to 32st May 2011.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mhw_WA<span class="sc">$</span>climatology <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2010-11-01"</span>), t <span class="sc">&lt;=</span> <span class="fu">as.Date</span>(<span class="st">"2011-05-31"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> t)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_flame</span>(<span class="fu">aes</span>(<span class="at">y =</span> temp, <span class="at">y2 =</span> thresh), <span class="at">fill =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> temp), <span class="at">colour =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> seas), <span class="at">colour =</span> <span class="st">"grey50"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> thresh), <span class="at">colour =</span> <span class="st">"forestgreen"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"SST (°C)"</span>) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-wa-flame" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wa-flame-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-wa-flame-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wa-flame-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: The 2011 Western Australian marine heatwave drawn with <code>geom_flame().</code>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="marine-cold-spells" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="marine-cold-spells">Marine cold-spells</h3>
+<p>Cold-spells use the <strong>10th</strong> percentile threshold and <code>coldSpells = TRUE</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ts_WA_10 <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(sst_WA, <span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1982-01-01"</span>, <span class="st">"2011-12-31"</span>),</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">pctile =</span> <span class="dv">10</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>mcs_WA   <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_WA_10, <span class="at">coldSpells =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>mcs_WA<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(event_no, duration, date_start, date_peak,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>         intensity_max, intensity_cumulative) <span class="sc">|&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(intensity_cumulative) <span class="sc">|&gt;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   event_no duration date_start  date_peak intensity_max intensity_cumulative
+#&gt; 1       15       76 1990-04-13 1990-05-11       -3.1883            -190.2043
+#&gt; 2       49       58 2003-12-19 2004-01-23       -2.5865            -100.5806
+#&gt; 3       83       41 2020-04-26 2020-05-25       -3.1433             -95.8339
+#&gt; 4       64       52 2014-04-14 2014-05-05       -2.5358             -92.6844
+#&gt; 5       77       46 2018-07-24 2018-08-02       -2.4311             -83.2407</code></pre>
+</div>
+</div>
+<p>Intensities of cold-spells are negative (below the climatology).</p>
+</section>
+<section id="atmospheric-heatwaves-and-cold-spells" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="atmospheric-heatwaves-and-cold-spells">Atmospheric heatwaves and cold-spells</h3>
+<p>For air temperature we follow the common atmospheric convention of at least <strong>3 consecutive days</strong> above the 90th percentile of <strong>Tmax</strong> (heatwaves) or below the 10th percentile of <strong>Tmin</strong> (cold-spells) <span class="citation" data-cites="Perkins2013">(<a href="#ref-Perkins2013" role="doc-biblioref">Perkins and Alexander, 2013</a>)</span>, and join gaps of 1 day (the atmospheric default suggested in the <code>heatwaveR</code> documentation). Because the column is not called <code>temp</code>, tell both functions which column to use with <code>y</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ts_alg_tmax <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(Algiers, <span class="at">y =</span> tMax,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1961-01-01"</span>, <span class="st">"1990-12-31"</span>))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>hw_alg <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_alg_tmax, <span class="at">y =</span> tMax, <span class="at">minDuration =</span> <span class="dv">3</span>, <span class="at">maxGap =</span> <span class="dv">1</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>ts_alg_tmin <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(Algiers, <span class="at">y =</span> tMin, <span class="at">pctile =</span> <span class="dv">10</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1961-01-01"</span>, <span class="st">"1990-12-31"</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>cs_alg <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_alg_tmin, <span class="at">y =</span> tMin, <span class="at">coldSpells =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">minDuration =</span> <span class="dv">3</span>, <span class="at">maxGap =</span> <span class="dv">1</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="at">heatwave  =</span> hw_alg<span class="sc">$</span>event,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">coldspell =</span> cs_alg<span class="sc">$</span>event, <span class="at">.id =</span> <span class="st">"type"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type) <span class="sc">|&gt;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_events      =</span> <span class="fu">n</span>(),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_duration =</span> <span class="fu">mean</span>(duration),</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_intensity =</span> <span class="fu">max</span>(<span class="fu">abs</span>(intensity_max)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 4
+#&gt;   type      n_events mean_duration max_intensity
+#&gt;   &lt;chr&gt;        &lt;int&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1 coldspell      158          4.03          9.45
+#&gt; 2 heatwave       173          4.25         17.2</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lolli_plot</span>(hw_alg, <span class="at">metric =</span> intensity_max)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-algiers-lolli" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-algiers-lolli-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-algiers-lolli-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-algiers-lolli-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Atmospheric heatwaves in Algiers (Tmax).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="classify-severity" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="classify-severity">Classify severity</h2>
+<p><code>category()</code> assigns each event a Hobday et al.&nbsp;(2018) category and season. Western Australia is in the southern hemisphere, so set <code>S = TRUE</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>mhw_cat_WA <span class="ot">&lt;-</span> <span class="fu">category</span>(mhw_WA, <span class="at">S =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"WA"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>mhw_cat_WA <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   event_no event_name  peak_date   category  i_max duration p_moderate p_strong
+#&gt; 1        1       &lt;NA&gt; 1983-01-20 I Moderate 2.1562        5        100        0
+#&gt; 2        2       &lt;NA&gt; 1983-03-25 I Moderate 1.5273        6        100        0
+#&gt; 3        3       &lt;NA&gt; 1983-12-28 I Moderate 1.8151        5        100        0
+#&gt; 4        4       &lt;NA&gt; 1984-06-05 I Moderate 1.9576       10        100        0
+#&gt; 5        5       &lt;NA&gt; 1984-06-19 I Moderate 2.1346        6        100        0
+#&gt; 6        6       &lt;NA&gt; 1984-07-10 I Moderate 2.2590       19        100        0
+#&gt;   p_severe p_extreme      season
+#&gt; 1        0         0      Summer
+#&gt; 2        0         0      Summer
+#&gt; 3        0         0      Spring
+#&gt; 4        0         0        Fall
+#&gt; 5        0         0        Fall
+#&gt; 6        0         0 Fall/Winter</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mhw_cat_WA <span class="sc">|&gt;</span> <span class="fu">count</span>(category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     category  n
+#&gt; 1 I Moderate 67
+#&gt; 2  II Strong 21
+#&gt; 3 III Severe  1
+#&gt; 4 IV Extreme  1</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">event_line</span>(mhw_WA, <span class="at">spread =</span> <span class="dv">100</span>, <span class="at">start_date =</span> <span class="st">"2010-11-01"</span>,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">end_date =</span> <span class="st">"2011-06-30"</span>, <span class="at">category =</span> <span class="cn">TRUE</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-wa-category" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wa-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-wa-category-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wa-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Categories of the 2011 Western Australian marine heatwave.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The same function classifies cold-spells; it detects that it has been given cold-spells.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mcs_cat_WA <span class="ot">&lt;-</span> <span class="fu">category</span>(mcs_WA, <span class="at">S =</span> <span class="cn">TRUE</span>, <span class="at">name =</span> <span class="st">"WA"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>mcs_cat_WA <span class="sc">|&gt;</span> <span class="fu">count</span>(category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     category  n
+#&gt; 1 I Moderate 68
+#&gt; 2  II Strong 18</code></pre>
+</div>
+</div>
+<section id="absolute-thresholds-with-exceedance" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="absolute-thresholds-with-exceedance">Absolute thresholds with <code>exceedance()</code></h3>
+<p>Sometimes the relevant question is not “unusually hot for this place?” but “above a temperature that harms my organism?”. <code>exceedance()</code> detects runs above (or, with <code>below = TRUE</code>, below) a fixed threshold.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>exc_26 <span class="ot">&lt;-</span> <span class="fu">exceedance</span>(sst_WA, <span class="at">threshold =</span> <span class="dv">26</span>, <span class="at">minDuration =</span> <span class="dv">5</span>, <span class="at">maxGap =</span> <span class="dv">2</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>exc_26<span class="sc">$</span>exceedance <span class="sc">|&gt;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exceedance_no, date_start, duration, intensity_max) <span class="sc">|&gt;</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(duration)) <span class="sc">|&gt;</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   exceedance_no date_start duration intensity_max
+#&gt; 1             3 2011-02-10       29          3.74
+#&gt; 2             2 2008-04-08       11          1.19
+#&gt; 3             1 1999-05-21        5          0.40</code></pre>
+</div>
+</div>
+</section>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Daily means smooth out the afternoon peaks and night-time lows that organisms actually experience. <code>heatwaveR</code> (from v0.5.4) also accepts <strong>hourly</strong> data, with a <code>POSIXct</code> time column on exact hours. All window and duration arguments are then in <strong>hours</strong>.</p>
+<p><code>heatwaveR</code> does not include an hourly dataset, so we reconstruct one from the daily Algiers Tmax and Tmin with a simple sine-shaped diurnal cycle (maximum at 15:00, minimum at 03:00). Real diurnal cycles are asymmetric, so this is for teaching only; with your own logger data you would skip this step.</p>
+<section id="import-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="import-1">Import</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hourly code is time-zone sensitive: work in UTC to avoid daylight saving shifts</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">TZ =</span> <span class="st">"UTC"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>alg_hourly <span class="ot">&lt;-</span> Algiers <span class="sc">|&gt;</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"1971-01-01"</span>)) <span class="sc">|&gt;</span>          <span class="co"># 35 years keeps run time short</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncount</span>(<span class="dv">24</span>, <span class="at">.id =</span> <span class="st">"hour"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hour =</span> hour <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">temp =</span> (tMax <span class="sc">+</span> tMin) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                (tMax <span class="sc">-</span> tMin) <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">cos</span>(<span class="dv">2</span> <span class="sc">*</span> pi <span class="sc">*</span> (hour <span class="sc">-</span> <span class="dv">15</span>) <span class="sc">/</span> <span class="dv">24</span>),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">t    =</span> <span class="fu">as.POSIXct</span>(t, <span class="at">tz =</span> <span class="st">"UTC"</span>) <span class="sc">+</span> hour <span class="sc">*</span> <span class="dv">3600</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(t, temp) <span class="sc">|&gt;</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(t)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>alg_hourly <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;                     t     temp
+#&gt; 1 1971-01-01 00:00:00 5.759010
+#&gt; 2 1971-01-01 01:00:00 5.401443
+#&gt; 3 1971-01-01 02:00:00 5.176667
+#&gt; 4 1971-01-01 03:00:00 5.100000
+#&gt; 5 1971-01-01 04:00:00 5.176667
+#&gt; 6 1971-01-01 05:00:00 5.401443</code></pre>
+</div>
+</div>
+</section>
+<section id="quality-check-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="quality-check-1">Quality check</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>alg_hourly <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">start        =</span> <span class="fu">min</span>(t),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">end          =</span> <span class="fu">max</span>(t),</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_hours      =</span> <span class="fu">n</span>(),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_expected   =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(end, start, <span class="at">units =</span> <span class="st">"hours"</span>)) <span class="sc">+</span> <span class="dv">1</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">off_the_hour =</span> <span class="fu">sum</span>(<span class="fu">minute</span>(t) <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">|</span> <span class="fu">second</span>(t) <span class="sc">!=</span> <span class="dv">0</span>),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_missing    =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(temp)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;        start                 end n_hours n_expected off_the_hour n_missing
+#&gt; 1 1971-01-01 2005-12-31 23:00:00  306816     306816            0         0</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>alg_hourly <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">&gt;=</span> <span class="fu">as.POSIXct</span>(<span class="st">"2003-07-01"</span>, <span class="at">tz =</span> <span class="st">"UTC"</span>),</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>         t <span class="sc">&lt;</span>  <span class="fu">as.POSIXct</span>(<span class="st">"2003-08-01"</span>, <span class="at">tz =</span> <span class="st">"UTC"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> temp)) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> Algiers <span class="sc">|&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>               <span class="fu">filter</span>(t <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2003-07-01"</span>), t <span class="sc">&lt;</span> <span class="fu">as.Date</span>(<span class="st">"2003-08-01"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>               <span class="fu">pivot_longer</span>(<span class="fu">c</span>(tMax, tMin), <span class="at">values_to =</span> <span class="st">"temp"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">as.POSIXct</span>(t, <span class="at">tz =</span> <span class="st">"UTC"</span>) <span class="sc">+</span> <span class="fu">if_else</span>(name <span class="sc">==</span> <span class="st">"tMax"</span>, <span class="dv">15</span>, <span class="dv">3</span>) <span class="sc">*</span> <span class="dv">3600</span>),</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">colour =</span> name)) <span class="sc">+</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">tMax =</span> <span class="st">"#e12744"</span>, <span class="at">tMin =</span> <span class="st">"#2b6cb0"</span>)) <span class="sc">+</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Air temperature (°C)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-hourly-check" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hourly-check-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-hourly-check-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hourly-check-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Reconstructed hourly air temperature in Algiers for July 2003 (line) with daily Tmax and Tmin (points).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="detect-events-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="detect-events-1">Detect events</h2>
+<p>Scale every time-based argument from days to hours: a ±5-day window becomes <code>windowHalfWidth = 5 * 24</code>, the 31-day smoothing becomes <code>smoothPercentileWidth = 31 * 24</code>, and so on. Here we require at least 3 days (72 h) above the hour-of-year 90th percentile and allow gaps of up to 12 h (e.g. a slightly cooler night) to be joined. These are choices you must report.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ts_alg_h <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(alg_hourly,</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">climatologyPeriod     =</span> <span class="fu">c</span>(<span class="st">"1971-01-01"</span>, <span class="st">"2000-12-31"</span>),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">windowHalfWidth       =</span> <span class="dv">5</span> <span class="sc">*</span> <span class="dv">24</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">smoothPercentileWidth =</span> <span class="dv">31</span> <span class="sc">*</span> <span class="dv">24</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>hw_alg_h <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_alg_h, <span class="at">minDuration =</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">24</span>, <span class="at">maxGap =</span> <span class="dv">12</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>hw_alg_h<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(event_no, date_start, date_peak, duration,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>         intensity_max, intensity_cumulative) <span class="sc">|&gt;</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(intensity_max)) <span class="sc">|&gt;</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   event_no date_start           date_peak duration intensity_max
+#&gt; 1        1 1987-10-25 1987-10-26 15:00:00       72       17.9398
+#&gt;   intensity_cumulative
+#&gt; 1             868.0221</code></pre>
+</div>
+</div>
+<p>Durations are in hours and cumulative intensity in °C × hours.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>top_h <span class="ot">&lt;-</span> hw_alg_h<span class="sc">$</span>event <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(intensity_max, <span class="at">n =</span> <span class="dv">1</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>hw_alg_h<span class="sc">$</span>climatology <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">&gt;=</span> top_h<span class="sc">$</span>date_start <span class="sc">-</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">86400</span>,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>         t <span class="sc">&lt;=</span> top_h<span class="sc">$</span>date_end   <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">86400</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> t)) <span class="sc">+</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> thresh, <span class="at">ymax =</span> <span class="fu">pmax</span>(temp, thresh)),</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"#e12744"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> seas), <span class="at">colour =</span> <span class="st">"grey50"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> thresh), <span class="at">colour =</span> <span class="st">"forestgreen"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> temp)) <span class="sc">+</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Air temperature (°C)"</span>) <span class="sc">+</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-hourly-event" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hourly-event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-hourly-event-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hourly-event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: The most intense hourly heatwave in the reconstructed Algiers record. Red shading shows hours above the hour-of-year threshold (green).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Hourly cold-spells work the same way:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ts_alg_h10 <span class="ot">&lt;-</span> <span class="fu">ts2clm</span>(alg_hourly,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">climatologyPeriod     =</span> <span class="fu">c</span>(<span class="st">"1971-01-01"</span>, <span class="st">"2000-12-31"</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">windowHalfWidth       =</span> <span class="dv">5</span> <span class="sc">*</span> <span class="dv">24</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">smoothPercentileWidth =</span> <span class="dv">31</span> <span class="sc">*</span> <span class="dv">24</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">pctile =</span> <span class="dv">10</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>cs_alg_h <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_alg_h10, <span class="at">coldSpells =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">minDuration =</span> <span class="dv">3</span> <span class="sc">*</span> <span class="dv">24</span>, <span class="at">maxGap =</span> <span class="dv">12</span>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(cs_alg_h<span class="sc">$</span>event)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+</section>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Gridded products such as NOAA OISST give one time series per pixel. Detecting events on a grid is the same workflow applied to each pixel with <code>group_by()</code> + <code>group_modify()</code>. Here the three SST datasets play the role of three pixels.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  sst_WA     <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"WA"</span>,     <span class="at">lon =</span> <span class="fl">112.625</span>, <span class="at">lat =</span> <span class="sc">-</span><span class="fl">29.375</span>),</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  sst_NW_Atl <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"NW_Atl"</span>, <span class="at">lon =</span> <span class="sc">-</span><span class="fl">66.875</span>, <span class="at">lat =</span>  <span class="fl">43.125</span>),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  sst_Med    <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">site =</span> <span class="st">"Med"</span>,    <span class="at">lon =</span>   <span class="fl">9.125</span>, <span class="at">lat =</span>  <span class="fl">43.625</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># One function per pixel: climatology -&gt; events -&gt; categories</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>event_cat <span class="ot">&lt;-</span> <span class="cf">function</span>(df, key) {</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">|&gt;</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ts2clm</span>(<span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1982-01-01"</span>, <span class="st">"2011-12-31"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">detect_event</span>() <span class="sc">|&gt;</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">category</span>(<span class="at">S =</span> key<span class="sc">$</span>lat <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="at">name =</span> key<span class="sc">$</span>site)</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>mhw_sites <span class="ot">&lt;-</span> sites <span class="sc">|&gt;</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site, lon, lat) <span class="sc">|&gt;</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_modify</span>(\(df, key) <span class="fu">event_cat</span>(df, key)) <span class="sc">|&gt;</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>mhw_sites <span class="sc">|&gt;</span> <span class="fu">count</span>(site, category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 10 × 3
+#&gt;    site   category       n
+#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;
+#&gt;  1 Med    I Moderate    80
+#&gt;  2 Med    II Strong     41
+#&gt;  3 Med    III Severe     2
+#&gt;  4 NW_Atl I Moderate    92
+#&gt;  5 NW_Atl II Strong     32
+#&gt;  6 NW_Atl III Severe     6
+#&gt;  7 WA     I Moderate    67
+#&gt;  8 WA     II Strong     21
+#&gt;  9 WA     III Severe     1
+#&gt; 10 WA     IV Extreme     1</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>site_summary <span class="ot">&lt;-</span> mhw_sites <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site, lon, lat) <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_events =</span> <span class="fu">n</span>(), <span class="at">mhw_days =</span> <span class="fu">sum</span>(duration), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(site_summary, <span class="fu">aes</span>(<span class="at">x =</span> lon, <span class="at">y =</span> lat)) <span class="sc">+</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_borders</span>(<span class="st">"world"</span>, <span class="at">fill =</span> <span class="st">"grey85"</span>, <span class="at">colour =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> mhw_days), <span class="at">colour =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> site), <span class="at">nudge_y =</span> <span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_quickmap</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">160</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">70</span>)) <span class="sc">+</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">size =</span> <span class="st">"MHW days"</span>) <span class="sc">+</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-sites-map" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sites-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-sites-map-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sites-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Total marine heatwave days (1982–2022) at the three example sites.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Trends in event frequency are commonly tested per pixel with a Poisson GLM of annual counts:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>mhw_counts <span class="ot">&lt;-</span> mhw_sites <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(site, <span class="at">year =</span> <span class="fu">year</span>(peak_date)) <span class="sc">|&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(site, <span class="at">year =</span> <span class="dv">1982</span><span class="sc">:</span><span class="dv">2022</span>, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">n =</span> <span class="dv">0</span>))</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>mhw_counts <span class="sc">|&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest</span>(<span class="at">data =</span> <span class="sc">-</span>site) <span class="sc">|&gt;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fit =</span> <span class="fu">map</span>(data, \(d) <span class="fu">glm</span>(n <span class="sc">~</span> year, <span class="at">family =</span> poisson, <span class="at">data =</span> d)),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">tidy =</span> <span class="fu">map</span>(fit, broom<span class="sc">::</span>tidy)) <span class="sc">|&gt;</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(tidy) <span class="sc">|&gt;</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"year"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(site,</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">change_per_decade =</span> <span class="fu">exp</span>(estimate <span class="sc">*</span> <span class="dv">10</span>),  <span class="co"># multiplicative change</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>            p.value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   site   change_per_decade       p.value
+#&gt;   &lt;chr&gt;              &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1 Med                 1.64 0.00000000378
+#&gt; 2 NW_Atl              1.34 0.000143     
+#&gt; 3 WA                  1.27 0.00866</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Working with real gridded data (OISST)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For real grids, download a subset of NOAA OISST with <code>rerddap</code>, then apply the same <code>group_by(lon, lat)</code> + <code>group_modify()</code> code. Large grids are best split into longitude slices and processed in parallel, or handled with the companion package <a href="https://robwschlegel.github.io/heatwave3/"><code>heatwave3</code></a>, which applies <code>heatwaveR</code> directly to NetCDF files. See the heatwaveR vignettes on <a href="https://robwschlegel.github.io/heatwaveR/articles/OISST_preparation.html">OISST preparation</a> and <a href="https://robwschlegel.github.io/heatwaveR/articles/gridded_event_detection.html">gridded event detection</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run: downloads ~1 year of OISST for a small box off southwest Australia</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rerddap)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>oisst <span class="ot">&lt;-</span> <span class="fu">griddap</span>(<span class="at">datasetx  =</span> <span class="st">"ncdcOisst21Agg_LonPM180"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">url       =</span> <span class="st">"https://coastwatch.pfeg.noaa.gov/erddap/"</span>,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time      =</span> <span class="fu">c</span>(<span class="st">"2011-01-01"</span>, <span class="st">"2011-12-31"</span>),</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">zlev      =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">latitude  =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">32</span>, <span class="sc">-</span><span class="dv">28</span>),</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">longitude =</span> <span class="fu">c</span>(<span class="dv">112</span>, <span class="dv">115</span>),</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fields    =</span> <span class="st">"sst"</span>)<span class="sc">$</span>data <span class="sc">|&gt;</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">as.Date</span>(<span class="fu">str_remove</span>(time, <span class="st">"T12:00:00Z"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">lon =</span> longitude, <span class="at">lat =</span> latitude, t, <span class="at">temp =</span> sst) <span class="sc">|&gt;</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: event detection needs the full multi-decade record for each pixel,</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="co"># so download 1982-present in chunks of &lt; 9 years before running ts2clm().</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="activities" class="level1 unnumbered">
+<h1 class="unnumbered">Activities</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Daily data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Hourly data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Gridded data</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 1: Another ocean
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Detect marine heatwaves in <code>sst_NW_Atl</code> (Northwest Atlantic) with a 1982–2011 baseline. (a) How many events are there? (b) Which event had the largest <strong>cumulative</strong> intensity, and when did it peak? (c) Classify the events; note this site is in the <strong>northern</strong> hemisphere.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>mhw_NWA <span class="ot">&lt;-</span> sst_NW_Atl <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ts2clm</span>(<span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1982-01-01"</span>, <span class="st">"2011-12-31"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">detect_event</span>()</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(mhw_NWA<span class="sc">$</span>event)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 130</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mhw_NWA<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(intensity_cumulative, <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(event_no, date_start, date_peak, duration,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>         intensity_max, intensity_cumulative)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   event_no date_start  date_peak duration intensity_max intensity_cumulative
+#&gt; 1       72 2012-06-09 2012-07-15      239         4.569             593.0845</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">category</span>(mhw_NWA, <span class="at">S =</span> <span class="cn">FALSE</span>, <span class="at">name =</span> <span class="st">"NW_Atl"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(category)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     category  n
+#&gt; 1 I Moderate 92
+#&gt; 2  II Strong 32
+#&gt; 3 III Severe  6</code></pre>
+</div>
+</div>
+<p>There are 130 events. The largest by cumulative intensity peaked on 2012-07-15. Using <code>S = FALSE</code> is essential so that the season labels are correct.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 2: The baseline matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Repeat the Western Australia detection with a later baseline, 1992-01-01 to 2021-12-31. How many events are detected with each baseline, and how many events start after 2011? Why do the numbers differ?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>mhw_WA_late <span class="ot">&lt;-</span> sst_WA <span class="sc">|&gt;</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ts2clm</span>(<span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1992-01-01"</span>, <span class="st">"2021-12-31"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">detect_event</span>()</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>baseline_comp <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">1982-2011</span><span class="st">`</span> <span class="ot">=</span> mhw_WA<span class="sc">$</span>event,</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">1992-2021</span><span class="st">`</span> <span class="ot">=</span> mhw_WA_late<span class="sc">$</span>event,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"baseline"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(baseline) <span class="sc">|&gt;</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_events      =</span> <span class="fu">n</span>(),</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_after_2011  =</span> <span class="fu">sum</span>(date_start <span class="sc">&gt;</span> <span class="fu">as.Date</span>(<span class="st">"2011-12-31"</span>)),</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">total_days    =</span> <span class="fu">sum</span>(duration))</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>baseline_comp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 4
+#&gt;   baseline  n_events n_after_2011 total_days
+#&gt;   &lt;chr&gt;        &lt;int&gt;        &lt;int&gt;      &lt;dbl&gt;
+#&gt; 1 1982-2011       90           32       1287
+#&gt; 2 1992-2021       73           25       1121</code></pre>
+</div>
+</div>
+<p>The later baseline includes warmer years, so the threshold is higher and fewer events are detected, especially in recent years. Neither is “wrong”: a fixed early baseline measures change relative to a historical state (relevant for organisms that cannot keep up with warming), while a shifting or detrended baseline isolates short-term variability <span class="citation" data-cites="Amaya2023">(<a href="#ref-Amaya2023" role="doc-biblioref">Amaya et al., 2023</a>)</span>. You must report which you used.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 3: Missing data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Real records have gaps. Set the WA temperatures between 2011-02-10 and 2011-02-20 to <code>NA</code> and rerun the detection (a) without interpolation and (b) with <code>maxPadLength = 3</code> and (c) <code>maxPadLength = 11</code> in <code>ts2clm()</code>. What happens to the 2011 event?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>sst_WA_gap <span class="ot">&lt;-</span> sst_WA <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp =</span> <span class="fu">if_else</span>(<span class="fu">between</span>(t, <span class="fu">as.Date</span>(<span class="st">"2011-02-10"</span>), <span class="fu">as.Date</span>(<span class="st">"2011-02-20"</span>)),</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                        <span class="cn">NA_real_</span>, temp))</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>detect_2011 <span class="ot">&lt;-</span> <span class="cf">function</span>(pad) {</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  sst_WA_gap <span class="sc">|&gt;</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ts2clm</span>(<span class="at">climatologyPeriod =</span> <span class="fu">c</span>(<span class="st">"1982-01-01"</span>, <span class="st">"2011-12-31"</span>),</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">maxPadLength =</span> pad) <span class="sc">|&gt;</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">detect_event</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pluck</span>(<span class="st">"event"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(date_start <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2010-12-01"</span>),</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>           date_start <span class="sc">&lt;=</span> <span class="fu">as.Date</span>(<span class="st">"2011-04-30"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(date_start, date_end, duration, intensity_max, intensity_cumulative)</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a><span class="fu">detect_2011</span>(<span class="cn">FALSE</span>)  <span class="co"># no interpolation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   date_start   date_end duration intensity_max intensity_cumulative
+#&gt; 1 2010-12-24 2011-02-09       48        3.3697             104.0114
+#&gt; 2 2011-02-21 2011-04-07       46        6.6143             146.6426
+#&gt; 3 2011-04-15 2011-05-02       18        2.2985              32.3359</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">detect_2011</span>(<span class="dv">3</span>)      <span class="co"># interpolate gaps up to 3 days only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   date_start   date_end duration intensity_max intensity_cumulative
+#&gt; 1 2010-12-24 2011-02-09       48        3.3697             104.0114
+#&gt; 2 2011-02-21 2011-04-07       46        6.6143             146.6426
+#&gt; 3 2011-04-15 2011-05-02       18        2.2985              32.3359</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">detect_2011</span>(<span class="dv">11</span>)     <span class="co"># interpolate the whole 11-day gap</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   date_start   date_end duration intensity_max intensity_cumulative
+#&gt; 1 2010-12-24 2011-04-07      105        6.5827             288.5834
+#&gt; 2 2011-04-15 2011-05-02       18        2.2985              32.3359</code></pre>
+</div>
+</div>
+<p>Without interpolation, the 11-day gap is longer than <code>maxGap</code>, so the single 105-day event is split into separate events and its duration and cumulative intensity are underestimated. A <code>maxPadLength</code> shorter than the gap does not fill it. Interpolating the whole gap restores one event, but the interpolated values are a guess: a straight line from 25.4 to 27.4 °C that misses the real mid-February warming (up to 27.6 °C), so intensity metrics are still slightly biased. Report how much data were missing and how gaps were treated <span class="citation" data-cites="Schlegel2019">(<a href="#ref-Schlegel2019" role="doc-biblioref">Schlegel et al., 2019</a>)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 4: Atmospheric definitions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using <code>Algiers</code>, compare the heatwaves detected with the atmospheric convention (<code>minDuration = 3</code>, <code>maxGap = 1</code>) and the marine convention (<code>minDuration = 5</code>, <code>maxGap = 2</code>) on Tmax. How many events and heatwave days does each give? Which year had the most heatwave days under the atmospheric convention?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>hw_alg_marine <span class="ot">&lt;-</span> <span class="fu">detect_event</span>(ts_alg_tmax, <span class="at">y =</span> tMax, <span class="at">minDuration =</span> <span class="dv">5</span>, <span class="at">maxGap =</span> <span class="dv">2</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">3 d / gap 1</span><span class="st">`</span> <span class="ot">=</span> hw_alg<span class="sc">$</span>event,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">5 d / gap 2</span><span class="st">`</span> <span class="ot">=</span> hw_alg_marine<span class="sc">$</span>event, <span class="at">.id =</span> <span class="st">"definition"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(definition) <span class="sc">|&gt;</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_events =</span> <span class="fu">n</span>(), <span class="at">heatwave_days =</span> <span class="fu">sum</span>(duration))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 3
+#&gt;   definition  n_events heatwave_days
+#&gt;   &lt;chr&gt;          &lt;int&gt;         &lt;dbl&gt;
+#&gt; 1 3 d / gap 1      173           735
+#&gt; 2 5 d / gap 2       41           258</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>hw_alg<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">year =</span> <span class="fu">year</span>(date_start)) <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">heatwave_days =</span> <span class="fu">sum</span>(duration)) <span class="sc">|&gt;</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(heatwave_days, <span class="at">n =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 2
+#&gt;    year heatwave_days
+#&gt;   &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1  2001            46</code></pre>
+</div>
+</div>
+<p>The shorter minimum duration detects many more, shorter events. Neither choice is universally correct, which is why the definition must always be reported alongside the results <span class="citation" data-cites="Perkins2013">(<a href="#ref-Perkins2013" role="doc-biblioref">Perkins and Alexander, 2013</a>)</span>.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 5: How long is “prolonged”?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Rerun the hourly heatwave detection with <code>minDuration = 24</code> (1 day) and with <code>minDuration = 5 * 24</code> (5 days), keeping <code>maxGap = 12</code>. How do the number of events and their mean duration change? Which definition would you choose to study heat stress in a small, short-lived insect, and why?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 5
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">min_hours =</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">72</span>, <span class="dv">120</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">events =</span> <span class="fu">map</span>(min_hours, \(m) {</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">detect_event</span>(ts_alg_h, <span class="at">minDuration =</span> m, <span class="at">maxGap =</span> <span class="dv">12</span>)<span class="sc">$</span>event</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  })) <span class="sc">|&gt;</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_events          =</span> <span class="fu">map_int</span>(events, nrow),</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_duration_h   =</span> <span class="fu">map_dbl</span>(events, \(e) <span class="fu">mean</span>(e<span class="sc">$</span>duration)),</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_event_hours =</span> <span class="fu">map_dbl</span>(events, \(e) <span class="fu">sum</span>(e<span class="sc">$</span>duration))) <span class="sc">|&gt;</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>events)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 4
+#&gt;   min_hours n_events mean_duration_h total_event_hours
+#&gt;       &lt;dbl&gt;    &lt;int&gt;           &lt;dbl&gt;             &lt;dbl&gt;
+#&gt; 1        24        5            42.4               212
+#&gt; 2        72        1            72                  72
+#&gt; 3       120        1            NA                  NA</code></pre>
+</div>
+</div>
+<p>Shorter minimum durations detect many more, shorter events. For a small, short-lived ectotherm, a day or even a few hours of extreme heat can be damaging, so a 24-h (or shorter) definition, or an absolute organism-specific threshold with <code>exceedance()</code>, may be more relevant than a 5-day definition designed for ocean temperatures.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 6: Daily vs.&nbsp;hourly
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Do the daily (Tmax, 3-day) and hourly heatwaves identify the same periods? For each daily Tmax heatwave in 1971–2005, check whether any hourly heatwave overlaps it. What proportion of daily events have an hourly counterpart?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 6
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>daily_ev  <span class="ot">&lt;-</span> hw_alg<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date_start <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"1971-01-01"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(event_no, date_start, date_end)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>hourly_ev <span class="ot">&lt;-</span> hw_alg_h<span class="sc">$</span>event <span class="sc">|&gt;</span></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">h_start =</span> <span class="fu">as_date</span>(date_start), <span class="at">h_end =</span> <span class="fu">as_date</span>(date_end))</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> daily_ev <span class="sc">|&gt;</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">has_hourly =</span> <span class="fu">any</span>(hourly_ev<span class="sc">$</span>h_start <span class="sc">&lt;=</span> date_end <span class="sc">&amp;</span></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>                            hourly_ev<span class="sc">$</span>h_end <span class="sc">&gt;=</span> date_start)) <span class="sc">|&gt;</span></span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>overlap <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">n_daily =</span> <span class="fu">n</span>(), <span class="at">prop_with_hourly =</span> <span class="fu">mean</span>(has_hourly))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 2
+#&gt;   n_daily prop_with_hourly
+#&gt;     &lt;int&gt;            &lt;dbl&gt;
+#&gt; 1     142          0.00704</code></pre>
+</div>
+</div>
+<p>Many but not all daily events have an hourly counterpart. The two approaches use different thresholds (daily Tmax vs.&nbsp;each hour of the day) and the hourly definition needs nights to stay warm too. They answer different questions, so choose the resolution that matches the process you study.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 7: Compare the “pixels”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using <code>mhw_sites</code>, which site has (a) the most events, (b) the longest single event, and (c) the highest proportion of its events in category II or above?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 7
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>mhw_sites <span class="sc">|&gt;</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">|&gt;</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_events        =</span> <span class="fu">n</span>(),</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">longest_days    =</span> <span class="fu">max</span>(duration),</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">prop_strong_plus =</span> <span class="fu">mean</span>(category <span class="sc">!=</span> <span class="st">"I Moderate"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 4
+#&gt;   site   n_events longest_days prop_strong_plus
+#&gt;   &lt;chr&gt;     &lt;int&gt;        &lt;dbl&gt;            &lt;dbl&gt;
+#&gt; 1 Med         123          144            0.350
+#&gt; 2 NW_Atl      130          239            0.292
+#&gt; 3 WA           90          105            0.256</code></pre>
+</div>
+</div>
+<p>Each site has its own climatology, so these are comparisons of <em>relative</em> extremes; a Category II event in the Mediterranean and in Western Australia can involve very different absolute temperatures.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="reporting-the-workflow" class="level1 unnumbered">
+<h1 class="unnumbered">Reporting the Workflow</h1>
+<p>Because the definition determines the result, report every parameter needed to reproduce the detection:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data source, resolution and processing</td>
+<td>NOAA OISST v2.1, 0.25°, daily; or logger model, depth, sampling interval, aggregation to daily mean</td>
+</tr>
+<tr class="even">
+<td>Record length and missing data</td>
+<td>1982–2022; 0% missing; gaps ≤ 2 days linearly interpolated (<code>maxPadLength = 2</code>)</td>
+</tr>
+<tr class="odd">
+<td>Baseline (climatology) period</td>
+<td>1982-01-01 to 2011-12-31; fixed or shifting; detrended or not</td>
+</tr>
+<tr class="even">
+<td>Threshold</td>
+<td>90th (heatwaves) / 10th (cold-spells) percentile; or absolute value with <code>exceedance()</code></td>
+</tr>
+<tr class="odd">
+<td>Climatology settings</td>
+<td><code>windowHalfWidth = 5</code>, <code>smoothPercentileWidth = 31</code> (in hours × 24 for hourly data)</td>
+</tr>
+<tr class="even">
+<td>Event definition</td>
+<td><code>minDuration = 5</code>, <code>maxGap = 2</code> (marine) or 3 and 1 (atmospheric)</td>
+</tr>
+<tr class="odd">
+<td>Categories</td>
+<td>Hobday et al.&nbsp;(2018), <code>S = TRUE/FALSE</code></td>
+</tr>
+<tr class="even">
+<td>Software</td>
+<td>R and <code>heatwaveR</code> versions; cite <span class="citation" data-cites="Schlegel2018">Schlegel and Smit (<a href="#ref-Schlegel2018" role="doc-biblioref">2018</a>)</span>, <span class="citation" data-cites="Hobday2016">Hobday et al. (<a href="#ref-Hobday2016" role="doc-biblioref">2016</a>)</span>, <span class="citation" data-cites="Hobday2018">Hobday et al. (<a href="#ref-Hobday2018" role="doc-biblioref">2018</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Code and outputs</td>
+<td>Script, event table and climatology in a public repository</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"output"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(mhw_WA<span class="sc">$</span>event, <span class="st">"output/mhw_WA_events.csv"</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(mhw_cat_WA,   <span class="st">"output/mhw_WA_categories.csv"</span>)</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"heatwaveR"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As with any analysis, the methods text can be generated from the objects themselves:</p>
+<blockquote class="blockquote">
+<p>Marine heatwaves were detected in daily SST (1982–2022) with <code>heatwaveR</code> v0.5.5 <span class="citation" data-cites="Schlegel2018">(<a href="#ref-Schlegel2018" role="doc-biblioref">Schlegel and Smit, 2018</a>)</span>, following <span class="citation" data-cites="Hobday2016">Hobday et al. (<a href="#ref-Hobday2016" role="doc-biblioref">2016</a>)</span>: periods of ≥ 5 days above the seasonally varying 90th percentile of a 1982–2011 climatology, with gaps of ≤ 2 days joined. We detected 90 events, categorised following <span class="citation" data-cites="Hobday2018">Hobday et al. (<a href="#ref-Hobday2018" role="doc-biblioref">2018</a>)</span>.</p>
+</blockquote>
+</section>
+<section id="caveats" class="level1 unnumbered">
+<h1 class="unnumbered">Caveats</h1>
+<p>A heatwave definition describes the <strong>environment</strong>, not the <strong>organism</strong>. Translating events into biological impact needs care.</p>
+<ul>
+<li><strong>Relative ≠ harmful.</strong> Percentile thresholds and categories measure how unusual a temperature is for that place and season, not whether it exceeds an organism’s tolerance. A Severe winter event may be harmless and a Moderate summer event lethal <span class="citation" data-cites="Smith2023">(<a href="#ref-Smith2023" role="doc-biblioref">Smith et al., 2023</a>)</span>.</li>
+<li><strong>Environment ≠ body temperature.</strong> Air or satellite SST rarely equals the body temperature of an organism in a burrow, under a rock, in the intertidal or at depth. Microclimate and biophysical models help bridge this gap <span class="citation" data-cites="Kearney2009 Sinclair2016">(<a href="#ref-Kearney2009" role="doc-biblioref">Kearney and Porter, 2009</a>; <a href="#ref-Sinclair2016" role="doc-biblioref"><span class="nocase">Sinclair et al.</span>, 2016</a>)</span>.</li>
+<li><strong>Resolution matters.</strong> Daily means hide the hours of peak heat; tolerance is non-linear, so averaging underestimates damage (<a href="#fig-tdt-concept" class="quarto-xref">Figure&nbsp;<span>11</span></a>).</li>
+<li><strong>Intensity and duration interact.</strong> Thermal tolerance is a function of both temperature and exposure time: the <strong>thermal death time (TDT)</strong> curve <span class="citation" data-cites="Rezende2014 Jorgensen2019">(<a href="#ref-Jorgensen2019" role="doc-biblioref">Jørgensen et al., 2019</a>; <a href="#ref-Rezende2014" role="doc-biblioref">Rezende et al., 2014</a>)</span>. Short, intense events and long, moderate events can be equally damaging.</li>
+<li><strong>Damage accumulates (and sometimes repairs).</strong> Injury can be summed across a fluctuating temperature trace by integrating the rate of injury (<span class="math inline">\(1/\text{LT}(T)\)</span>) over time <span class="citation" data-cites="Jorgensen2021 Rezende2020">(<a href="#ref-Jorgensen2021" role="doc-biblioref">Jørgensen et al., 2021</a>; <a href="#ref-Rezende2020" role="doc-biblioref">Rezende et al., 2020</a>)</span>. Below a critical temperature (<span class="math inline">\(T_c\)</span>) damage may not accumulate and repair can occur <span class="citation" data-cites="Orsted2022">(<a href="#ref-Orsted2022" role="doc-biblioref">Ørsted et al., 2022</a>)</span>. Acclimation, hardening, life stage and behaviour all modify the outcome.</li>
+<li><strong>Sub-lethal effects</strong> (on growth, reproduction and performance) can occur well below lethal limits and over longer timescales <span class="citation" data-cites="Harris2018">(<a href="#ref-Harris2018" role="doc-biblioref"><span class="nocase">Harris et al.</span>, 2018</a>)</span>.</li>
+<li><strong>Small warming, big effects.</strong> Because heat-failure rates rise exponentially with temperature, modest increases in peak temperatures can greatly increase the frequency of heat failure <span class="citation" data-cites="Jorgensen2022">(<a href="#ref-Jorgensen2022" role="doc-biblioref">Jørgensen et al., 2022</a>)</span>.</li>
+<li><strong>Baselines for biology.</strong> For organisms that cannot acclimate or adapt as fast as the climate warms, a fixed historical baseline may better represent stress than a shifting one <span class="citation" data-cites="Amaya2023">(<a href="#ref-Amaya2023" role="doc-biblioref">Amaya et al., 2023</a>)</span>.</li>
+</ul>
+<div id="fig-tdt-concept" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Three panels: a TDT line of log survival time against temperature, hourly vs daily mean temperature traces, and accumulated injury curves.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tdt-concept-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/hw_tdt_concept.svg" class="img-fluid figure-img" style="width:100.0%" alt="Three panels: a TDT line of log survival time against temperature, hourly vs daily mean temperature traces, and accumulated injury curves.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tdt-concept-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: The thermal death time (TDT) framework with hypothetical parameters. (a) Survival time declines log-linearly with temperature above a critical temperature <span class="math inline">\(T_c\)</span>; <span class="math inline">\(z\)</span> is the temperature increase that reduces survival time ten-fold. (b) The same three days at hourly and daily-mean resolution. (c) Injury, accumulated as <span class="math inline">\(\sum \Delta t/\text{LT}(T)\)</span>, is substantial from the hourly trace but almost zero from the daily mean.
+</figcaption>
+</figure>
+</div>
+<p>The TDT model is</p>
+<p><span class="math display">\[
+\log_{10}\text{LT}(T) = \frac{CT_{\max,1h} - T}{z},
+\qquad
+\text{injury} = \sum_{T_i \ge T_c} \frac{\Delta t}{\text{LT}(T_i)}
+\]</span></p>
+<p>where LT is the time (h) to 50% mortality at temperature <span class="math inline">\(T\)</span>, <span class="math inline">\(CT_{\max,1h}\)</span> is the temperature giving LT = 1 h, and <span class="math inline">\(z\)</span> is the thermal sensitivity <span class="citation" data-cites="Rezende2014 Jorgensen2021">(<a href="#ref-Jorgensen2021" role="doc-biblioref">Jørgensen et al., 2021</a>; <a href="#ref-Rezende2014" role="doc-biblioref">Rezende et al., 2014</a>)</span>. An accumulated injury of 1 (100%) predicts 50% mortality.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Injury rate (per hour) for a temperature, given TDT parameters</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>injury_rate <span class="ot">&lt;-</span> <span class="cf">function</span>(temp, ctmax_1h, z, t_c) {</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">if_else</span>(temp <span class="sc">&gt;=</span> t_c, <span class="dv">10</span><span class="sc">^</span>((temp <span class="sc">-</span> ctmax_1h) <span class="sc">/</span> z), <span class="dv">0</span>)</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="activities-biological-impact" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="activities-biological-impact">Activities: biological impact</h2>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 8: Does category predict impact?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assume a hypothetical temperate marine ectotherm off Western Australia with <span class="math inline">\(CT_{\max,1h}\)</span> = 36.6 °C, <span class="math inline">\(z\)</span> = 3.7 °C and <span class="math inline">\(T_c\)</span> = 24 °C. Using the daily SST in <code>mhw_WA$climatology</code>, calculate the accumulated injury during each heatwave (each day contributes 24 h). Join the result to the categories in <code>mhw_cat_WA</code>. (a) Which events are predicted to cause ≥ 50% mortality (injury ≥ 1)? (b) Does category predict injury?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 8
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>mhw_injury <span class="ot">&lt;-</span> mhw_WA<span class="sc">$</span>climatology <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(event_no)) <span class="sc">|&gt;</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(event_no) <span class="sc">|&gt;</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">peak_temp =</span> <span class="fu">max</span>(temp),</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">injury    =</span> <span class="fu">sum</span>(<span class="dv">24</span> <span class="sc">*</span> <span class="fu">injury_rate</span>(temp, <span class="at">ctmax_1h =</span> <span class="fl">36.6</span>, <span class="at">z =</span> <span class="fl">3.7</span>,</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">t_c =</span> <span class="dv">24</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mhw_cat_WA <span class="sc">|&gt;</span> <span class="fu">select</span>(event_no, event_name, category, duration),</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">"event_no"</span>)</span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>mhw_injury <span class="sc">|&gt;</span></span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(injury <span class="sc">&gt;=</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(injury))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 4 × 6
+#&gt;   event_no peak_temp injury event_name category   duration
+#&gt;      &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;      &lt;chr&gt;         &lt;dbl&gt;
+#&gt; 1       52      29.7   4.48 WA 2011a   IV Extreme      105
+#&gt; 2       59      26.4   1.89 WA 2012a   II Strong       101
+#&gt; 3       87      25.7   1.09 WA 2022    II Strong        58
+#&gt; 4       41      27.2   1.04 WA 2008a   III Severe       35</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mhw_injury, <span class="fu">aes</span>(<span class="at">x =</span> category, <span class="at">y =</span> injury <span class="sc">*</span> <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">size =</span> duration, <span class="at">colour =</span> peak_temp), <span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_c</span>(<span class="at">option =</span> <span class="st">"inferno"</span>, <span class="at">end =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Hobday et al. (2018) category"</span>, <span class="at">y =</span> <span class="st">"Accumulated injury (%)"</span>,</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">size =</span> <span class="st">"Duration (days)"</span>, <span class="at">colour =</span> <span class="st">"Peak SST (°C)"</span>) <span class="sc">+</span></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-injury-category" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-injury-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="env_heatwaves_files/figure-html/fig-injury-category-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-injury-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Accumulated injury of a hypothetical ectotherm during each Western Australian marine heatwave, by category. The dashed line marks 50% predicted mortality.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The Extreme 2011 event stands out, but some lower-category events also accumulate substantial injury because they were long or occurred in the warm season (with these parameters, a Strong event in 2012 accumulates more injury than the Severe event in 2008), while winter events accumulate none because the water stayed below <span class="math inline">\(T_c\)</span>. Category describes how unusual an event is; injury depends on <strong>absolute</strong> temperature and <strong>duration</strong> relative to the organism’s tolerance.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 9: Resolution and averaging
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a hypothetical lizard with <span class="math inline">\(CT_{\max,1h}\)</span> = 45 °C, <span class="math inline">\(z\)</span> = 4 °C and <span class="math inline">\(T_c\)</span> = 36 °C, calculate the injury accumulated in 2003 in Algiers from (a) the hourly air temperatures (<code>alg_hourly</code>), (b) the daily mean ((Tmax + Tmin)/2, applied for 24 h), and (c) the daily maximum (applied for 24 h). Which is closest to the hourly estimate, and why do the others fail? What other caveats apply to using air temperature for a lizard?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 9
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>lizard <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ctmax_1h =</span> <span class="dv">45</span>, <span class="at">z =</span> <span class="dv">4</span>, <span class="at">t_c =</span> <span class="dv">36</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>hourly_2003 <span class="ot">&lt;-</span> alg_hourly <span class="sc">|&gt;</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">year</span>(t) <span class="sc">==</span> <span class="dv">2003</span>) <span class="sc">|&gt;</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">injury =</span> <span class="fu">sum</span>(<span class="fu">injury_rate</span>(temp, lizard<span class="sc">$</span>ctmax_1h, lizard<span class="sc">$</span>z, lizard<span class="sc">$</span>t_c)))</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>daily_2003 <span class="ot">&lt;-</span> Algiers <span class="sc">|&gt;</span></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">year</span>(t) <span class="sc">==</span> <span class="dv">2003</span>) <span class="sc">|&gt;</span></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">injury_mean =</span> <span class="fu">sum</span>(<span class="dv">24</span> <span class="sc">*</span> <span class="fu">injury_rate</span>((tMax <span class="sc">+</span> tMin) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>                                       lizard<span class="sc">$</span>ctmax_1h, lizard<span class="sc">$</span>z, lizard<span class="sc">$</span>t_c)),</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">injury_max  =</span> <span class="fu">sum</span>(<span class="dv">24</span> <span class="sc">*</span> <span class="fu">injury_rate</span>(tMax,</span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>                                       lizard<span class="sc">$</span>ctmax_1h, lizard<span class="sc">$</span>z, lizard<span class="sc">$</span>t_c)))</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">resolution =</span> <span class="fu">c</span>(<span class="st">"hourly"</span>, <span class="st">"daily mean"</span>, <span class="st">"daily max"</span>),</span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">injury_pct =</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">c</span>(hourly_2003<span class="sc">$</span>injury,</span>
+<span id="cb75-17"><a href="#cb75-17" aria-hidden="true" tabindex="-1"></a>                            daily_2003<span class="sc">$</span>injury_mean,</span>
+<span id="cb75-18"><a href="#cb75-18" aria-hidden="true" tabindex="-1"></a>                            daily_2003<span class="sc">$</span>injury_max))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 2
+#&gt;   resolution injury_pct
+#&gt;   &lt;chr&gt;           &lt;dbl&gt;
+#&gt; 1 hourly           396.
+#&gt; 2 daily mean         0 
+#&gt; 3 daily max       2317.</code></pre>
+</div>
+</div>
+<p>The daily mean almost never exceeds <span class="math inline">\(T_c\)</span>, so it predicts little or no injury (because injury rises exponentially with temperature, averaging always underestimates it). Applying the daily maximum for 24 h assumes the peak lasts all day and grossly overestimates injury. Only the hourly trace captures the time spent near the peak. <strong>Further caveats</strong>: lizards thermoregulate behaviourally and their body temperatures differ from shaded air temperature; the TDT parameters here are hypothetical; the model ignores repair, acclimation and hardening; and our hourly series is itself reconstructed from Tmax and Tmin <span class="citation" data-cites="Kearney2009 Sinclair2016 Orsted2022">(<a href="#ref-Kearney2009" role="doc-biblioref">Kearney and Porter, 2009</a>; <a href="#ref-Orsted2022" role="doc-biblioref">Ørsted et al., 2022</a>; <a href="#ref-Sinclair2016" role="doc-biblioref"><span class="nocase">Sinclair et al.</span>, 2016</a>)</span>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="citation" class="level1 unnumbered">
+<h1 class="unnumbered">Citation</h1>
+<p>When using <code>heatwaveR</code>, please cite <span class="citation" data-cites="Schlegel2018">Schlegel and Smit (<a href="#ref-Schlegel2018" role="doc-biblioref">2018</a>)</span>, and the definitions you used <span class="citation" data-cites="Hobday2016 Hobday2018">(<a href="#ref-Hobday2016" role="doc-biblioref">Hobday et al., 2016</a>; <a href="#ref-Hobday2018" role="doc-biblioref">Hobday et al., 2018</a>)</span>.</p>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Amaya2023" class="csl-entry" role="listitem">
+<strong>Amaya, D. J., Jacox, M. G., Fewings, M. R., Saba, V. S., Stuecker, M. F., Rykaczewski, R. R., Ross, A. C., Stock, C. A., Capotondi, A., Petrik, C. M., et al.</strong> (2023). <a href="https://doi.org/10.1038/d41586-023-00924-2">Marine heatwaves need clear definitions so coastal communities can adapt</a>. <em>Nature</em> <strong>616</strong>, 29–32.
+</div>
+<div id="ref-Domeisen2023" class="csl-entry" role="listitem">
+<strong>Domeisen, D. I. V., Eltahir, E. A. B., Fischer, E. M., Knutti, R., Perkins-Kirkpatrick, S. E., Schär, C., Seneviratne, S. I., Weisheimer, A. and Wernli, H.</strong> (2023). <a href="https://doi.org/10.1038/s43017-022-00371-z">Prediction and projection of heatwaves</a>. <em>Nature Reviews Earth &amp; Environment</em> <strong>4</strong>, 36–50.
+</div>
+<div id="ref-Harris2018" class="csl-entry" role="listitem">
+<strong><span class="nocase">Harris, R. M. B., Beaumont, L. J., Vance, T. R., et al.</span></strong> (2018). <a href="https://doi.org/10.1038/s41558-018-0187-9">Biological responses to the press and pulse of climate trends and extreme events</a>. <em>Nature Climate Change</em> <strong>8</strong>, 579–587.
+</div>
+<div id="ref-Hobday2016" class="csl-entry" role="listitem">
+<strong>Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C. J., Benthuysen, J. A., Burrows, M. T., Donat, M. G., Feng, M., et al.</strong> (2016). <a href="https://doi.org/10.1016/j.pocean.2015.12.014">A hierarchical approach to defining marine heatwaves</a>. <em>Progress in Oceanography</em> <strong>141</strong>, 227–238.
+</div>
+<div id="ref-Hobday2018" class="csl-entry" role="listitem">
+<strong>Hobday, A. J., Oliver, E. C. J., Sen Gupta, A., Benthuysen, J. A., Burrows, M. T., Donat, M. G., Holbrook, N. J., Moore, P. J., Thomsen, M. S., Wernberg, T., et al.</strong> (2018). <a href="https://doi.org/10.5670/oceanog.2018.205">Categorizing and naming marine heatwaves</a>. <em>Oceanography</em> <strong>31</strong>, 162–173.
+</div>
+<div id="ref-Jorgensen2019" class="csl-entry" role="listitem">
+<strong>Jørgensen, L. B., Malte, H. and Overgaard, J.</strong> (2019). <a href="https://doi.org/10.1111/1365-2435.13279">How to assess <span>Drosophila</span> heat tolerance: Unifying static and dynamic tolerance assays to predict heat distribution limits</a>. <em>Functional Ecology</em> <strong>33</strong>, 629–642.
+</div>
+<div id="ref-Jorgensen2021" class="csl-entry" role="listitem">
+<strong>Jørgensen, L. B., Malte, H., Ørsted, M., Klahn, N. A. and Overgaard, J.</strong> (2021). <a href="https://doi.org/10.1038/s41598-021-92004-6">A unifying model to estimate thermal tolerance limits in ectotherms across static, dynamic and fluctuating exposures to thermal stress</a>. <em>Scientific Reports</em> <strong>11</strong>, 12840.
+</div>
+<div id="ref-Jorgensen2022" class="csl-entry" role="listitem">
+<strong>Jørgensen, L. B., Ørsted, M., Malte, H., Wang, T. and Overgaard, J.</strong> (2022). <a href="https://doi.org/10.1038/s41586-022-05334-4">Extreme escalation of heat failure rates in ectotherms with global warming</a>. <em>Nature</em> <strong>611</strong>, 93–98.
+</div>
+<div id="ref-Kearney2009" class="csl-entry" role="listitem">
+<strong>Kearney, M. and Porter, W.</strong> (2009). <a href="https://doi.org/10.1111/j.1461-0248.2008.01277.x">Mechanistic niche modelling: Combining physiological and spatial data to predict species’ ranges</a>. <em>Ecology Letters</em> <strong>12</strong>, 334–350.
+</div>
+<div id="ref-Nairn2015" class="csl-entry" role="listitem">
+<strong>Nairn, J. R. and Fawcett, R. J. B.</strong> (2015). <a href="https://doi.org/10.3390/ijerph120100227">The excess heat factor: A metric for heatwave intensity and its use in classifying heatwave severity</a>. <em>International Journal of Environmental Research and Public Health</em> <strong>12</strong>, 227–253.
+</div>
+<div id="ref-Oliver2018" class="csl-entry" role="listitem">
+<strong>Oliver, E. C. J., Donat, M. G., Burrows, M. T., Moore, P. J., Smale, D. A., Alexander, L. V., Benthuysen, J. A., Feng, M., Sen Gupta, A., Hobday, A. J., et al.</strong> (2018). <a href="https://doi.org/10.1038/s41467-018-03732-9">Longer and more frequent marine heatwaves over the past century</a>. <em>Nature Communications</em> <strong>9</strong>, 1324.
+</div>
+<div id="ref-Orsted2022" class="csl-entry" role="listitem">
+<strong>Ørsted, M., Jørgensen, L. B. and Overgaard, J.</strong> (2022). <a href="https://doi.org/10.1242/jeb.244514">Finding the right thermal limit: A framework to reconcile ecological, physiological and methodological aspects of <span>CTmax</span> in ectotherms</a>. <em>Journal of Experimental Biology</em> <strong>225</strong>, jeb244514.
+</div>
+<div id="ref-Perkins2015" class="csl-entry" role="listitem">
+<strong>Perkins, S. E.</strong> (2015). <a href="https://doi.org/10.1016/j.atmosres.2015.05.014">A review on the scientific understanding of heatwaves—their measurement, driving mechanisms, and changes at the global scale</a>. <em>Atmospheric Research</em> <strong>164–165</strong>, 242–267.
+</div>
+<div id="ref-Perkins2013" class="csl-entry" role="listitem">
+<strong>Perkins, S. E. and Alexander, L. V.</strong> (2013). <a href="https://doi.org/10.1175/JCLI-D-12-00383.1">On the measurement of heat waves</a>. <em>Journal of Climate</em> <strong>26</strong>, 4500–4517.
+</div>
+<div id="ref-Rezende2014" class="csl-entry" role="listitem">
+<strong>Rezende, E. L., Castañeda, L. E. and Santos, M.</strong> (2014). <a href="https://doi.org/10.1111/1365-2435.12268">Tolerance landscapes in thermal ecology</a>. <em>Functional Ecology</em> <strong>28</strong>, 799–809.
+</div>
+<div id="ref-Rezende2020" class="csl-entry" role="listitem">
+<strong>Rezende, E. L., Bozinovic, F., Szilágyi, A. and Santos, M.</strong> (2020). <a href="https://doi.org/10.1126/science.aba9287">Predicting temperature mortality and selection in natural <span>Drosophila</span> populations</a>. <em>Science</em> <strong>369</strong>, 1242–1245.
+</div>
+<div id="ref-Schlegel2018" class="csl-entry" role="listitem">
+<strong>Schlegel, R. W. and Smit, A. J.</strong> (2018). <a href="https://doi.org/10.21105/joss.00821">heatwaveR: A central algorithm for the detection of heatwaves and cold-spells</a>. <em>Journal of Open Source Software</em> <strong>3</strong>, 821.
+</div>
+<div id="ref-Schlegel2017" class="csl-entry" role="listitem">
+<strong>Schlegel, R. W., Oliver, E. C. J., Wernberg, T. and Smit, A. J.</strong> (2017). <a href="https://doi.org/10.1016/j.pocean.2017.01.004">Nearshore and offshore co-occurrence of marine heatwaves and cold-spells</a>. <em>Progress in Oceanography</em> <strong>151</strong>, 189–205.
+</div>
+<div id="ref-Schlegel2019" class="csl-entry" role="listitem">
+<strong>Schlegel, R. W., Oliver, E. C. J., Hobday, A. J. and Smit, A. J.</strong> (2019). <a href="https://doi.org/10.3389/fmars.2019.00737">Detecting marine heatwaves with sub-optimal data</a>. <em>Frontiers in Marine Science</em> <strong>6</strong>, 737.
+</div>
+<div id="ref-Schlegel2021" class="csl-entry" role="listitem">
+<strong>Schlegel, R. W., Darmaraki, S., Benthuysen, J. A., Filbee-Dexter, K. and Oliver, E. C. J.</strong> (2021). <a href="https://doi.org/10.1016/j.pocean.2021.102684">Marine cold-spells</a>. <em>Progress in Oceanography</em> <strong>198</strong>, 102684.
+</div>
+<div id="ref-Sinclair2016" class="csl-entry" role="listitem">
+<strong><span class="nocase">Sinclair, B. J., Marshall, K. E., Sewell, M. A., et al.</span></strong> (2016). <a href="https://doi.org/10.1111/ele.12686">Can we predict ectotherm responses to climate change using thermal performance curves and body temperatures?</a> <em>Ecology Letters</em> <strong>19</strong>, 1372–1385.
+</div>
+<div id="ref-Smale2019" class="csl-entry" role="listitem">
+<strong><span class="nocase">Smale, D. A., Wernberg, T., Oliver, E. C. J., et al.</span></strong> (2019). <a href="https://doi.org/10.1038/s41558-019-0412-1">Marine heatwaves threaten global biodiversity and the provision of ecosystem services</a>. <em>Nature Climate Change</em> <strong>9</strong>, 306–312.
+</div>
+<div id="ref-Smith2023" class="csl-entry" role="listitem">
+<strong>Smith, K. E., Burrows, M. T., Hobday, A. J., King, N. G., Moore, P. J., Sen Gupta, A., Thomsen, M. S., Wernberg, T. and Smale, D. A.</strong> (2023). <a href="https://doi.org/10.1146/annurev-marine-032122-121437">Biological impacts of marine heatwaves</a>. <em>Annual Review of Marine Science</em> <strong>15</strong>, 119–145.
+</div>
+<div id="ref-Wernberg2016" class="csl-entry" role="listitem">
+<strong><span class="nocase">Wernberg, T., Bennett, S., Babcock, R. C., et al.</span></strong> (2016). <a href="https://doi.org/10.1126/science.aad8745">Climate-driven regime shift of a temperate marine ecosystem</a>. <em>Science</em> <strong>353</strong>, 169–172.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nicholaswunz\.github\.io\/thermal_ecology_R\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./intro.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./phys_respirometry.html" class="pagination-link" aria-label="Respirometry">
+        <span class="nav-page-text">Respirometry</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>. This work is licensed under a <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC-BY-NC-ND 4.0 Int License</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

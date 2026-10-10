@@ -1,0 +1,1052 @@
+# Heatwaves and Cold-spells {.unnumbered}
+
+Authors: Nicholas Wu
+
+Detecting, describing and classifying extreme temperature events with a structured, reproducible workflow following the [`heatwaveR`](https://robwschlegel.github.io/heatwaveR/) package R [@Schlegel2018].
+
+::: {.callout-note icon="false"}
+## Workshop overview
+
+**By the end of this workshop you will be able to:**
+
+1. Explain how heatwaves and cold-spells are defined, and recognise the common 
+   problems that change the number and size of detected events.
+2. Detect and describe events in **daily** and **hourly** temperature data with
+   the [`heatwaveR`](https://robwschlegel.github.io/heatwaveR/) package
+   [@Schlegel2018].
+3. Classify event severity and scale the workflow to many locations (gridded
+   data).
+4. Report the workflow and interpret events in terms of **biological impact**,
+   e.g. with thermal-death-time models.
+:::
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(fig.align = "center", comment = "#>")
+```
+
+## Background {.unnumbered}
+
+### What is a heatwave? {.unnumbered}
+
+In everyday language a heatwave is "a run of unusually hot days". To compare
+events between places, seasons and decades we need a precise, *relative*
+definition. In a **relative** definition, "unusually hot" means hot *for that
+place and time of year*, so a 25 °C day can be a heatwave in winter but not in
+summer.
+
+For the ocean, @Hobday2016 defined a **marine heatwave (MHW)** as a *prolonged
+discrete anomalously warm water event* and operationalised it as at least
+**5 consecutive days** above a **seasonally varying 90th percentile threshold**,
+calculated from a **30-year baseline (climatology) period**, with events
+separated by **2 days or fewer joined together** (@fig-hw-metrics). The same
+algorithm, with the 10th percentile and temperatures *below* the threshold,
+detects **marine cold-spells (MCS)** [@Schlegel2017; @Schlegel2021].
+@Hobday2018 then named events by their **category**: how many multiples of the
+threshold–climatology difference the peak exceeds (I Moderate, II Strong,
+III Severe, IV Extreme).
+
+![Anatomy of a heatwave following @Hobday2016 and @Hobday2018. The climatology (grey) is the seasonal mean and the threshold (green) the seasonally varying 90th percentile of the baseline period. An event needs ≥ 5 days above the threshold; short spikes are ignored and gaps of ≤ 2 days are bridged. Event metrics are measured relative to the climatology, and the category depends on how many multiples of the threshold–climatology difference the temperature reaches.](images/hw_metrics.svg){#fig-hw-metrics fig-alt="Annotated temperature time series showing climatology, threshold, an event shaded by category, duration, maximum intensity, onset and decline rates, and how gaps and short spikes are treated." width="100%"}
+
+For the atmosphere, there is no single universal definition. Definitions use
+daily maximum (Tmax), minimum (Tmin) or mean temperature, relative (percentile)
+or absolute thresholds, heat-stress indices that combine temperature and
+humidity, and minimum durations that are usually **3 days**
+[@Perkins2013; @Perkins2015; @Nairn2015]. @Perkins2013 recommended describing
+heatwaves with a small set of metrics (number, frequency, duration, amplitude
+and magnitude), which maps closely onto the metrics in @fig-hw-metrics.
+
+The table below summarises the main metrics returned by `heatwaveR`:
+
+| Metric | Meaning | Units (daily data) |
+|----|----|----|
+| `duration` | Days from start to end of the event | days |
+| `intensity_max` | Peak temperature anomaly relative to the climatology | °C |
+| `intensity_mean` | Mean anomaly over the event | °C |
+| `intensity_cumulative` | Sum of daily anomalies (area under the curve) | °C × days |
+| `rate_onset`, `rate_decline` | How fast the event developed and decayed | °C day^-1^ |
+| `*_relThresh`, `*_abs` | Same intensities relative to the threshold, or as absolute temperatures | °C |
+
+### Why are heatwaves important in thermal ecology? {.unnumbered}
+
+Extreme events, not just gradual warming, drive many of the biggest ecological
+responses to climate change [@Harris2018]. Marine heatwaves have become longer
+and more frequent over the past century [@Oliver2018], and they cause mass
+mortality, range shifts and loss of habitat-forming species [@Smale2019;
+@Smith2023]. The 2011 Western Australian MHW, the dataset you will analyse
+below, contributed to a regime shift from kelp forests to seaweed turfs
+[@Wernberg2016]. On land, heatwaves are projected to become more frequent,
+persistent and intense across almost all inhabited regions [@Domeisen2023].
+
+### Why a structured, reproducible workflow? {.unnumbered}
+
+The number, duration and intensity of events you detect depend on many choices:
+the dataset, the baseline period, the percentile, the minimum duration, how gaps
+and missing data are treated, and whether the time series is detrended. These
+choices are often under-reported, so results from different studies are hard to
+compare or synthesise [@Hobday2016; @Schlegel2019; @Amaya2023].
+
+A shared algorithm implemented in open code solves much of this.
+`heatwaveR` is the R implementation of the Hobday et al. definitions (a faster
+successor to the original Python and `RmarineHeatWaves` code), works on air
+and water temperatures, on daily and hourly data, and makes every parameter an
+explicit, reportable function argument [@Schlegel2018]. Writing the workflow as
+code means you can rerun it when new data arrive, apply it identically to
+thousands of grid cells, and share it with your paper.
+
+## Common problems {.unnumbered}
+
+| Problem | Effect on detected events | How to handle it |
+|----|----|----|
+| **Short time series** (< 30 years) | Unstable percentiles; thresholds too low or too high | Use ≥ 30 years where possible; report the baseline; see @Schlegel2019 |
+| **Missing data** | Events split into pieces or missed | Report % missing; interpolate short gaps only (`maxPadLength`); see @Schlegel2019 |
+| **Long-term trend in the data** | With a fixed baseline, late years are "always in a heatwave" | Decide (and report) fixed vs. shifting baseline or detrending [@Amaya2023] |
+| **Choice of baseline period** | Different baselines give different event counts | Use a standard 30-year period (e.g. 1982–2011 for OISST; WMO 1991–2020) and report it |
+| **Resolution** (daily vs. hourly; satellite vs. in situ) | Daily means hide extremes that organisms feel | Match the data resolution to the biological question |
+| **Definition choices** (percentile, `minDuration`, `maxGap`) | Event number and duration change | Use established defaults (5/2 marine, 3/1 atmospheric) or justify alternatives |
+| **Events at the ends of the series** | `rate_onset`/`rate_decline` are `NA`; durations truncated | Interpret edge events with care |
+| **Hemisphere and season** | Wrong season labels in `category()` | Set `S = TRUE` for the southern hemisphere |
+| **Relative vs. absolute stress** | A "Severe" winter event may be biologically harmless | Combine relative events with absolute, organism-specific thresholds (see Caveats) |
+
+Without a reproducible workflow there are additional problems: thresholds
+computed once in a spreadsheet and copied between sites, baseline periods that
+silently differ between analyses, missing-data handling that is never
+documented, and results that cannot be updated when new data arrive.
+
+## Example Workflow {.unnumbered}
+
+At minimum, your data need:
+
+- a **date** column (class `Date`, "YYYY-MM-DD") for daily data, or a date-time
+  column (class `POSIXct`, on the hour) for hourly data, named `t` by default; and
+- a **temperature** column, named `temp` by default (other names can be passed
+  with the `x` and `y` arguments).
+
+```{r}
+#| eval: false
+# Run once to install
+install.packages(c("tidyverse", "heatwaveR", "maps"))
+```
+
+```{r}
+#| message: false
+library(tidyverse) # data wrangling and plotting
+library(heatwaveR) # heatwave and cold-spell detection
+```
+
+The workflow has three core steps: build a climatology and
+threshold with `ts2clm()`, detect events with `detect_event()`, and classify them
+with `category()`.
+
+`heatwaveR` comes with four example datasets:
+
+| Dataset | Content | Period |
+|----|----|----|
+| `sst_WA` | Daily sea surface temperature (SST), Western Australia | 1982–2022 |
+| `sst_NW_Atl` | Daily SST, Northwest Atlantic | 1982–2022 |
+| `sst_Med` | Daily SST, Mediterranean | 1982–2022 |
+| `Algiers` | Daily air Tmax and Tmin, Algiers (Algeria) | 1961–2005 |
+
+::: {.panel-tabset .nav-pills}
+
+# Daily data {.unnumbered}
+
+## Import {.unnumbered}
+
+The example data are already loaded with the package. With your own data, the
+pattern is: read, fix column types, and aggregate to the resolution you need.
+
+```{r}
+#| eval: false
+# Example only: a logger file with a date-time column and temperature
+my_daily <- read_csv("data/my_logger.csv") |>
+  mutate(date_time = ymd_hms(date_time)) |>
+  group_by(t = as_date(date_time)) |>
+  summarise(temp = mean(temp, na.rm = TRUE), .groups = "drop")
+```
+
+```{r}
+sst_WA
+```
+
+## Quality check {.unnumbered}
+
+Before detecting anything, check that the record is long enough, complete,
+regular and free of duplicates, and look at it.
+
+```{r}
+check_series <- function(df) {
+  df |>
+    summarise(start      = min(t),
+              end        = max(t),
+              years      = round(as.numeric(end - start) / 365.25, 1),
+              n_days     = n(),
+              n_expected = as.numeric(end - start) + 1,
+              n_missing  = sum(is.na(temp)) + (n_expected - n_days),
+              n_dup      = sum(duplicated(t)))
+}
+
+check_series(sst_WA)
+```
+
+```{r}
+#| label: fig-sst-wa
+#| fig-cap: "Daily SST off Western Australia (grey) with annual means (black) and a linear trend (red)."
+#| fig-width: 8
+#| fig-height: 3.5
+#| message: false
+wa_annual <- sst_WA |>
+  group_by(year = year(t)) |>
+  summarise(temp = mean(temp))
+
+ggplot() +
+  geom_line(data = sst_WA, aes(x = t, y = temp), colour = "grey70", linewidth = 0.2) +
+  geom_line(data = wa_annual, aes(x = as.Date(paste0(year, "-07-01")), y = temp)) +
+  geom_smooth(data = wa_annual, aes(x = as.Date(paste0(year, "-07-01")), y = temp),
+              method = "lm", se = FALSE, colour = "#e12744") +
+  labs(x = NULL, y = "SST (°C)") +
+  theme_linedraw()
+```
+
+The record is 41 years long with no gaps, which is ideal. Note the warming
+trend: with a fixed 1982–2011 baseline, warmer recent years will produce more
+events. This is not an error, but it is a decision to report (see Caveats).
+
+## Detect events {.unnumbered}
+
+### Marine heatwaves {.unnumbered}
+
+`ts2clm()` calculates, for each day of the year, the climatological mean (`seas`)
+and the 90th percentile threshold (`thresh`) from the baseline period, pooling
+values within ±5 days (`windowHalfWidth`) and smoothing with a 31-day moving
+average (`smoothPercentileWidth`). `detect_event()` then finds runs of days
+above the threshold.
+
+```{r}
+ts_WA  <- ts2clm(sst_WA, climatologyPeriod = c("1982-01-01", "2011-12-31"))
+mhw_WA <- detect_event(ts_WA)   # defaults: minDuration = 5, maxGap = 2
+
+ts_WA |> head()
+```
+
+`detect_event()` returns a list with a `climatology` data frame (the daily data
+with the threshold and event flags) and an `event` data frame (one row per event).
+
+```{r}
+mhw_WA$event |>
+  select(event_no, duration, date_start, date_peak,
+         intensity_max, intensity_cumulative) |>
+  arrange(desc(intensity_max)) |>
+  head(5)
+```
+
+The largest event is the 2011 "Ningaloo Niño" heatwave. `event_line()` and
+`lolli_plot()` give quick visual summaries.
+
+```{r}
+#| label: fig-wa-event
+#| fig-cap: "The 2011 marine heatwave off Western Australia drawn with `event_line()`."
+#| fig-width: 9
+#| fig-height: 4
+#| warning: false
+event_line(mhw_WA, spread = 180, metric = intensity_max,
+           start_date = "1982-01-01", end_date = "2014-12-31") +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| label: fig-wa-line
+#| fig-cap: "All detected marine heatwave events off Western Australia drawn with `lolli_plot()`."
+#| fig-width: 9
+#| fig-height: 3.5
+#| warning: false
+lolli_plot(mhw_WA, metric = intensity_max)
+```
+
+For full control, `geom_flame()` adds the event "flames" to any `ggplot`. In **Fig. 5**,
+the timespan is from the 11th November 2010 to 32st May 2011.
+
+```{r}
+#| label: fig-wa-flame
+#| fig-cap: "The 2011 Western Australian marine heatwave drawn with `geom_flame().`"
+#| fig-width: 8
+#| fig-height: 3.5
+mhw_WA$climatology |>
+  filter(t >= as.Date("2010-11-01"), t <= as.Date("2011-05-31")) |>
+  ggplot(aes(x = t)) +
+  geom_flame(aes(y = temp, y2 = thresh), fill = "#e12744") +
+  geom_line(aes(y = temp), colour = "black") +
+  geom_line(aes(y = seas), colour = "grey50", linewidth = 1) +
+  geom_line(aes(y = thresh), colour = "forestgreen", linewidth = 0.8) +
+  labs(x = NULL, y = "SST (°C)") +
+  theme_linedraw()
+```
+
+### Marine cold-spells {.unnumbered}
+
+Cold-spells use the **10th** percentile threshold and `coldSpells = TRUE`.
+
+```{r}
+ts_WA_10 <- ts2clm(sst_WA, climatologyPeriod = c("1982-01-01", "2011-12-31"),
+                   pctile = 10)
+mcs_WA   <- detect_event(ts_WA_10, coldSpells = TRUE)
+
+mcs_WA$event |>
+  select(event_no, duration, date_start, date_peak,
+         intensity_max, intensity_cumulative) |>
+  arrange(intensity_cumulative) |>
+  head(5)
+```
+
+Intensities of cold-spells are negative (below the climatology).
+
+### Atmospheric heatwaves and cold-spells {.unnumbered}
+
+For air temperature we follow the common atmospheric convention of at least
+**3 consecutive days** above the 90th percentile of **Tmax** (heatwaves) or
+below the 10th percentile of **Tmin** (cold-spells) [@Perkins2013], and join
+gaps of 1 day (the atmospheric default suggested in the `heatwaveR`
+documentation). Because the column is not called `temp`, tell both functions
+which column to use with `y`.
+
+```{r}
+ts_alg_tmax <- ts2clm(Algiers, y = tMax,
+                      climatologyPeriod = c("1961-01-01", "1990-12-31"))
+hw_alg <- detect_event(ts_alg_tmax, y = tMax, minDuration = 3, maxGap = 1)
+
+ts_alg_tmin <- ts2clm(Algiers, y = tMin, pctile = 10,
+                      climatologyPeriod = c("1961-01-01", "1990-12-31"))
+cs_alg <- detect_event(ts_alg_tmin, y = tMin, coldSpells = TRUE,
+                       minDuration = 3, maxGap = 1)
+
+bind_rows(heatwave  = hw_alg$event,
+          coldspell = cs_alg$event, .id = "type") |>
+  group_by(type) |>
+  summarise(n_events      = n(),
+            mean_duration = mean(duration),
+            max_intensity = max(abs(intensity_max)))
+```
+
+```{r}
+#| label: fig-algiers-lolli
+#| fig-cap: "Atmospheric heatwaves in Algiers (Tmax)."
+#| fig-width: 8
+#| fig-height: 3.5
+#| warning: false
+lolli_plot(hw_alg, metric = intensity_max)
+```
+
+## Classify severity {.unnumbered}
+
+`category()` assigns each event a Hobday et al. (2018) category and season.
+Western Australia is in the southern hemisphere, so set `S = TRUE`.
+
+```{r}
+mhw_cat_WA <- category(mhw_WA, S = TRUE, name = "WA")
+mhw_cat_WA |> head()
+
+mhw_cat_WA |> count(category)
+```
+
+```{r}
+#| label: fig-wa-category
+#| fig-cap: "Categories of the 2011 Western Australian marine heatwave."
+#| fig-width: 8
+#| fig-height: 3.5
+#| warning: false
+event_line(mhw_WA, spread = 100, start_date = "2010-11-01",
+           end_date = "2011-06-30", category = TRUE) 
+```
+
+The same function classifies cold-spells; it detects that it has been given
+cold-spells.
+
+```{r}
+mcs_cat_WA <- category(mcs_WA, S = TRUE, name = "WA")
+mcs_cat_WA |> count(category)
+```
+
+### Absolute thresholds with `exceedance()` {.unnumbered}
+
+Sometimes the relevant question is not "unusually hot for this place?" but "above
+a temperature that harms my organism?". `exceedance()` detects runs above (or,
+with `below = TRUE`, below) a fixed threshold.
+
+```{r}
+exc_26 <- exceedance(sst_WA, threshold = 26, minDuration = 5, maxGap = 2)
+
+exc_26$exceedance |>
+  select(exceedance_no, date_start, duration, intensity_max) |>
+  arrange(desc(duration)) |>
+  head(5)
+```
+
+
+# Hourly data {.unnumbered}
+
+Daily means smooth out the afternoon peaks and night-time lows that organisms
+actually experience. `heatwaveR` (from v0.5.4) also accepts **hourly** data, with
+a `POSIXct` time column on exact hours. All window and duration arguments are
+then in **hours**.
+
+`heatwaveR` does not include an hourly dataset, so we reconstruct one from the
+daily Algiers Tmax and Tmin with a simple sine-shaped diurnal cycle (maximum at
+15:00, minimum at 03:00). Real diurnal cycles are asymmetric, so this is for
+teaching only; with your own logger data you would skip this step.
+
+## Import {.unnumbered}
+
+```{r}
+# Hourly code is time-zone sensitive: work in UTC to avoid daylight saving shifts
+Sys.setenv(TZ = "UTC")
+
+alg_hourly <- Algiers |>
+  filter(t >= as.Date("1971-01-01")) |>          # 35 years keeps run time short
+  uncount(24, .id = "hour") |>
+  mutate(hour = hour - 1,
+         temp = (tMax + tMin) / 2 +
+                (tMax - tMin) / 2 * cos(2 * pi * (hour - 15) / 24),
+         t    = as.POSIXct(t, tz = "UTC") + hour * 3600) |>
+  select(t, temp) |>
+  arrange(t)
+
+alg_hourly |> head()
+```
+
+## Quality check {.unnumbered}
+
+```{r}
+alg_hourly |>
+  summarise(start        = min(t),
+            end          = max(t),
+            n_hours      = n(),
+            n_expected   = as.numeric(difftime(end, start, units = "hours")) + 1,
+            off_the_hour = sum(minute(t) != 0 | second(t) != 0),
+            n_missing    = sum(is.na(temp)))
+```
+
+```{r}
+#| label: fig-hourly-check
+#| fig-cap: "Reconstructed hourly air temperature in Algiers for July 2003 (line) with daily Tmax and Tmin (points)."
+#| fig-width: 8
+#| fig-height: 3
+alg_hourly |>
+  filter(t >= as.POSIXct("2003-07-01", tz = "UTC"),
+         t <  as.POSIXct("2003-08-01", tz = "UTC")) |>
+  ggplot(aes(x = t, y = temp)) +
+  geom_line() +
+  geom_point(data = Algiers |>
+               filter(t >= as.Date("2003-07-01"), t < as.Date("2003-08-01")) |>
+               pivot_longer(c(tMax, tMin), values_to = "temp") |>
+               mutate(t = as.POSIXct(t, tz = "UTC") + if_else(name == "tMax", 15, 3) * 3600),
+             aes(colour = name)) +
+  scale_colour_manual(values = c(tMax = "#e12744", tMin = "#2b6cb0")) +
+  labs(x = NULL, y = "Air temperature (°C)", colour = NULL) +
+  theme_linedraw()
+```
+
+## Detect events {.unnumbered}
+
+Scale every time-based argument from days to hours: a ±5-day window becomes
+`windowHalfWidth = 5 * 24`, the 31-day smoothing becomes
+`smoothPercentileWidth = 31 * 24`, and so on. Here we require at least 3 days
+(72 h) above the hour-of-year 90th percentile and allow gaps of up to 12 h (e.g.
+a slightly cooler night) to be joined. These are choices you must report.
+
+```{r}
+ts_alg_h <- ts2clm(alg_hourly,
+                   climatologyPeriod     = c("1971-01-01", "2000-12-31"),
+                   windowHalfWidth       = 5 * 24,
+                   smoothPercentileWidth = 31 * 24)
+
+hw_alg_h <- detect_event(ts_alg_h, minDuration = 3 * 24, maxGap = 12)
+
+hw_alg_h$event |>
+  select(event_no, date_start, date_peak, duration,
+         intensity_max, intensity_cumulative) |>
+  arrange(desc(intensity_max)) |>
+  head(5)
+```
+
+Durations are in hours and cumulative intensity in °C × hours.
+
+```{r}
+#| label: fig-hourly-event
+#| fig-cap: "The most intense hourly heatwave in the reconstructed Algiers record. Red shading shows hours above the hour-of-year threshold (green)."
+#| fig-width: 8
+#| fig-height: 3.5
+top_h <- hw_alg_h$event |> slice_max(intensity_max, n = 1)
+
+hw_alg_h$climatology |>
+  filter(t >= top_h$date_start - 3 * 86400,
+         t <= top_h$date_end   + 3 * 86400) |>
+  ggplot(aes(x = t)) +
+  geom_ribbon(aes(ymin = thresh, ymax = pmax(temp, thresh)),
+              fill = "#e12744", alpha = 0.5) +
+  geom_line(aes(y = seas), colour = "grey50", linewidth = 0.8) +
+  geom_line(aes(y = thresh), colour = "forestgreen", linewidth = 0.8) +
+  geom_line(aes(y = temp)) +
+  labs(x = NULL, y = "Air temperature (°C)") +
+  theme_linedraw()
+```
+
+Hourly cold-spells work the same way:
+
+```{r}
+ts_alg_h10 <- ts2clm(alg_hourly,
+                     climatologyPeriod     = c("1971-01-01", "2000-12-31"),
+                     windowHalfWidth       = 5 * 24,
+                     smoothPercentileWidth = 31 * 24,
+                     pctile = 10)
+
+cs_alg_h <- detect_event(ts_alg_h10, coldSpells = TRUE,
+                         minDuration = 3 * 24, maxGap = 12)
+
+nrow(cs_alg_h$event)
+```
+
+
+# Gridded data {.unnumbered}
+
+Gridded products such as NOAA OISST give one time series per pixel. Detecting
+events on a grid is the same workflow applied to each pixel with
+`group_by()` + `group_modify()`. Here the three SST datasets play the role of
+three pixels.
+
+```{r}
+sites <- bind_rows(
+  sst_WA     |> mutate(site = "WA",     lon = 112.625, lat = -29.375),
+  sst_NW_Atl |> mutate(site = "NW_Atl", lon = -66.875, lat =  43.125),
+  sst_Med    |> mutate(site = "Med",    lon =   9.125, lat =  43.625)
+)
+
+# One function per pixel: climatology -> events -> categories
+event_cat <- function(df, key) {
+  df |>
+    ts2clm(climatologyPeriod = c("1982-01-01", "2011-12-31")) |>
+    detect_event() |>
+    category(S = key$lat < 0, name = key$site)
+}
+
+mhw_sites <- sites |>
+  group_by(site, lon, lat) |>
+  group_modify(\(df, key) event_cat(df, key)) |>
+  ungroup()
+
+mhw_sites |> count(site, category)
+```
+
+```{r}
+#| label: fig-sites-map
+#| fig-cap: "Total marine heatwave days (1982–2022) at the three example sites."
+#| fig-width: 8
+#| fig-height: 4
+site_summary <- mhw_sites |>
+  group_by(site, lon, lat) |>
+  summarise(n_events = n(), mhw_days = sum(duration), .groups = "drop")
+
+ggplot(site_summary, aes(x = lon, y = lat)) +
+  annotation_borders("world", fill = "grey85", colour = NA) +
+  geom_point(aes(size = mhw_days), colour = "#e12744") +
+  geom_text(aes(label = site), nudge_y = 9) +
+  coord_quickmap(xlim = c(-100, 160), ylim = c(-50, 70)) +
+  labs(x = NULL, y = NULL, size = "MHW days") +
+  theme_linedraw()
+```
+
+Trends in event frequency are commonly tested per pixel with a Poisson GLM of
+annual counts:
+
+```{r}
+mhw_counts <- mhw_sites |>
+  count(site, year = year(peak_date)) |>
+  complete(site, year = 1982:2022, fill = list(n = 0))
+
+mhw_counts |>
+  nest(data = -site) |>
+  mutate(fit = map(data, \(d) glm(n ~ year, family = poisson, data = d)),
+         tidy = map(fit, broom::tidy)) |>
+  unnest(tidy) |>
+  filter(term == "year") |>
+  transmute(site,
+            change_per_decade = exp(estimate * 10),  # multiplicative change
+            p.value)
+```
+
+::: {.callout-note collapse="true" icon="false"}
+## Working with real gridded data (OISST)
+
+For real grids, download a subset of NOAA OISST with `rerddap`, then apply the
+same `group_by(lon, lat)` + `group_modify()` code. Large grids are best split
+into longitude slices and processed in parallel, or handled with the companion
+package [`heatwave3`](https://robwschlegel.github.io/heatwave3/), which applies
+`heatwaveR` directly to NetCDF files. See the heatwaveR vignettes on
+[OISST preparation](https://robwschlegel.github.io/heatwaveR/articles/OISST_preparation.html)
+and [gridded event detection](https://robwschlegel.github.io/heatwaveR/articles/gridded_event_detection.html).
+
+```{r}
+#| eval: false
+# Not run: downloads ~1 year of OISST for a small box off southwest Australia
+library(rerddap)
+
+oisst <- griddap(datasetx  = "ncdcOisst21Agg_LonPM180",
+                 url       = "https://coastwatch.pfeg.noaa.gov/erddap/",
+                 time      = c("2011-01-01", "2011-12-31"),
+                 zlev      = c(0, 0),
+                 latitude  = c(-32, -28),
+                 longitude = c(112, 115),
+                 fields    = "sst")$data |>
+  mutate(t = as.Date(str_remove(time, "T12:00:00Z"))) |>
+  select(lon = longitude, lat = latitude, t, temp = sst) |>
+  drop_na()
+
+# Note: event detection needs the full multi-decade record for each pixel,
+# so download 1982-present in chunks of < 9 years before running ts2clm().
+```
+:::
+
+:::
+
+---
+
+# Activities {.unnumbered}
+
+::: {.panel-tabset .nav-pills}
+
+# Daily data {.unnumbered}
+
+::: {.callout-tip icon="false"}
+## Activity 1: Another ocean
+
+Detect marine heatwaves in `sst_NW_Atl` (Northwest Atlantic) with a 1982–2011
+baseline. (a) How many events are there? (b) Which event had the largest
+**cumulative** intensity, and when did it peak? (c) Classify the events; note
+this site is in the **northern** hemisphere.
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 1
+
+```{r}
+mhw_NWA <- sst_NW_Atl |>
+  ts2clm(climatologyPeriod = c("1982-01-01", "2011-12-31")) |>
+  detect_event()
+
+nrow(mhw_NWA$event)
+
+mhw_NWA$event |>
+  slice_max(intensity_cumulative, n = 1) |>
+  select(event_no, date_start, date_peak, duration,
+         intensity_max, intensity_cumulative)
+
+category(mhw_NWA, S = FALSE, name = "NW_Atl") |>
+  count(category)
+```
+
+There are `r nrow(mhw_NWA$event)` events. The largest by cumulative intensity
+peaked on
+`r mhw_NWA$event |> slice_max(intensity_cumulative, n = 1) |> pull(date_peak)`.
+Using `S = FALSE` is essential so that the season labels are correct.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 2: The baseline matters
+
+Repeat the Western Australia detection with a later baseline,
+1992-01-01 to 2021-12-31. How many events are detected with each baseline, and
+how many events start after 2011? Why do the numbers differ?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 2
+
+```{r}
+mhw_WA_late <- sst_WA |>
+  ts2clm(climatologyPeriod = c("1992-01-01", "2021-12-31")) |>
+  detect_event()
+
+baseline_comp <- bind_rows(
+  `1982-2011` = mhw_WA$event,
+  `1992-2021` = mhw_WA_late$event,
+  .id = "baseline") |>
+  group_by(baseline) |>
+  summarise(n_events      = n(),
+            n_after_2011  = sum(date_start > as.Date("2011-12-31")),
+            total_days    = sum(duration))
+baseline_comp
+```
+
+The later baseline includes warmer years, so the threshold is higher and fewer
+events are detected, especially in recent years. Neither is "wrong": a fixed
+early baseline measures change relative to a historical state (relevant for
+organisms that cannot keep up with warming), while a shifting or detrended
+baseline isolates short-term variability [@Amaya2023]. You must report which you
+used.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 3: Missing data
+
+Real records have gaps. Set the WA temperatures between 2011-02-10 and
+2011-02-20 to `NA` and rerun the detection (a) without interpolation and
+(b) with `maxPadLength = 3` and (c) `maxPadLength = 11` in `ts2clm()`. What
+happens to the 2011 event?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 3
+
+```{r}
+sst_WA_gap <- sst_WA |>
+  mutate(temp = if_else(between(t, as.Date("2011-02-10"), as.Date("2011-02-20")),
+                        NA_real_, temp))
+
+detect_2011 <- function(pad) {
+  sst_WA_gap |>
+    ts2clm(climatologyPeriod = c("1982-01-01", "2011-12-31"),
+           maxPadLength = pad) |>
+    detect_event() |>
+    pluck("event") |>
+    filter(date_start >= as.Date("2010-12-01"),
+           date_start <= as.Date("2011-04-30")) |>
+    select(date_start, date_end, duration, intensity_max, intensity_cumulative)
+}
+
+detect_2011(FALSE)  # no interpolation
+detect_2011(3)      # interpolate gaps up to 3 days only
+detect_2011(11)     # interpolate the whole 11-day gap
+```
+
+Without interpolation, the 11-day gap is longer than `maxGap`, so the single
+105-day event is split into separate events and its duration and cumulative
+intensity are underestimated. A `maxPadLength` shorter than the gap does not fill
+it. Interpolating the whole gap restores one event, but the interpolated values
+are a guess: a straight line from 25.4 to 27.4 °C that misses the real
+mid-February warming (up to 27.6 °C), so intensity metrics are still slightly
+biased. Report how much data were missing and how gaps were treated
+[@Schlegel2019].
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 4: Atmospheric definitions
+
+Using `Algiers`, compare the heatwaves detected with the atmospheric convention
+(`minDuration = 3`, `maxGap = 1`) and the marine convention (`minDuration = 5`,
+`maxGap = 2`) on Tmax. How many events and heatwave days does each give? Which
+year had the most heatwave days under the atmospheric convention?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 4
+
+```{r}
+hw_alg_marine <- detect_event(ts_alg_tmax, y = tMax, minDuration = 5, maxGap = 2)
+
+bind_rows(`3 d / gap 1` = hw_alg$event,
+          `5 d / gap 2` = hw_alg_marine$event, .id = "definition") |>
+  group_by(definition) |>
+  summarise(n_events = n(), heatwave_days = sum(duration))
+
+hw_alg$event |>
+  group_by(year = year(date_start)) |>
+  summarise(heatwave_days = sum(duration)) |>
+  slice_max(heatwave_days, n = 1)
+```
+
+The shorter minimum duration detects many more, shorter events. Neither choice
+is universally correct, which is why the definition must always be reported
+alongside the results [@Perkins2013].
+:::
+
+# Hourly data {.unnumbered}
+
+::: {.callout-tip icon="false"}
+## Activity 5: How long is "prolonged"?
+
+Rerun the hourly heatwave detection with `minDuration = 24` (1 day) and with
+`minDuration = 5 * 24` (5 days), keeping `maxGap = 12`. How do the number of
+events and their mean duration change? Which definition would you choose to
+study heat stress in a small, short-lived insect, and why?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 5
+
+```{r}
+tibble(min_hours = c(24, 72, 120)) |>
+  mutate(events = map(min_hours, \(m) {
+    detect_event(ts_alg_h, minDuration = m, maxGap = 12)$event
+  })) |>
+  mutate(n_events          = map_int(events, nrow),
+         mean_duration_h   = map_dbl(events, \(e) mean(e$duration)),
+         total_event_hours = map_dbl(events, \(e) sum(e$duration))) |>
+  select(-events)
+```
+
+Shorter minimum durations detect many more, shorter events. For a small,
+short-lived ectotherm, a day or even a few hours of extreme heat can be
+damaging, so a 24-h (or shorter) definition, or an absolute
+organism-specific threshold with `exceedance()`, may be more relevant than a
+5-day definition designed for ocean temperatures.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 6: Daily vs. hourly
+
+Do the daily (Tmax, 3-day) and hourly heatwaves identify the same periods? For
+each daily Tmax heatwave in 1971–2005, check whether any hourly heatwave
+overlaps it. What proportion of daily events have an hourly counterpart?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 6
+
+```{r}
+daily_ev  <- hw_alg$event |>
+  filter(date_start >= as.Date("1971-01-01")) |>
+  select(event_no, date_start, date_end)
+
+hourly_ev <- hw_alg_h$event |>
+  transmute(h_start = as_date(date_start), h_end = as_date(date_end))
+
+overlap <- daily_ev |>
+  rowwise() |>
+  mutate(has_hourly = any(hourly_ev$h_start <= date_end &
+                            hourly_ev$h_end >= date_start)) |>
+  ungroup()
+
+overlap |> summarise(n_daily = n(), prop_with_hourly = mean(has_hourly))
+```
+
+Many but not all daily events have an hourly counterpart. The two approaches use
+different thresholds (daily Tmax vs. each hour of the day) and the hourly
+definition needs nights to stay warm too. They answer different questions,
+so choose the resolution that matches the process you study.
+:::
+
+# Gridded data {.unnumbered}
+
+::: {.callout-tip icon="false"}
+## Activity 7: Compare the "pixels"
+
+Using `mhw_sites`, which site has (a) the most events, (b) the longest single
+event, and (c) the highest proportion of its events in category II or above?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 7
+
+```{r}
+mhw_sites |>
+  group_by(site) |>
+  summarise(n_events        = n(),
+            longest_days    = max(duration),
+            prop_strong_plus = mean(category != "I Moderate"))
+```
+
+Each site has its own climatology, so these are comparisons of *relative*
+extremes; a Category II event in the Mediterranean and in Western Australia can
+involve very different absolute temperatures.
+:::
+
+::: 
+
+# Reporting the Workflow {.unnumbered}
+
+Because the definition determines the result, report every parameter needed to
+reproduce the detection:
+
+| Item | Example |
+|----|----|
+| Data source, resolution and processing | NOAA OISST v2.1, 0.25°, daily; or logger model, depth, sampling interval, aggregation to daily mean |
+| Record length and missing data | 1982–2022; 0% missing; gaps ≤ 2 days linearly interpolated (`maxPadLength = 2`) |
+| Baseline (climatology) period | 1982-01-01 to 2011-12-31; fixed or shifting; detrended or not |
+| Threshold | 90th (heatwaves) / 10th (cold-spells) percentile; or absolute value with `exceedance()` |
+| Climatology settings | `windowHalfWidth = 5`, `smoothPercentileWidth = 31` (in hours × 24 for hourly data) |
+| Event definition | `minDuration = 5`, `maxGap = 2` (marine) or 3 and 1 (atmospheric) |
+| Categories | Hobday et al. (2018), `S = TRUE/FALSE` |
+| Software | R and `heatwaveR` versions; cite @Schlegel2018, @Hobday2016, @Hobday2018 |
+| Code and outputs | Script, event table and climatology in a public repository |
+
+```{r}
+#| eval: false
+dir.create("output", showWarnings = FALSE)
+write_csv(mhw_WA$event, "output/mhw_WA_events.csv")
+write_csv(mhw_cat_WA,   "output/mhw_WA_categories.csv")
+sessionInfo()
+citation("heatwaveR")
+```
+
+As with any analysis, the methods text can be generated from the objects
+themselves:
+
+> Marine heatwaves were detected in daily SST (1982–2022) with `heatwaveR`
+> v`r packageVersion("heatwaveR")` [@Schlegel2018], following @Hobday2016:
+> periods of ≥ 5 days above the seasonally varying 90th percentile of a
+> 1982–2011 climatology, with gaps of ≤ 2 days joined. We detected
+> `r nrow(mhw_WA$event)` events, categorised following @Hobday2018.
+
+# Caveats {.unnumbered}
+
+A heatwave definition describes the **environment**, not the **organism**.
+Translating events into biological impact needs care.
+
+- **Relative ≠ harmful.** Percentile thresholds and categories measure how
+  unusual a temperature is for that place and season, not whether it exceeds an
+  organism's tolerance. A Severe winter event may be harmless and a Moderate
+  summer event lethal [@Smith2023].
+- **Environment ≠ body temperature.** Air or satellite SST rarely equals the
+  body temperature of an organism in a burrow, under a rock, in the intertidal
+  or at depth. Microclimate and biophysical models help bridge this gap
+  [@Kearney2009; @Sinclair2016].
+- **Resolution matters.** Daily means hide the hours of peak heat; tolerance is
+  non-linear, so averaging underestimates damage (@fig-tdt-concept).
+- **Intensity and duration interact.** Thermal tolerance is a function of both
+  temperature and exposure time: the **thermal death time (TDT)** curve
+  [@Rezende2014; @Jorgensen2019]. Short, intense events and long, moderate
+  events can be equally damaging.
+- **Damage accumulates (and sometimes repairs).** Injury can be summed across
+  a fluctuating temperature trace by integrating the rate of injury
+  ($1/\text{LT}(T)$) over time [@Jorgensen2021; @Rezende2020]. Below a critical
+  temperature ($T_c$) damage may not accumulate and repair can occur
+  [@Orsted2022]. Acclimation, hardening, life stage and behaviour all modify
+  the outcome.
+- **Sub-lethal effects** (on growth, reproduction and performance) can occur
+  well below lethal limits and over longer timescales [@Harris2018].
+- **Small warming, big effects.** Because heat-failure rates rise exponentially
+  with temperature, modest increases in peak temperatures can greatly increase
+  the frequency of heat failure [@Jorgensen2022].
+- **Baselines for biology.** For organisms that cannot acclimate or adapt as
+  fast as the climate warms, a fixed historical baseline may better represent
+  stress than a shifting one [@Amaya2023].
+
+![The thermal death time (TDT) framework with hypothetical parameters. (a) Survival time declines log-linearly with temperature above a critical temperature $T_c$; $z$ is the temperature increase that reduces survival time ten-fold. (b) The same three days at hourly and daily-mean resolution. (c) Injury, accumulated as $\sum \Delta t/\text{LT}(T)$, is substantial from the hourly trace but almost zero from the daily mean.](images/hw_tdt_concept.svg){#fig-tdt-concept fig-alt="Three panels: a TDT line of log survival time against temperature, hourly vs daily mean temperature traces, and accumulated injury curves." width="100%"}
+
+The TDT model is
+
+$$
+\log_{10}\text{LT}(T) = \frac{CT_{\max,1h} - T}{z},
+\qquad
+\text{injury} = \sum_{T_i \ge T_c} \frac{\Delta t}{\text{LT}(T_i)}
+$$
+
+where LT is the time (h) to 50% mortality at temperature $T$, $CT_{\max,1h}$ is
+the temperature giving LT = 1 h, and $z$ is the thermal sensitivity
+[@Rezende2014; @Jorgensen2021]. An accumulated injury of 1 (100%) predicts 50%
+mortality.
+
+```{r}
+# Injury rate (per hour) for a temperature, given TDT parameters
+injury_rate <- function(temp, ctmax_1h, z, t_c) {
+  if_else(temp >= t_c, 10^((temp - ctmax_1h) / z), 0)
+}
+```
+
+## Activities: biological impact {.unnumbered}
+
+::: {.callout-tip icon="false"}
+## Activity 8: Does category predict impact?
+
+Assume a hypothetical temperate marine ectotherm off Western Australia with
+$CT_{\max,1h}$ = 36.6 °C, $z$ = 3.7 °C and $T_c$ = 24 °C. Using the daily SST in
+`mhw_WA$climatology`, calculate the accumulated injury during each heatwave
+(each day contributes 24 h). Join the result to the categories in `mhw_cat_WA`.
+(a) Which events are predicted to cause ≥ 50% mortality (injury ≥ 1)?
+(b) Does category predict injury?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 8
+
+```{r}
+mhw_injury <- mhw_WA$climatology |>
+  filter(!is.na(event_no)) |>
+  group_by(event_no) |>
+  summarise(peak_temp = max(temp),
+            injury    = sum(24 * injury_rate(temp, ctmax_1h = 36.6, z = 3.7,
+                                             t_c = 24))) |>
+  left_join(mhw_cat_WA |> select(event_no, event_name, category, duration),
+            by = "event_no")
+
+mhw_injury |>
+  filter(injury >= 1) |>
+  arrange(desc(injury))
+```
+
+```{r}
+#| label: fig-injury-category
+#| fig-cap: "Accumulated injury of a hypothetical ectotherm during each Western Australian marine heatwave, by category. The dashed line marks 50% predicted mortality."
+#| fig-width: 7
+#| fig-height: 4
+ggplot(mhw_injury, aes(x = category, y = injury * 100)) +
+  geom_hline(yintercept = 100, linetype = "dashed", colour = "#e12744") +
+  geom_jitter(aes(size = duration, colour = peak_temp), width = 0.15, alpha = 0.8) +
+  scale_colour_viridis_c(option = "inferno", end = 0.9) +
+  labs(x = "Hobday et al. (2018) category", y = "Accumulated injury (%)",
+       size = "Duration (days)", colour = "Peak SST (°C)") +
+  theme_linedraw()
+```
+
+The Extreme 2011 event stands out, but some lower-category events also
+accumulate substantial injury because they were long or occurred in the warm
+season (with these parameters, a Strong event in 2012 accumulates more injury
+than the Severe event in 2008), while winter events accumulate none because
+the water stayed below $T_c$.
+Category describes how unusual an event is; injury depends on **absolute**
+temperature and **duration** relative to the organism's tolerance.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 9: Resolution and averaging
+
+For a hypothetical lizard with $CT_{\max,1h}$ = 45 °C, $z$ = 4 °C and
+$T_c$ = 36 °C, calculate the injury accumulated in 2003 in Algiers from
+(a) the hourly air temperatures (`alg_hourly`), (b) the daily mean
+((Tmax + Tmin)/2, applied for 24 h), and (c) the daily maximum (applied for 24 h).
+Which is closest to the hourly estimate, and why do the others fail? What other
+caveats apply to using air temperature for a lizard?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 9
+
+```{r}
+lizard <- list(ctmax_1h = 45, z = 4, t_c = 36)
+
+hourly_2003 <- alg_hourly |>
+  filter(year(t) == 2003) |>
+  summarise(injury = sum(injury_rate(temp, lizard$ctmax_1h, lizard$z, lizard$t_c)))
+
+daily_2003 <- Algiers |>
+  filter(year(t) == 2003) |>
+  summarise(
+    injury_mean = sum(24 * injury_rate((tMax + tMin) / 2,
+                                       lizard$ctmax_1h, lizard$z, lizard$t_c)),
+    injury_max  = sum(24 * injury_rate(tMax,
+                                       lizard$ctmax_1h, lizard$z, lizard$t_c)))
+
+tibble(resolution = c("hourly", "daily mean", "daily max"),
+       injury_pct = 100 * c(hourly_2003$injury,
+                            daily_2003$injury_mean,
+                            daily_2003$injury_max))
+```
+
+The daily mean almost never exceeds $T_c$, so it predicts little or no injury
+(because injury rises exponentially with temperature, averaging always
+underestimates it). Applying the daily maximum for 24 h assumes the peak lasts
+all day and grossly overestimates injury. Only the hourly trace captures the
+time spent near the peak. **Further caveats**: lizards thermoregulate behaviourally
+and their body temperatures differ from shaded air temperature; the TDT
+parameters here are hypothetical; the model ignores repair, acclimation and
+hardening; and our hourly series is itself reconstructed from Tmax and Tmin
+[@Kearney2009; @Sinclair2016; @Orsted2022].
+:::
+
+# Citation {.unnumbered}
+
+When using `heatwaveR`, please cite @Schlegel2018, and the definitions you used
+[@Hobday2016; @Hobday2018].
+
+# References {.unnumbered}
+
+<div id="refs"></div>

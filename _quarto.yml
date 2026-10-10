@@ -31,7 +31,7 @@ book:
     - part: "Environmental Data"
       chapters:
       - intro.qmd
-      - summary.qmd
+      - env_heatwaves.qmd
     - part: "Physiological Data"
       chapters:
       - phys_respirometry.qmd

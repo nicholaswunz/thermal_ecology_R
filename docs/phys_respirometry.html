@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -69,17 +88,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./behav_torpor.html" rel="next">
-<link href="./summary.html" rel="prev">
+<link href="./env_heatwaves.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ce235460fbde20b065e8841fec035907.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-87f1e3aac7f6e6e62305f242b34f8653.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -109,6 +128,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdn.usefathom.com/script.js" data-site="QDWZORBB" defer=""></script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -181,8 +229,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  <a href="./env_heatwaves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Heatwaves and Cold-spells</span></a>
   </div>
 </li>
       </ul>
@@ -216,7 +264,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./behav_torpor.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Torpor/arousal patterns</span></a>
+ <span class="menu-text">Torpor/Arousal</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./behav_timage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Thermal Images</span></a>
   </div>
 </li>
       </ul>
@@ -239,18 +293,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#aquatic-respirometry" id="toc-aquatic-respirometry" class="nav-link active" data-scroll-target="#aquatic-respirometry">Aquatic Respirometry</a>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a>
   <ul class="collapse">
-  <li><a href="#setting-up" id="toc-setting-up" class="nav-link" data-scroll-target="#setting-up">Setting up</a></li>
-  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a>
+  <li><a href="#why-measure-oxygen" id="toc-why-measure-oxygen" class="nav-link" data-scroll-target="#why-measure-oxygen">Why measure oxygen?</a></li>
+  <li><a href="#types-of-respirometry" id="toc-types-of-respirometry" class="nav-link" data-scroll-target="#types-of-respirometry">Types of respirometry</a></li>
+  <li><a href="#why-a-structured-reproducible-workflow" id="toc-why-a-structured-reproducible-workflow" class="nav-link" data-scroll-target="#why-a-structured-reproducible-workflow">Why a structured, reproducible workflow?</a></li>
+  </ul></li>
+  <li><a href="#common-problems" id="toc-common-problems" class="nav-link" data-scroll-target="#common-problems">Common problems</a>
   <ul class="collapse">
-  <li><a href="#quality-check" id="toc-quality-check" class="nav-link" data-scroll-target="#quality-check">Quality check</a></li>
-  <li><a href="#calculate-o2-uptake-rate" id="toc-calculate-o2-uptake-rate" class="nav-link" data-scroll-target="#calculate-o2-uptake-rate">Calculate O<sub>2</sub> uptake rate</a></li>
-  <li><a href="#background-o2-rate" id="toc-background-o2-rate" class="nav-link" data-scroll-target="#background-o2-rate">Background O<sub>2</sub> rate</a></li>
-  <li><a href="#conversions" id="toc-conversions" class="nav-link" data-scroll-target="#conversions">Conversions</a></li>
-  <li><a href="#final-o2-uptake-rate" id="toc-final-o2-uptake-rate" class="nav-link" data-scroll-target="#final-o2-uptake-rate">Final O<sub>2</sub> uptake rate</a></li>
+  <li><a href="#problems-in-the-raw-data" id="toc-problems-in-the-raw-data" class="nav-link" data-scroll-target="#problems-in-the-raw-data">Problems in the raw data</a></li>
   </ul></li>
-  </ul></li>
+  <li><a href="#example-workflow" id="toc-example-workflow" class="nav-link" data-scroll-target="#example-workflow">Example Workflow</a></li>
+  <li><a href="#activities" id="toc-activities" class="nav-link" data-scroll-target="#activities">Activities</a></li>
+  <li><a href="#reporting-the-workflow" id="toc-reporting-the-workflow" class="nav-link" data-scroll-target="#reporting-the-workflow">Reporting the Workflow</a></li>
+  <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats">Caveats</a></li>
+  <li><a href="#citation" id="toc-citation" class="nav-link" data-scroll-target="#citation">Citation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -277,51 +335,1706 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Authors: Nicholas Wu</p>
-<p>Estimating metabolic rate</p>
-<section id="aquatic-respirometry" class="level1 unnumbered">
-<h1 class="unnumbered">Aquatic Respirometry</h1>
-<p>We will use the <a href="https://januarharianto.github.io/respR/"><code>respR</code></a> package to illustrate how to process and tidy raw oxygen traces from a respirometry experiment. The package has also been peer reviewed and published in <a href="https://doi.org/10.1111/2041-210X.13162">Methods in Ecology and Evolution</a>.</p>
-<p>The tutorial will use data from a close-chamber respiromety experiment, but the package is able to handle intermittent-flow and open-flow respirometry, and critical oxygen values (P<sub>crit</sub>).</p>
-<section id="setting-up" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="setting-up">Setting up</h2>
-<p>Load R packages and set up directory and load your raw data.</p>
-<p>At minimum, the raw data should contain:</p>
-<ul>
-<li>a time column</li>
-<li>an oxygen column.</li>
-</ul>
-<p>In this example, we have xxxx.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("respR")</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(respR)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Estimating metabolic rate from raw oxygen traces with a structured, reproducible workflow following the <a href="https://januarharianto.github.io/respR/"><code>respR</code></a> R package <span class="citation" data-cites="Harianto2019">(<a href="#ref-Harianto2019" role="doc-biblioref">Harianto et al., 2019</a>)</span>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Workshop overview
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>By the end of this workshop you will be able to:</strong></p>
+<ol type="1">
+<li>Recognise common problems in raw oxygen traces before they bias your results.</li>
+<li>Import, quality check, extract, background-correct and convert oxygen uptake rates with the <a href="https://januarharianto.github.io/respR/"><code>respR</code></a> package <span class="citation" data-cites="Harianto2019">(<a href="#ref-Harianto2019" role="doc-biblioref">Harianto et al., 2019</a>)</span> in a <code>tidyverse</code> workflow.</li>
+<li>Adapt the same workflow to <strong>aerial</strong> (gas-phase) respirometry.</li>
+<li>Report your workflow so it can be reproduced and synthesised by others.</li>
+</ol>
+</div>
+</div>
+<section id="background" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="background">Background</h2>
+<section id="why-measure-oxygen" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="why-measure-oxygen">Why measure oxygen?</h3>
+<p>Metabolic rate (MR), the rate at which an organism uses energy, underpins almost every question in thermal ecology: how much energy an animal needs at a given temperature, how much it has left for growth and reproduction, and how close it is to its physiological limits. Because aerobic metabolism consumes oxygen in near-fixed proportion to the energy released, the most common way to estimate MR is <strong>indirect calorimetry</strong>: measuring the rate of oxygen consumption (<span class="math inline">\(\dot{M}\text{O}_2\)</span> in water breathers, <span class="math inline">\(\dot{V}\text{O}_2\)</span> in air breathers) and/or carbon dioxide production <span class="citation" data-cites="Lighton2019 Wu2024">(<a href="#ref-Lighton2019" role="doc-biblioref">Lighton, 2019</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>.</p>
+<p>Depending on the state of the animal, the rate is interpreted as a different <strong>metabolic rate metric</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Definition (short)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Standard metabolic rate (SMR)</td>
+<td>MR of an inactive, unstressed, post-absorptive adult <strong>ectotherm</strong> in its inactive phase <span class="citation" data-cites="Chabot2016 Wu2024">(<a href="#ref-Chabot2016" role="doc-biblioref">Chabot et al., 2016</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Basal metabolic rate (BMR)</td>
+<td>The <strong>endotherm</strong> equivalent of SMR, measured within the thermoneutral zone <span class="citation" data-cites="Wu2024">(<a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Resting / routine metabolic rate (RMR)</td>
+<td>MR of a resting animal when one or more SMR/BMR conditions cannot be met; <em>routine</em> MR includes spontaneous activity <span class="citation" data-cites="Killen2021 Wu2024">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Maximum metabolic rate (MMR)</td>
+<td>Maximum aerobic O<sub>2</sub> uptake, e.g.&nbsp;during or immediately after exhaustive exercise <span class="citation" data-cites="Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Aerobic scope</td>
+<td>MMR − SMR (absolute) or MMR / SMR (factorial) <span class="citation" data-cites="Clark2013">(<a href="#ref-Clark2013" role="doc-biblioref">Clark et al., 2013</a>)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="types-of-respirometry" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="types-of-respirometry">Types of respirometry</h3>
+<p>All respirometry methods record oxygen over time; they differ in how oxygen is supplied to the animal (<a href="#fig-resp-methods" class="quarto-xref">Figure&nbsp;<span>1</span></a>).</p>
+<div id="fig-resp-methods" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Schematic of closed, intermittent-flow, flow-through and aerial closed-system respirometers with idealised oxygen traces.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resp-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/resp_methods.svg" class="img-fluid figure-img" style="width:100.0%" alt="Schematic of closed, intermittent-flow, flow-through and aerial closed-system respirometers with idealised oxygen traces.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resp-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Four common respirometry designs and the idealised oxygen traces they produce. In closed and intermittent-flow systems the metabolic rate is proportional to the <strong>slope</strong> of oxygen against time; in flow-through systems it is proportional to the <strong>difference</strong> between inflow and outflow oxygen multiplied by the flow rate; in an aerial closed system the slope of O<sub>2</sub> partial pressure is converted to moles with the gas law.
+</figcaption>
+</figure>
+</div>
+<p>For <strong>closed</strong> and <strong>intermittent-flow</strong> respirometry, the oxygen uptake rate is</p>
+<p><span class="math display">\[
+\dot{M}\text{O}_2 = -\left(\beta_{\text{animal}} - \beta_{\text{blank}}\right) \times V_{\text{eff}}
+\]</span></p>
+<p>where <span class="math inline">\(\beta\)</span> is the slope of a linear regression of oxygen concentration against time for the animal chamber and for an empty (“blank”) chamber that measures background (microbial) oxygen use, and <span class="math inline">\(V_{\text{eff}}\)</span> is the <em>effective</em> volume of water (respirometer + tubing − animal volume) <span class="citation" data-cites="Steffensen1989 Svendsen2016">(<a href="#ref-Steffensen1989" role="doc-biblioref">Steffensen, 1989</a>; <a href="#ref-Svendsen2016" role="doc-biblioref">Svendsen et al., 2016</a>)</span>. For <strong>flow-through</strong> respirometry, <span class="math inline">\(\dot{M}\text{O}_2 = (C_{\text{in}} - C_{\text{out}}) \times FR\)</span>, where <span class="math inline">\(FR\)</span> is the flow rate <span class="citation" data-cites="Lighton2019">(<a href="#ref-Lighton2019" role="doc-biblioref">Lighton, 2019</a>)</span>.</p>
+</section>
+<section id="why-a-structured-reproducible-workflow" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="why-a-structured-reproducible-workflow">Why a structured, reproducible workflow?</h3>
+<p>Turning a raw oxygen trace into a single number involves many decisions: which part of the trace to use, how long the regression window is, how to correct for background, which volume and which units. Each decision can change the final value, and most are never reported. A survey of 202 aquatic intermittent-flow respirometry papers found reporting to be poor and inconsistent: only 71% clearly stated body mass at the time of measurement, 34% how many measurements were used to estimate SMR, and more than 30% did not mention background respiration at all <span class="citation" data-cites="Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>)</span>.</p>
+<p>Analytical choices alone matter, where BMR estimates can be 12–30% higher when calculated from 10–15 min windows rather than 60 min windows <span class="citation" data-cites="Hayes1992 Jacobs2014">(<a href="#ref-Hayes1992" role="doc-biblioref">Hayes et al., 1992</a>; <a href="#ref-Jacobs2014" role="doc-biblioref">Jacobs and McKechnie, 2014</a>)</span>, shorter regression windows inflate MMR <span class="citation" data-cites="Prinzing2021">(<a href="#ref-Prinzing2021" role="doc-biblioref">Prinzing et al., 2021</a>)</span>, and filtering slopes by a high r<sup>2</sup> threshold can bias SMR upward <span class="citation" data-cites="Chabot2021">(<a href="#ref-Chabot2021" role="doc-biblioref">Chabot et al., 2021</a>)</span>.</p>
+<p>Manually selecting regions in a spreadsheet makes these decisions invisible and impossible to audit. A <strong>scripted, object-based workflow</strong> records every parameter alongside the result, reduces transcription and unit-conversion errors, and lets a reviewer or meta-analyst rerun the analysis from raw data <span class="citation" data-cites="Harianto2019 Wu2024">(<a href="#ref-Harianto2019" role="doc-biblioref">Harianto et al., 2019</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>. Both the aquatic <span class="citation" data-cites="Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>)</span> and terrestrial <span class="citation" data-cites="Wu2024">(<a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span> reporting guidelines recommend open-source, command-line tools such as <code>respR</code> <span class="citation" data-cites="Harianto2019">(<a href="#ref-Harianto2019" role="doc-biblioref">Harianto et al., 2019</a>)</span> or <code>LoLinR</code> <span class="citation" data-cites="Olito2017">(<a href="#ref-Olito2017" role="doc-biblioref">Olito et al., 2017</a>)</span> for exactly this reason.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reproducibility vs.&nbsp;replicability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Reproducibility</strong> = getting the same result from the <em>same data and code</em>. <strong>Replicability</strong> = getting consistent results from a <em>new study</em> asking the same question. A scripted workflow guarantees the first and makes the second possible, because others can copy your exact methods <span class="citation" data-cites="Wu2024">(<a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>.</p>
+</div>
 </div>
 </section>
-<section id="workflow" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="workflow">Workflow</h2>
-<section id="quality-check" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="quality-check">Quality check</h3>
 </section>
-<section id="calculate-o2-uptake-rate" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="calculate-o2-uptake-rate">Calculate O<sub>2</sub> uptake rate</h3>
+<section id="common-problems" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="common-problems">Common problems</h2>
+<section id="problems-in-the-raw-data" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="problems-in-the-raw-data">Problems in the raw data</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th>What it looks like</th>
+<th>Why it matters</th>
+<th>Where <code>respR</code> helps</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Non-numeric, missing (<code>NA</code>), infinite, duplicated or out-of-order time values</td>
+<td>Import errors, gaps, sensor drop-outs</td>
+<td>Regressions fail or silently use the wrong rows</td>
+<td><code>inspect()</code></td>
+</tr>
+<tr class="even">
+<td>Initial disturbance</td>
+<td>Steep or curved section at the start</td>
+<td>Handling stress, thermal and mixing equilibration inflate rates</td>
+<td><code>inspect()</code>, <code>subset_data()</code>, <code>calc_rate(from, to)</code></td>
+</tr>
+<tr class="odd">
+<td>Sensor interference / spikes</td>
+<td>Sudden drops or jumps</td>
+<td>One artefact can dominate a regression</td>
+<td><code>inspect()</code> rolling-rate plot</td>
+</tr>
+<tr class="even">
+<td>Activity bursts</td>
+<td>Short steep sections</td>
+<td>Fine for MMR, wrong for SMR/RMR</td>
+<td><code>auto_rate()</code> methods</td>
+</tr>
+<tr class="odd">
+<td>Flush periods</td>
+<td>Saw-tooth oxygen rises</td>
+<td>Must be excluded from rate windows</td>
+<td><code>calc_rate.int()</code>, <code>auto_rate.int()</code></td>
+</tr>
+<tr class="even">
+<td>Very low oxygen</td>
+<td>Curvature as O<sub>2</sub> falls</td>
+<td>Animals may change behaviour or become O<sub>2</sub>-conformers</td>
+<td><code>calc_rate(by = "oxygen")</code>, <code>oxy_crit()</code></td>
+</tr>
+<tr class="odd">
+<td>Background respiration or sensor drift</td>
+<td>Slow decline in a blank chamber</td>
+<td>Animal rate is overestimated</td>
+<td><code>calc_rate.bg()</code>, <code>adjust_rate()</code></td>
+</tr>
+<tr class="even">
+<td>Wrong volume or units</td>
+<td>Rates orders of magnitude off</td>
+<td>Classic source of published errors</td>
+<td><code>convert_rate()</code>, <code>convert_MR()</code></td>
+</tr>
+</tbody>
+</table>
+<p>Here are some real examples from the data that come with <code>respR</code> (we load the packages properly in the next section).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-resp-problems" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resp-problems-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="phys_respirometry_files/figure-html/fig-resp-problems-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resp-problems-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Common problems in raw oxygen traces, all from datasets supplied with <code>respR</code>. (A) unstable start; (B) a sensor artefact mid-trial; (C) irregularities near the end; (D) flushes in an intermittent-flow trial.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="background-o2-rate" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="background-o2-rate">Background O<sub>2</sub> rate</h3>
 </section>
-<section id="conversions" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="conversions">Conversions</h3>
+<section id="example-workflow" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="example-workflow">Example Workflow</h2>
+<p>At minimum, your raw data need:</p>
+<ul>
+<li>a <strong>numeric time</strong> column (e.g.&nbsp;seconds or minutes since the start), and</li>
+<li>one or more <strong>oxygen</strong> columns (any unit).</li>
+</ul>
+<p>Everything up to the conversion step in <code>respR</code> is unitless, so it works for water or air, for uptake or production. Metadata you will need at the conversion step: oxygen and time units, effective volume, specimen mass, and (for some units) temperature, salinity and atmospheric pressure.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run once to install</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"respR"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># data wrangling and plotting</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(respR)     <span class="co"># respirometry processing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The workflow we will follow is shown as below. Each <code>respR</code> function returns an object that the next function understands, so the parameters of every step travel with the result.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="" aria-current="page">Aquatic Respirometry</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Aerial Respirometry</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>We will analyse <code>urchins.rd</code>, a closed-chamber experiment on the sea urchin <em>Heliocidaris erythrogramma</em> <span class="citation" data-cites="Carey2016">(<a href="#ref-Carey2016" role="doc-biblioref">Carey et al., 2016</a>)</span> that is supplied with <a href="https://januarharianto.github.io/respR/"><code>respR</code></a>. It contains time in <strong>minutes</strong>, dissolved oxygen in <strong>mg L<sup>-1</sup></strong> for 16 urchins (columns <code>a</code> to <code>p</code>), and two blank chambers (<code>b1</code>, <code>b2</code>). The experiment was run at 20 °C, salinity 30 and 1.01 bar in 1.09 L respirometers.</p>
+<p>The tutorial will use data from a close-chamber respiromety experiment, but the package is able to handle intermittent-flow and open-flow respirometry, and critical oxygen values (P<sub>crit</sub>).</p>
+<section id="import" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="import">Import</h2>
+<p>The data are already in R. For your own files you would use <code>read_csv()</code> (see the aerial example below). It is good practice to store the experimental metadata in one place rather than typing numbers into later functions.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>urchins <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(urchins.rd)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>urchins</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 271 × 19
+#&gt;    time.min     a     b     c     d     e     f     g     h     i     j     k
+#&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt;  1      0    7.86  7.86  7.64  7.65  7.87  7.74  7.62  7.65  7.96  7.75  7.72
+#&gt;  2      0.2  7.87  7.79  7.6   7.71  7.87  7.72  7.61  7.66  7.97  7.72  7.71
+#&gt;  3      0.3  7.89  7.7   7.6   7.7   7.9   7.72  7.61  7.63  7.98  7.72  7.69
+#&gt;  4      0.5  7.9   7.68  7.6   7.72  7.92  7.74  7.62  7.66  7.97  7.72  7.7 
+#&gt;  5      0.7  7.87  7.64  7.6   7.67  7.9   7.73  7.59  7.65  7.95  7.71  7.66
+#&gt;  6      0.8  7.82  7.69  7.61  7.61  7.88  7.7   7.6   7.65  7.94  7.7   7.63
+#&gt;  7      1    7.84  7.69  7.56  7.62  7.85  7.7   7.6   7.67  7.95  7.69  7.65
+#&gt;  8      1.2  7.84  7.66  7.59  7.63  7.83  7.69  7.6   7.69  7.96  7.7   7.65
+#&gt;  9      1.3  7.86  7.65  7.59  7.63  7.82  7.64  7.62  7.65  7.94  7.67  7.69
+#&gt; 10      1.5  7.81  7.64  7.59  7.57  7.85  7.64  7.61  7.66  7.96  7.66  7.67
+#&gt; # ℹ 261 more rows
+#&gt; # ℹ 7 more variables: l &lt;dbl&gt;, m &lt;dbl&gt;, n &lt;dbl&gt;, o &lt;dbl&gt;, p &lt;dbl&gt;, b1 &lt;dbl&gt;,
+#&gt; #   b2 &lt;dbl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metadata for the experiment (from ?urchins.rd)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>urchin_meta <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">oxy_unit  =</span> <span class="st">"mg/L"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_unit =</span> <span class="st">"min"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">volume_L  =</span> <span class="fl">1.09</span>,  <span class="co"># effective volume of water (L)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">temp_C    =</span> <span class="dv">20</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sal       =</span> <span class="dv">30</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pres_bar  =</span> <span class="fl">1.01</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">mass_kg   =</span> <span class="fl">0.19</span>   <span class="co"># example specimen mass used in the respR vignette</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A quick tidy plot of every chamber is the fastest way to spot problems.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>urchins <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>time.min, <span class="at">names_to =</span> <span class="st">"chamber"</span>, <span class="at">values_to =</span> <span class="st">"o2_mgL"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type =</span> <span class="fu">if_else</span>(chamber <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"b1"</span>, <span class="st">"b2"</span>), <span class="st">"Blank"</span>, <span class="st">"Urchin"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> time.min, <span class="at">y =</span> o2_mgL, <span class="at">colour =</span> type)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> chamber, <span class="at">ncol =</span> <span class="dv">6</span>, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">Blank =</span> <span class="st">"#2b6cb0"</span>, <span class="at">Urchin =</span> <span class="st">"black"</span>)) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time (min)"</span>, <span class="at">y =</span> <span class="fu">expression</span>(O[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-urchins-all" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-urchins-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="phys_respirometry_files/figure-html/fig-urchins-all-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-urchins-all-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Oxygen traces of 16 urchins and two blank chambers.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="final-o2-uptake-rate" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="final-o2-uptake-rate">Final O<sub>2</sub> uptake rate</h3>
-<p>If you have some raw oxygen traces that you would like to be implemented in <code>respR</code>, please contact the package maintainer Nicholas Carey.</p>
+<section id="quality-check" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="quality-check">Quality check</h2>
+<p><code>inspect()</code> checks that the time and oxygen columns are numeric, finite, free of <code>NA</code>s, sequential, not duplicated and evenly spaced, and plots the data with a rolling rate.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(urchins, <span class="at">time =</span> <span class="dv">1</span>, <span class="at">oxygen =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">19</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Multiple 'oxygen' columns selected. Note that subsequent functions in respR will by default use first oxygen column only.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time.min    a    b    c    d    e    f    g    h    i    j    k
+#&gt; numeric             pass pass pass pass pass pass pass pass pass pass pass pass
+#&gt; Inf/-Inf            pass pass pass pass pass pass pass pass pass pass pass pass
+#&gt; NA/NaN              pass pass pass pass pass pass pass pass pass pass pass pass
+#&gt; sequential          pass    -    -    -    -    -    -    -    -    -    -    -
+#&gt; duplicated          pass    -    -    -    -    -    -    -    -    -    -    -
+#&gt; evenly-spaced       WARN    -    -    -    -    -    -    -    -    -    -    -
+#&gt;                    l    m    n    o    p   b1   b2
+#&gt; numeric         pass pass pass pass pass pass pass
+#&gt; Inf/-Inf        pass pass pass pass pass pass pass
+#&gt; NA/NaN          pass pass pass pass pass pass pass
+#&gt; sequential         -    -    -    -    -    -    -
+#&gt; duplicated         -    -    -    -    -    -    -
+#&gt; evenly-spaced      -    -    -    -    -    -    -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time.min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1 0.2
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The only warning is that time is not evenly spaced. That is expected here (decimal minutes are rounded to 0.1 or 0.2 min), and <code>respR</code> uses actual time values, so it is safe. Now inspect a single urchin and save the result:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>urchin <span class="ot">&lt;-</span> <span class="fu">inspect</span>(urchins, <span class="at">time =</span> <span class="st">"time.min"</span>, <span class="at">oxygen =</span> <span class="st">"n"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time.min    n
+#&gt; numeric             pass pass
+#&gt; Inf/-Inf            pass pass
+#&gt; NA/NaN              pass pass
+#&gt; sequential          pass    -
+#&gt; duplicated          pass    -
+#&gt; evenly-spaced       WARN    -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time.min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1 0.2
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The bottom panel (rolling rate across 10% of the data) shows a stable rate of about −0.02 mg L<sup>-1</sup> min<sup>-1</sup> for the first ~29 minutes, after which the trace becomes irregular (the urchin interfered with the sensor). A regression across the whole trace would not represent routine metabolism.</p>
+</section>
+<section id="calculate-o2-uptake-rate" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="calculate-o2-uptake-rate">Calculate O<sub>2</sub> uptake rate</h2>
+<section id="manual-selection-with-calc_rate" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="manual-selection-with-calc_rate">Manual selection with <code>calc_rate()</code></h3>
+<p>Without extra arguments, <code>calc_rate()</code> fits a regression to the whole dataset (see below).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_rate</span>(urchin)                           <span class="co"># whole trace (not appropriate here)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.calc_rate # ---------------------
+#&gt; Rank 1 of 1 rates:
+#&gt; Rate: -0.01749242 
+#&gt; 
+#&gt; To see full results use summary().
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<p>Use <code>from</code>, <code>to</code> and <code>by</code> (<code>"time"</code>, <code>"row"</code> or <code>"oxygen"</code>) to choose a region. In this case, from 4 to 29 time points.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>urch_rate <span class="ot">&lt;-</span> <span class="fu">calc_rate</span>(urchin, <span class="at">from =</span> <span class="dv">4</span>, <span class="at">to =</span> <span class="dv">29</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Show summary of the rate with the <code>summary()</code> function.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(urch_rate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # summary.calc_rate # -------------------
+#&gt; Summary of all rate results:
+#&gt; 
+#&gt;    rep rank intercept_b0    slope_b1   rsq row endrow time endtime  oxy endoxy
+#&gt; 1:  NA    1     7.636454 -0.02177588 0.987  25    175    4      29 7.58   6.98
+#&gt;    rate.2pt        rate
+#&gt; 1:   -0.024 -0.02177588
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<p>Note the <strong>negative</strong> rate: in <code>respR</code>, oxygen <em>uptake</em> is a negative slope. The r<sup>2</sup> of 0.987 indicates a good linear fit.</p>
+</section>
+<section id="objective-selection-with-auto_rate" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="objective-selection-with-auto_rate">Objective selection with <code>auto_rate()</code></h3>
+<p>Hand-picking a window is subjective. <code>auto_rate()</code> runs rolling regressions and, with the default <code>method = "linear"</code>, uses kernel density estimation to find the most consistently linear regions. Other methods return the <code>"lowest"</code> or <code>"highest"</code> rates for a given window width (useful for SMR and MMR).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>urch_auto <span class="ot">&lt;-</span> <span class="fu">auto_rate</span>(urchin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; auto_rate: Applying default 'width' of 0.2</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(urch_auto)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # summary.auto_rate # -------------------
+#&gt; 
+#&gt; === Summary of Results by Kernel Density Rank ===
+#&gt;    rep rank intercept_b0     slope_b1    rsq    density row endrow time endtime
+#&gt; 1:  NA    1     7.640570 -0.021969944 0.9900 164.954620  10    180  1.5    29.8
+#&gt; 2:  NA    2     7.598477 -0.019950517 0.9460 107.181029  88    155 14.5    25.7
+#&gt; 3:  NA    3     7.034767 -0.001154829 0.0544  79.007047 175    246 29.0    40.8
+#&gt; 4:  NA    4     7.348348 -0.011177711 0.6820  18.212754 155    203 25.7    33.7
+#&gt; 5:  NA    5     7.482069 -0.015764053 0.8130  15.126435 144    193 23.8    32.0
+#&gt; 6:  NA    6     7.039336 -0.001278712 0.0675  12.671471 174    246 28.8    40.8
+#&gt; 7:  NA    7     8.182843 -0.030776978 0.6920   4.610254 221    269 36.7    44.7
+#&gt; 8:  NA    8     8.008165 -0.026455439 0.6050   3.210837 219    266 36.3    44.2
+#&gt;     oxy endoxy         rate
+#&gt; 1: 7.62   6.98 -0.021969944
+#&gt; 2: 7.31   7.07 -0.019950517
+#&gt; 3: 6.98   6.98 -0.001154829
+#&gt; 4: 7.07   6.98 -0.011177711
+#&gt; 5: 7.08   7.00 -0.015764053
+#&gt; 6: 7.02   6.98 -0.001278712
+#&gt; 7: 7.00   6.76 -0.030776978
+#&gt; 8: 6.99   6.79 -0.026455439
+#&gt; 
+#&gt; Regressions : 218 | Results : 8 | Method : linear | Roll width : 54 | Roll type : row 
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>auto_rate()</code> is a tool, <strong>not an oracle</strong>. Always look at the plot and the summary, and check that the regions it chooses make biological sense (e.g.&nbsp;not right after handling, not during an artefact).</p>
+</div>
+</div>
+</section>
+</section>
+<section id="background-o2-rate" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="background-o2-rate">Background O<sub>2</sub> rate</h2>
+<p>Microbes in the water also consume oxygen. Blank chambers run under identical conditions estimate this background rate. <code>calc_rate.bg()</code> calculates the rate in one or more blank columns.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>bg_rate <span class="ot">&lt;-</span> <span class="fu">calc_rate.bg</span>(urchins, <span class="at">time =</span> <span class="dv">1</span>, <span class="at">oxygen =</span> <span class="dv">18</span><span class="sc">:</span><span class="dv">19</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # plot.calc_rate.bg # -------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; plot.calc_rate.bg: Plotting all 2 background rates ...
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bg_rate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.calc_rate.bg # ------------------
+#&gt; Background rate(s):
+#&gt; [1] -0.0007650013 -0.0009018607
+#&gt; Mean background rate:
+#&gt; [1] -0.000833431
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<p>Then subtract it from the specimen rate with <code>adjust_rate()</code>. The default <code>method = "mean"</code> uses the mean of the two blanks. (For backgrounds that change over a long experiment, see the <code>"linear"</code>, <code>"exponential"</code> and <code>"paired"</code> methods in <code>?adjust_rate</code>.)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>urch_rate_adj <span class="ot">&lt;-</span> <span class="fu">adjust_rate</span>(urch_rate, <span class="at">by =</span> bg_rate, <span class="at">method =</span> <span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; adjust_rate: The 'by' input contains multiple background rates. The mean value will be used to perform adjustments.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; adjust_rate: Rate adjustments applied using "mean" method.</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Background was 3.8% of the urchin’s uptake here. Background typically grows over a long experiment (biofilm), so measure it at the start <strong>and</strong> end, and report how it was applied <span class="citation" data-cites="Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>)</span>.</p>
+</div>
+</div>
+</section>
+<section id="conversions" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="conversions">Conversions</h2>
+<p>Until now nothing has had units. <code>convert_rate()</code> needs the units of the raw data, the effective volume (L), and optionally mass (kg) or area (m<sup>2</sup>). Some oxygen units (e.g.&nbsp;<code>%Air</code>, <code>mL/L</code>) also need temperature (<code>t</code>), salinity (<code>S</code>) and pressure (<code>P</code>, bar).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Absolute rate: whole-animal mg O2 per hour</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_rate</span>(urch_rate_adj,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">oxy.unit    =</span> urchin_meta<span class="sc">$</span>oxy_unit,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">time.unit   =</span> urchin_meta<span class="sc">$</span>time_unit,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">output.unit =</span> <span class="st">"mg/h"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">volume      =</span> urchin_meta<span class="sc">$</span>volume_L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; convert_rate: Object of class 'adjust_rate' detected. Converting all adjusted rates in '$rate.adjusted'.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.convert_rate # ------------------
+#&gt; Rank 1 of 1 rates:
+#&gt; 
+#&gt; Input:
+#&gt; [1] -0.02094245
+#&gt; [1] "mg/L" "min" 
+#&gt; Converted:
+#&gt; [1] -1.369636
+#&gt; [1] "mgO2/hr"
+#&gt; 
+#&gt; To see full results use summary().
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mass-specific rate, saved as the final object</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>urch_rate_final <span class="ot">&lt;-</span> <span class="fu">convert_rate</span>(urch_rate_adj,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">oxy.unit    =</span> urchin_meta<span class="sc">$</span>oxy_unit,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">time.unit   =</span> urchin_meta<span class="sc">$</span>time_unit,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">output.unit =</span> <span class="st">"mL/h/kg"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">volume      =</span> urchin_meta<span class="sc">$</span>volume_L,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mass        =</span> urchin_meta<span class="sc">$</span>mass_kg,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">t =</span> urchin_meta<span class="sc">$</span>temp_C,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">S =</span> urchin_meta<span class="sc">$</span>sal,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>                                <span class="at">P =</span> urchin_meta<span class="sc">$</span>pres_bar)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; convert_rate: Object of class 'adjust_rate' detected. Converting all adjusted rates in '$rate.adjusted'.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>urch_rate_final</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.convert_rate # ------------------
+#&gt; Rank 1 of 1 rates:
+#&gt; 
+#&gt; Input:
+#&gt; [1] -0.02094245
+#&gt; [1] "mg/L" "min" 
+#&gt; Converted:
+#&gt; [1] -5.43096
+#&gt; [1] "mLO2/hr/kg"
+#&gt; 
+#&gt; To see full results use summary().
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<p>Use <code>unit_args()</code> to see every unit <code>respR</code> understands. Units are matched flexibly, so <code>"mg/L"</code>, <code>"mg l-1"</code> and <code>"mg per litre"</code> are equivalent.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>volume</code> is the volume of <strong>water</strong>, not of the respirometer. Subtract the animal’s volume (for most aquatic animals, mass in kg ≈ volume in L) and add the volume of any recirculation tubing.</p>
+</div>
+</div>
+</section>
+<section id="final-o2-uptake-rate" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="final-o2-uptake-rate">Final O<sub>2</sub> uptake rate</h2>
+<p><code>summary(..., export = TRUE)</code> returns a data frame with every parameter used: the regression window, r<sup>2</sup>, background, units, volume, mass and the final rate. This one row is your <strong>analysis record</strong>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>urch_final_df <span class="ot">&lt;-</span> <span class="fu">summary</span>(urch_rate_final, <span class="at">export =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>urch_final_df <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(time, endtime, rsq, rate, adjustment, rate.adjusted,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>         volume, mass, rate.output, output.unit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 10
+#&gt;    time endtime   rsq    rate adjustment rate.adjusted volume  mass rate.output
+#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+#&gt; 1     4      29 0.987 -0.0218  -0.000833       -0.0209   1.09  0.19       -5.43
+#&gt; # ℹ 1 more variable: output.unit &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p><strong>Sanity-check the result.</strong> A misplaced decimal or wrong unit is easy to miss, so compare your value with published rates of similar species, sizes and temperatures. <code>convert_MR()</code> converts between metabolic rate units:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_MR</span>(urch_rate_final, <span class="at">to =</span> <span class="st">"umol/h/g"</span>,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">t =</span> urchin_meta<span class="sc">$</span>temp_C, <span class="at">S =</span> urchin_meta<span class="sc">$</span>sal, <span class="at">P =</span> urchin_meta<span class="sc">$</span>pres_bar)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.convert_MR # --------------------
+#&gt; 
+#&gt; Converting rates from 'convert_rate' input...
+#&gt; 
+#&gt; Input: "mLO2/hr/kg"
+#&gt; [1] -5.43096
+#&gt; 
+#&gt; Converted: "umolO2/hr/g"
+#&gt; [1] -0.2252776
+#&gt; 
+#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<p>The <code>respR</code> closed-chamber vignette compares this value with published sea urchin rates of roughly 0.2–0.6 µmol O<sub>2</sub> h<sup>-1</sup> g<sup>-1</sup> at 22–25 °C, so the result is in the right ballpark.</p>
+<section id="the-whole-workflow-in-one-pipe" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="the-whole-workflow-in-one-pipe">The whole workflow in one pipe</h3>
+<p>Because each function passes its object to the next, the entire analysis is a few readable lines, which is exactly what you would archive alongside the raw data:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>urchin_n_result <span class="ot">&lt;-</span> urchins <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inspect</span>(<span class="at">time =</span> <span class="st">"time.min"</span>, <span class="at">oxygen =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">calc_rate</span>(<span class="at">from =</span> <span class="dv">4</span>, <span class="at">to =</span> <span class="dv">29</span>, <span class="at">by =</span> <span class="st">"time"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adjust_rate</span>(<span class="at">by =</span> <span class="fu">calc_rate.bg</span>(urchins, <span class="at">time =</span> <span class="dv">1</span>, <span class="at">oxygen =</span> <span class="dv">18</span><span class="sc">:</span><span class="dv">19</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">convert_rate</span>(<span class="at">oxy.unit =</span> <span class="st">"mg/L"</span>, <span class="at">time.unit =</span> <span class="st">"min"</span>,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">output.unit =</span> <span class="st">"mL/h/kg"</span>, <span class="at">volume =</span> <span class="fl">1.09</span>, <span class="at">mass =</span> <span class="fl">0.19</span>,</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">t =</span> <span class="dv">20</span>, <span class="at">S =</span> <span class="dv">30</span>, <span class="at">P =</span> <span class="fl">1.01</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(<span class="at">export =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><code>respR</code> was designed for aquatic respirometry, but its rate functions are unitless, so the same <code>inspect()</code> → <code>calc_rate()</code> → <code>adjust_rate()</code> → <code>convert_rate()</code> chain works for <strong>air</strong>. The key difference is the conversion from the oxygen signal to an amount of oxygen.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Do not use <code>respR</code>’s pressure or %-saturation units for air
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>respR</code> conversions of <code>"%Air"</code>, <code>"%Oxy"</code>, <code>"hPa"</code>, <code>"kPa"</code>, <code>"Torr"</code> and similar units use the <strong>solubility of oxygen in water</strong>. In air, a given partial pressure contains about 30 times more oxygen per litre than water at the same partial pressure. For gas-phase data, convert partial pressure to a molar concentration yourself with the ideal gas law, then give <code>respR</code> a unit that does not depend on solubility (e.g.&nbsp;<code>"umol/L"</code>).</p>
+</div>
+</div>
+<p>For a sealed, rigid chamber at constant temperature, the oxygen concentration in the air is</p>
+<p><span class="math display">\[
+C_{\text{O}_2} = \frac{p\text{O}_2}{R\,T}
+\]</span></p>
+<p>where <span class="math inline">\(p\text{O}_2\)</span> is the oxygen partial pressure (Pa), <span class="math inline">\(R\)</span> = 8.314 J mol<sup>-1</sup> K<sup>-1</sup> and <span class="math inline">\(T\)</span> is temperature (K). With <span class="math inline">\(p\text{O}_2\)</span> in hPa, <span class="math inline">\(C_{\text{O}_2}\)</span> (µmol L<sup>-1</sup>) <span class="math inline">\(= p\text{O}_2 \times 10^5 / (R\,T)\)</span>. The uptake rate is then the slope of <span class="math inline">\(C_{\text{O}_2}\)</span> against time multiplied by the <strong>air</strong> volume (chamber volume − animal volume). Because moles of oxygen are counted directly from the partial pressure, CO<sub>2</sub> accumulating in the chamber does not dilute the signal, and the result can be expressed as a gas volume at standard temperature and pressure (STPD: 0 °C, 101.325 kPa; 1 mol ≈ 22.414 L) <span class="citation" data-cites="Lighton2019">(<a href="#ref-Lighton2019" role="doc-biblioref">Lighton, 2019</a>)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The example data below are <strong>simulated</strong> for teaching (see <code>data/simulate_resp_aerial.py</code> in the book repository): a 4.2 g lizard in a 150 mL glass chamber at 25 °C, with an optical oxygen sensor reading <span class="math inline">\(p\text{O}_2\)</span> (hPa) every 10 s for 100 min, plus an empty blank chamber run in parallel. The true resting uptake used in the simulation is 22.5 µmol O<sub>2</sub> h<sup>-1</sup>, so you can check how close the workflow gets.</p>
+</div>
+</div>
+<section id="import-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="import-1">Import</h2>
+<p>Instrument exports typically have metadata lines at the top, column names with spaces and units, and separate date and time columns. Read the file, then rename columns and build a numeric time column.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the local copy if you cloned the repository, otherwise read from GitHub</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>aerial_file <span class="ot">&lt;-</span> <span class="st">"data/resp_aerial_lizard.csv"</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(aerial_file)) {</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  aerial_file <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/nicholaswunz/thermal_ecology_R/refs/heads/main/data/resp_aerial_lizard.csv"</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>aerial_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(aerial_file,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">comment =</span> <span class="st">"#"</span>,                 <span class="co"># skip metadata lines</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">na =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"NA"</span>, <span class="st">"NaN"</span>),       <span class="co"># sensor drop-outs</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(aerial_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 596
+#&gt; Columns: 7
+#&gt; $ Date               &lt;chr&gt; "14/03/2025", "14/03/2025", "14/03/2025", "14/03/20…
+#&gt; $ Time               &lt;time&gt; 09:12:00, 09:12:10, 09:12:20, 09:12:30, 09:12:40, …
+#&gt; $ `dt (s)`           &lt;dbl&gt; 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 12…
+#&gt; $ `Ch1 Oxygen (hPa)` &lt;dbl&gt; 208.70, 208.74, 208.66, 208.43, 208.36, 208.48, 208…
+#&gt; $ `Ch2 Oxygen (hPa)` &lt;dbl&gt; 208.86, 208.81, 208.72, 208.72, 208.75, 208.86, 208…
+#&gt; $ `Temp (degC)`      &lt;dbl&gt; 25.00, 25.01, 24.94, 24.99, 24.97, 25.00, 25.00, 24…
+#&gt; $ `Pressure (hPa)`   &lt;dbl&gt; 1012.4, 1012.4, 1012.4, 1012.4, 1012.4, 1012.4, 101…</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>aerial <span class="ot">&lt;-</span> aerial_raw <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">date         =</span> Date,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">clock        =</span> Time,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">dt_s         =</span> <span class="st">`</span><span class="at">dt (s)</span><span class="st">`</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">o2_spec_hpa  =</span> <span class="st">`</span><span class="at">Ch1 Oxygen (hPa)</span><span class="st">`</span>,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">o2_blank_hpa =</span> <span class="st">`</span><span class="at">Ch2 Oxygen (hPa)</span><span class="st">`</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">temp_c       =</span> <span class="st">`</span><span class="at">Temp (degC)</span><span class="st">`</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">baro_hpa     =</span> <span class="st">`</span><span class="at">Pressure (hPa)</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time =</span> <span class="fu">dmy_hms</span>(<span class="fu">paste</span>(date, clock)),</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">time_min  =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(date_time, <span class="fu">first</span>(date_time),</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">units =</span> <span class="st">"mins"</span>)))</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>aerial_meta <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">chamber_L =</span> <span class="fl">0.150</span>,</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mass_g    =</span> <span class="fl">4.2</span>,</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">air_L     =</span> <span class="fl">0.150</span> <span class="sc">-</span> <span class="fl">4.2</span> <span class="sc">/</span> <span class="dv">1000</span>  <span class="co"># chamber minus animal volume (density ~1 g/mL)</span></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>respR::format_time()</code> is an alternative way to turn date-time strings into numeric time (in seconds from the first value).</p>
+</div>
+</div>
+</section>
+<section id="quality-check-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="quality-check-1">Quality check</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(aerial, <span class="at">time =</span> <span class="st">"time_min"</span>, <span class="at">oxygen =</span> <span class="fu">c</span>(<span class="st">"o2_spec_hpa"</span>, <span class="st">"o2_blank_hpa"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Multiple 'oxygen' columns selected. Note that subsequent functions in respR will by default use first oxygen column only.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: NA/NaN values detected in Oxygen column(s).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time_min o2_spec_hpa o2_blank_hpa
+#&gt; numeric             pass        pass         pass
+#&gt; Inf/-Inf            pass        pass         pass
+#&gt; NA/NaN              pass        WARN         pass
+#&gt; sequential          pass           -            -
+#&gt; duplicated          pass           -            -
+#&gt; evenly-spaced       WARN           -            -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time_min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1666667 1.0000000
+#&gt; NA/NaN locations in Oxygen column: o2_spec_hpa 
+#&gt; [1] 252 253
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>inspect()</code> reports <code>NA</code> values in the specimen channel (two sensor drop-outs) and uneven time spacing (a 1-min logger pause near 70 min). Neither biases a regression on real time values once the <code>NA</code>s are removed. Also check the environmental columns: a sealed chamber is only valid if temperature is stable.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>aerial <span class="sc">|&gt;</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(temp_c, baro_hpa),</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">mean =</span> mean, <span class="at">min =</span> min, <span class="at">max =</span> max)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 6
+#&gt;   temp_c_mean temp_c_min temp_c_max baro_hpa_mean baro_hpa_min baro_hpa_max
+#&gt;         &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+#&gt; 1        25.0       24.9       25.1         1013.        1012.        1013.</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>aerial_clean <span class="ot">&lt;-</span> aerial <span class="sc">|&gt;</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(o2_spec_hpa)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="convert-partial-pressure-to-concentration" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="convert-partial-pressure-to-concentration">Convert partial pressure to concentration</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>R_gas <span class="ot">&lt;-</span> <span class="fl">8.314462618</span>  <span class="co"># J mol-1 K-1</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>aerial_clean <span class="ot">&lt;-</span> aerial_clean <span class="sc">|&gt;</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_K        =</span> temp_c <span class="sc">+</span> <span class="fl">273.15</span>,</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">o2_spec_umol  =</span> o2_spec_hpa  <span class="sc">*</span> <span class="fl">1e5</span> <span class="sc">/</span> (R_gas <span class="sc">*</span> temp_K),  <span class="co"># umol O2 per L air</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">o2_blank_umol =</span> o2_blank_hpa <span class="sc">*</span> <span class="fl">1e5</span> <span class="sc">/</span> (R_gas <span class="sc">*</span> temp_K))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="calculate-o2-uptake-rate-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="calculate-o2-uptake-rate-1">Calculate O<sub>2</sub> uptake rate</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>spec_insp <span class="ot">&lt;-</span> <span class="fu">inspect</span>(aerial_clean, <span class="at">time =</span> <span class="st">"time_min"</span>, <span class="at">oxygen =</span> <span class="st">"o2_spec_umol"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time_min o2_spec_umol
+#&gt; numeric             pass         pass
+#&gt; Inf/-Inf            pass         pass
+#&gt; NA/NaN              pass         pass
+#&gt; sequential          pass            -
+#&gt; duplicated          pass            -
+#&gt; evenly-spaced       WARN            -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time_min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1666667 1.0000000
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The rolling rate shows elevated uptake for the first ~8 min (handling), a burst of activity around 40–47 min, and stable resting uptake elsewhere. For a resting rate, use a window after settling and before the activity:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>spec_rate <span class="ot">&lt;-</span> <span class="fu">calc_rate</span>(spec_insp, <span class="at">from =</span> <span class="dv">10</span>, <span class="at">to =</span> <span class="dv">40</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="background-o2-rate-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="background-o2-rate-1">Background O<sub>2</sub> rate</h2>
+<p>In air there is little microbial respiration, but blanks still capture sensor drift, small leaks and respiration of any substrate in the chamber.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>blank_insp <span class="ot">&lt;-</span> <span class="fu">inspect</span>(aerial_clean, <span class="at">time =</span> <span class="st">"time_min"</span>, <span class="at">oxygen =</span> <span class="st">"o2_blank_umol"</span>,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">plot =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time_min o2_blank_umol
+#&gt; numeric             pass          pass
+#&gt; Inf/-Inf            pass          pass
+#&gt; NA/NaN              pass          pass
+#&gt; sequential          pass             -
+#&gt; duplicated          pass             -
+#&gt; evenly-spaced       WARN             -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time_min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1666667 1.0000000
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>blank_rate <span class="ot">&lt;-</span> <span class="fu">calc_rate.bg</span>(blank_insp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; calc_rate.bg: Applying column default of 'time = 1'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; calc_rate.bg: Applying column default of all non-time column(s) as 'oxygen'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # plot.calc_rate.bg # -------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; plot.calc_rate.bg: Plotting all 1 background rates ...
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>spec_rate_adj <span class="ot">&lt;-</span> <span class="fu">adjust_rate</span>(spec_rate, <span class="at">by =</span> blank_rate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; adjust_rate: Rate adjustments applied using "mean" method.</code></pre>
+</div>
+</div>
+</section>
+<section id="conversions-1" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="conversions-1">Conversions</h2>
+<p>Because the data are now in µmol L<sup>-1</sup>, <code>convert_rate()</code> needs no temperature, salinity or pressure, and the <code>volume</code> is the <strong>air</strong> volume.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>aerial_final <span class="ot">&lt;-</span> <span class="fu">convert_rate</span>(spec_rate_adj,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">oxy.unit    =</span> <span class="st">"umol/L"</span>,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">time.unit   =</span> <span class="st">"min"</span>,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">output.unit =</span> <span class="st">"umol/h"</span>,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">volume      =</span> aerial_meta<span class="sc">$</span>air_L)</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>aerial_final_mass <span class="ot">&lt;-</span> <span class="fu">convert_rate</span>(spec_rate_adj,</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">oxy.unit    =</span> <span class="st">"umol/L"</span>,</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">time.unit   =</span> <span class="st">"min"</span>,</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">output.unit =</span> <span class="st">"umol/h/g"</span>,</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">volume      =</span> aerial_meta<span class="sc">$</span>air_L,</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">mass        =</span> aerial_meta<span class="sc">$</span>mass_g <span class="sc">/</span> <span class="dv">1000</span>)  <span class="co"># kg</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="final-o2-consumption" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="final-o2-consumption">Final O<sub>2</sub> consumption</h2>
+<p>Terrestrial studies usually report <span class="math inline">\(\dot{V}\text{O}_2\)</span> as mL O<sub>2</sub> h<sup>-1</sup> at STPD.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>aerial_result <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">umol_h      =</span> <span class="fu">abs</span>(aerial_final<span class="sc">$</span>rate.output),</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">umol_h_g    =</span> <span class="fu">abs</span>(aerial_final_mass<span class="sc">$</span>rate.output),</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mL_h_STPD   =</span> umol_h <span class="sc">*</span> <span class="fl">22.414</span> <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">mL_h_g_STPD =</span> umol_h_g <span class="sc">*</span> <span class="fl">22.414</span> <span class="sc">/</span> <span class="dv">1000</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>aerial_result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 4
+#&gt;   umol_h umol_h_g mL_h_STPD mL_h_g_STPD
+#&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+#&gt; 1   22.4     5.34     0.502       0.120</code></pre>
+</div>
+</div>
+<p>The workflow recovers 22.4 µmol O<sub>2</sub> h<sup>-1</sup>, close to the true value of 22.5 µmol h<sup>-1</sup> used in the simulation.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Going further: flow-through aerial respirometry
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Most terrestrial work uses <strong>flow-through</strong> (open-flow) respirometry, where air flows through the chamber at a known rate and O<sub>2</sub> is measured as a <em>fractional</em> concentration. The equation depends on where the flow is measured and which gases are scrubbed. The standard equation, for flow (<span class="math inline">\(\dot{V}_I\)</span>) measured <em>before</em> the chamber with CO<sub>2</sub> and water vapour removed before the O<sub>2</sub> analyser, is <span class="citation" data-cites="Withers2001">(<a href="#ref-Withers2001" role="doc-biblioref">Withers, 2001</a>)</span>:</p>
+<p><span class="math display">\[
+\dot{V}\text{O}_2 = \frac{\dot{V}_I\,(F_I\text{O}_2 - F_E\text{O}_2)}{1 - F_E\text{O}_2}
+\]</span></p>
+<p>If CO<sub>2</sub> is <em>not</em> removed from the excurrent air, using this equation overestimates <span class="math inline">\(\dot{V}\text{O}_2\)</span> by about 21% in Withers’ worked example, and other flow-meter positions need different equations <span class="citation" data-cites="Withers2001">(<a href="#ref-Withers2001" role="doc-biblioref">Withers, 2001</a>)</span>. Flow-through data also need baseline drift and lag corrections <span class="citation" data-cites="Lighton2011 Lighton2019">(<a href="#ref-Lighton2019" role="doc-biblioref">Lighton, 2019</a>; <a href="#ref-Lighton2011" role="doc-biblioref">Lighton and Halsey, 2011</a>)</span>. <code>respR</code> is not designed for these corrections, so whatever tool you use for aerial flow-through data, state exactly which equation was applied. For closed systems where gas <em>fractions</em> are measured from syringe samples, the dilution and CO<sub>2</sub> corrections of <span class="citation" data-cites="Vleck1987">Vleck (<a href="#ref-Vleck1987" role="doc-biblioref">1987</a>)</span> apply.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="activities" class="level1 unnumbered">
+<h1 class="unnumbered">Activities</h1>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Aquatic</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Aerial</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 1: Inspect before you analyse
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Inspect urchin <code>h</code> with <code>inspect()</code>. (a) What problem do you see, and roughly when does it occur? (b) Which time window(s) would you use to estimate its routine metabolic rate?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>urchin_h <span class="ot">&lt;-</span> <span class="fu">inspect</span>(urchins, <span class="at">time =</span> <span class="st">"time.min"</span>, <span class="at">oxygen =</span> <span class="st">"h"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: inspect: Time values are not evenly-spaced (numerically).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; inspect: Data issues detected. For more information use print().</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # print.inspect # -----------------------
+#&gt;                 time.min    h
+#&gt; numeric             pass pass
+#&gt; Inf/-Inf            pass pass
+#&gt; NA/NaN              pass pass
+#&gt; sequential          pass    -
+#&gt; duplicated          pass    -
+#&gt; evenly-spaced       WARN    -
+#&gt; 
+#&gt; Uneven Time data locations (first 20 shown) in column: time.min 
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+#&gt; Minimum and Maximum intervals in uneven Time data: 
+#&gt; [1] 0.1 0.2
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<ol type="a">
+<li><p>Oxygen drops sharply between about 22 and 30 min and then jumps back up, which is physically impossible for a sealed chamber. It is a sensor artefact (e.g.&nbsp;the urchin covering the sensor spot), not respiration.</p></li>
+<li><p>Any window clear of the artefact, for example 2–20 min (after the start-up period) or 31–45 min. The earlier window is longer and starts after handling, so it is a sensible choice.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 2: Why you must not apply one window to every chamber
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calculate the rate of urchin <code>h</code> (a) over the whole trace, (b) using the same 4–29 min window we used for urchin <code>n</code>, and (c) over 2–20 min. Compare the rates and r<sup>2</sup> values. Which is correct, and why are the other two wrong?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>h_whole <span class="ot">&lt;-</span> <span class="fu">calc_rate</span>(urchin_h)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>h_4_29  <span class="ot">&lt;-</span> <span class="fu">calc_rate</span>(urchin_h, <span class="at">from =</span> <span class="dv">4</span>, <span class="at">to =</span> <span class="dv">29</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>h_2_20  <span class="ot">&lt;-</span> <span class="fu">calc_rate</span>(urchin_h, <span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">20</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">window =</span> <span class="fu">c</span>(<span class="st">"whole trace"</span>, <span class="st">"4-29 min"</span>, <span class="st">"2-20 min"</span>),</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">rate   =</span> <span class="fu">c</span>(h_whole<span class="sc">$</span>rate, h_4_29<span class="sc">$</span>rate, h_2_20<span class="sc">$</span>rate),</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">rsq    =</span> <span class="fu">c</span>(h_whole<span class="sc">$</span>summary<span class="sc">$</span>rsq, h_4_29<span class="sc">$</span>summary<span class="sc">$</span>rsq, h_2_20<span class="sc">$</span>summary<span class="sc">$</span>rsq))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   window         rate   rsq
+#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 whole trace -0.0150 0.72 
+#&gt; 2 4-29 min    -0.0274 0.757
+#&gt; 3 2-20 min    -0.0174 0.904</code></pre>
+</div>
+</div>
+<p>The 2–20 min window gives the valid estimate (high r<sup>2</sup>, no artefact). The 4–29 min window <em>includes</em> the artefact and overestimates uptake by roughly 57%; the whole-trace regression is pulled the other way by the post-artefact jump. A window that is right for one chamber can be badly wrong for another, so inspect every trace.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 3: Scale up with the tidyverse
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <code>purrr::map()</code> to process all 16 urchins with the same pipeline (<code>inspect()</code> → <code>calc_rate()</code> from 4 to 29 min → <code>adjust_rate()</code> with <code>bg_rate</code> → <code>convert_rate()</code> to mg h<sup>-1</sup>) and collect the results in one tibble. Which urchin would an r<sup>2</sup> ≥ 0.95 filter flag, and why does that matter?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>urchin_rates <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">chamber =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>]) <span class="sc">|&gt;</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">insp =</span> <span class="fu">map</span>(chamber, \(x) <span class="fu">inspect</span>(urchins, <span class="at">time =</span> <span class="st">"time.min"</span>,</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">oxygen =</span> x, <span class="at">plot =</span> <span class="cn">FALSE</span>)),</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rate =</span> <span class="fu">map</span>(insp, \(x) <span class="fu">calc_rate</span>(x, <span class="at">from =</span> <span class="dv">4</span>, <span class="at">to =</span> <span class="dv">29</span>, <span class="at">by =</span> <span class="st">"time"</span>,</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">plot =</span> <span class="cn">FALSE</span>)),</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">adj  =</span> <span class="fu">map</span>(rate, \(x) <span class="fu">adjust_rate</span>(x, <span class="at">by =</span> bg_rate)),</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">conv =</span> <span class="fu">map</span>(adj, \(x) <span class="fu">convert_rate</span>(x, <span class="at">oxy.unit =</span> <span class="st">"mg/L"</span>, <span class="at">time.unit =</span> <span class="st">"min"</span>,</span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">output.unit =</span> <span class="st">"mg/h"</span>, <span class="at">volume =</span> <span class="fl">1.09</span>)),</span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">res  =</span> <span class="fu">map</span>(conv, \(x) <span class="fu">summary</span>(x, <span class="at">export =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(chamber, res) <span class="sc">|&gt;</span></span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>urchin_rates <span class="sc">|&gt;</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(chamber, rsq, rate.adjusted, rate.output, output.unit) <span class="sc">|&gt;</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">flag =</span> <span class="fu">if_else</span>(rsq <span class="sc">&lt;</span> <span class="fl">0.95</span>, <span class="st">"check trace!"</span>, <span class="st">""</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 16 × 6
+#&gt;    chamber   rsq rate.adjusted rate.output output.unit flag          
+#&gt;    &lt;chr&gt;   &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;         
+#&gt;  1 a       0.993      -0.0283       -1.85  mgO2/hr     ""            
+#&gt;  2 b       0.983      -0.0205       -1.34  mgO2/hr     ""            
+#&gt;  3 c       0.959      -0.00981      -0.642 mgO2/hr     ""            
+#&gt;  4 d       0.978      -0.0230       -1.50  mgO2/hr     ""            
+#&gt;  5 e       0.978      -0.0169       -1.11  mgO2/hr     ""            
+#&gt;  6 f       0.984      -0.0205       -1.34  mgO2/hr     ""            
+#&gt;  7 g       0.96       -0.0133       -0.868 mgO2/hr     ""            
+#&gt;  8 h       0.757      -0.0265       -1.73  mgO2/hr     "check trace!"
+#&gt;  9 i       0.982      -0.0162       -1.06  mgO2/hr     ""            
+#&gt; 10 j       0.98       -0.0200       -1.30  mgO2/hr     ""            
+#&gt; 11 k       0.983      -0.0164       -1.07  mgO2/hr     ""            
+#&gt; 12 l       0.976      -0.0177       -1.16  mgO2/hr     ""            
+#&gt; 13 m       0.984      -0.0207       -1.35  mgO2/hr     ""            
+#&gt; 14 n       0.987      -0.0209       -1.37  mgO2/hr     ""            
+#&gt; 15 o       0.976      -0.0106       -0.695 mgO2/hr     ""            
+#&gt; 16 p       0.969      -0.0124       -0.812 mgO2/hr     ""</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>urchin_rates <span class="sc">|&gt;</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_reorder</span>(chamber, <span class="fu">abs</span>(rate.output)), <span class="at">y =</span> <span class="fu">abs</span>(rate.output),</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> rsq <span class="sc">&lt;</span> <span class="fl">0.95</span>)) <span class="sc">+</span></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"grey50"</span>, <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"#e12744"</span>),</span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"r² ≥ 0.95"</span>, <span class="st">"r² &lt; 0.95"</span>)) <span class="sc">+</span></span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Urchin"</span>, <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">dot</span>(M)<span class="sc">*</span>O[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"(mg h"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Urchin <code>h</code> is flagged, because its 4–29 min window contains the artefact (Activity 2). Automation makes processing fast and consistent, but it does not replace looking at the data. Note also that a low r<sup>2</sup> is not always a sign of a bad slope (it can simply reflect a low signal-to-noise ratio), so filtering on r<sup>2</sup> alone can bias results <span class="citation" data-cites="Chabot2021">(<a href="#ref-Chabot2021" role="doc-biblioref">Chabot et al., 2021</a>)</span>. Use r<sup>2</sup> as a prompt to look, not as an automatic exclusion rule.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 4: Lowest and highest rates in a swim-tunnel trial
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>sardine.rd</code> is a ~2 h swim-tunnel trial on a sardine (<em>Sardinops sagax</em>) with time in seconds and oxygen in <strong>% air saturation</strong>. Metadata: volume 12.3 L, mass 0.0477 kg, 14.8 °C, salinity 35, 1.013253 bar.</p>
+<ol type="a">
+<li>Use <code>auto_rate()</code> to find the <strong>lowest</strong> and <strong>highest</strong> rates over a 15-minute window. (b) Convert both to mg O<sub>2</sub> h<sup>-1</sup> kg<sup>-1</sup>. (c) What is the ratio of the highest to the lowest rate? Can you call this an aerobic scope?</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>sardine <span class="ot">&lt;-</span> <span class="fu">inspect</span>(sardine.rd, <span class="at">time =</span> <span class="dv">1</span>, <span class="at">oxygen =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>sard_low  <span class="ot">&lt;-</span> <span class="fu">auto_rate</span>(sardine, <span class="at">method =</span> <span class="st">"lowest"</span>,  <span class="at">width =</span> <span class="dv">900</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>sard_high <span class="ot">&lt;-</span> <span class="fu">auto_rate</span>(sardine, <span class="at">method =</span> <span class="st">"highest"</span>, <span class="at">width =</span> <span class="dv">900</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>convert_sardine <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">convert_rate</span>(x, <span class="at">oxy.unit =</span> <span class="st">"%Air"</span>, <span class="at">time.unit =</span> <span class="st">"sec"</span>,</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">output.unit =</span> <span class="st">"mg/h/kg"</span>, <span class="at">volume =</span> <span class="fl">12.3</span>, <span class="at">mass =</span> <span class="fl">0.0477</span>,</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">t =</span> <span class="fl">14.8</span>, <span class="at">S =</span> <span class="dv">35</span>, <span class="at">P =</span> <span class="fl">1.013253</span>)</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>sard_low_conv  <span class="ot">&lt;-</span> <span class="fu">convert_sardine</span>(sard_low)</span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>sard_high_conv <span class="ot">&lt;-</span> <span class="fu">convert_sardine</span>(sard_high)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sard_low, <span class="at">pos =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # plot.auto_rate # ----------------------
+#&gt; plot.auto_rate: Plotting rate from position 1 of 6613 ... 
+#&gt; To plot others use 'pos'</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>sardine_summary <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rate    =</span> <span class="fu">c</span>(<span class="st">"lowest 15 min"</span>, <span class="st">"highest 15 min"</span>),</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mg_h_kg =</span> <span class="fu">abs</span>(<span class="fu">c</span>(sard_low_conv<span class="sc">$</span>rate.output[<span class="dv">1</span>], sard_high_conv<span class="sc">$</span>rate.output[<span class="dv">1</span>]))</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>sardine_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 2
+#&gt;   rate           mg_h_kg
+#&gt;   &lt;chr&gt;            &lt;dbl&gt;
+#&gt; 1 lowest 15 min     46.5
+#&gt; 2 highest 15 min    86.2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>sardine_summary<span class="sc">$</span>mg_h_kg[<span class="dv">2</span>] <span class="sc">/</span> sardine_summary<span class="sc">$</span>mg_h_kg[<span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.854384</code></pre>
+</div>
+</div>
+<p>The highest rate is about 1.9 times the lowest. This is <strong>not</strong> a proper aerobic scope: the lowest 15-min window in a 2-h trial is not SMR (SMR needs many hours of post-absorptive rest and a statistical estimator such as a low quantile of many measurements; <span class="citation" data-cites="Chabot2016">Chabot et al. (<a href="#ref-Chabot2016" role="doc-biblioref">2016</a>)</span>), the highest rate was not produced by an exhaustion protocol, and both depend strongly on the window width <span class="citation" data-cites="Prinzing2021">(<a href="#ref-Prinzing2021" role="doc-biblioref">Prinzing et al., 2021</a>)</span>. Also note that no background was measured in this dataset, which should be reported.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 5: Intermittent-flow respirometry
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>intermittent.rd</code> contains three closed phases separated by flushes (time in seconds, O<sub>2</sub> in mg L<sup>-1</sup>; volume 2.379 L; ash-free dry mass 0.006955 kg). The closed phases start at rows 1, 2101 and 3901.</p>
+<p>Use <code>calc_rate.int()</code> to estimate one rate per replicate, ignoring the first 300 s after each closure (<code>wait</code>) and measuring over the next 900 s (<code>measure</code>). Convert to mg O<sub>2</sub> h<sup>-1</sup> g<sup>-1</sup> and report the mean ± SD.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 5
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>urchin_int <span class="ot">&lt;-</span> <span class="fu">inspect</span>(intermittent.rd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>int_rates <span class="ot">&lt;-</span> <span class="fu">calc_rate.int</span>(urchin_int,</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">starts  =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2101</span>, <span class="dv">3901</span>),</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">wait    =</span> <span class="dv">300</span>,</span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">measure =</span> <span class="dv">900</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>int_conv <span class="ot">&lt;-</span> <span class="fu">convert_rate</span>(int_rates,</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">oxy.unit =</span> <span class="st">"mg/L"</span>, <span class="at">time.unit =</span> <span class="st">"s"</span>,</span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">output.unit =</span> <span class="st">"mg/h/g"</span>,</span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">volume =</span> <span class="fl">2.379</span>, <span class="at">mass =</span> <span class="fl">0.006955</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(int_rates, <span class="at">type =</span> <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # plot.calc_rate.int # ------------------
+#&gt; plot.calc_rate.int: Plotting rate from all replicates ...</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; -----------------------------------------</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(int_conv, <span class="at">export =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_mg_h_g =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(rate.output)),</span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_mg_h_g   =</span> <span class="fu">sd</span>(<span class="fu">abs</span>(rate.output)),</span>
+<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_reps      =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; # summary.convert_rate # ----------------
+#&gt; Summary of all converted rates:
+#&gt; 
+#&gt;    rep rank intercept_b0      slope_b1   rsq density  row endrow time endtime
+#&gt; 1:   1    1     7.133571 -0.0005894062 0.990      NA  301   1200  300    1199
+#&gt; 2:   2    1     8.536105 -0.0006121910 0.991      NA 2401   3300 2400    3299
+#&gt; 3:   3    1     9.564309 -0.0006155389 0.980      NA 4201   4831 4200    4830
+#&gt;     oxy endoxy          rate adjustment rate.adjusted    rate.input oxy.unit
+#&gt; 1: 6.98   6.43 -0.0005894062         NA            NA -0.0005894062     mg/L
+#&gt; 2: 7.05   6.52 -0.0006121910         NA            NA -0.0006121910     mg/L
+#&gt; 3: 6.95   6.59 -0.0006155389         NA            NA -0.0006155389     mg/L
+#&gt;    time.unit volume     mass area  S  t  P  rate.abs rate.m.spec rate.a.spec
+#&gt; 1:       sec  2.379 0.006955   NA NA NA NA -5.047911  -0.7257959          NA
+#&gt; 2:       sec  2.379 0.006955   NA NA NA NA -5.243049  -0.7538532          NA
+#&gt; 3:       sec  2.379 0.006955   NA NA NA NA -5.271722  -0.7579758          NA
+#&gt;    output.unit rate.output
+#&gt; 1:   mgO2/hr/g  -0.7257959
+#&gt; 2:   mgO2/hr/g  -0.7538532
+#&gt; 3:   mgO2/hr/g  -0.7579758
+#&gt; -----------------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 3
+#&gt;   mean_mg_h_g sd_mg_h_g n_reps
+#&gt;         &lt;dbl&gt;     &lt;dbl&gt;  &lt;int&gt;
+#&gt; 1       0.746    0.0175      3</code></pre>
+</div>
+</div>
+<p>The <code>wait</code> phase excludes the mixing and equilibration period right after the flush closes, and fixing <code>measure</code> gives every replicate the same window length, which is a reportable, reproducible rule <span class="citation" data-cites="Svendsen2016 Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>; <a href="#ref-Svendsen2016" role="doc-biblioref">Svendsen et al., 2016</a>)</span>. Background respiration was not measured for this dataset, which would need to be stated in a write-up.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 6: Activity metabolism
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <code>auto_rate()</code> to find the <strong>highest</strong> 5-min rate in the lizard trial, adjust it for background, and convert it to mL O<sub>2</sub> h<sup>-1</sup> (STPD). How many times higher is it than the resting rate? When did it occur?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 6
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>spec_high <span class="ot">&lt;-</span> <span class="fu">auto_rate</span>(spec_insp, <span class="at">method =</span> <span class="st">"highest"</span>, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">by =</span> <span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>spec_high_conv <span class="ot">&lt;-</span> spec_high <span class="sc">|&gt;</span></span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adjust_rate</span>(<span class="at">by =</span> blank_rate) <span class="sc">|&gt;</span></span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">convert_rate</span>(<span class="at">oxy.unit =</span> <span class="st">"umol/L"</span>, <span class="at">time.unit =</span> <span class="st">"min"</span>,</span>
+<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">output.unit =</span> <span class="st">"umol/h"</span>, <span class="at">volume =</span> aerial_meta<span class="sc">$</span>air_L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>high_df <span class="ot">&lt;-</span> <span class="fu">summary</span>(spec_high_conv, <span class="at">export =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>high_summary <span class="ot">&lt;-</span> high_df <span class="sc">|&gt;</span></span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb114-3"><a href="#cb114-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb114-4"><a href="#cb114-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">start_min     =</span> time,</span>
+<span id="cb114-5"><a href="#cb114-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">end_min       =</span> endtime,</span>
+<span id="cb114-6"><a href="#cb114-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">umol_h        =</span> <span class="fu">abs</span>(rate.output),</span>
+<span id="cb114-7"><a href="#cb114-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">mL_h_STPD     =</span> umol_h <span class="sc">*</span> <span class="fl">22.414</span> <span class="sc">/</span> <span class="dv">1000</span>,</span>
+<span id="cb114-8"><a href="#cb114-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">times_resting =</span> umol_h <span class="sc">/</span> aerial_result<span class="sc">$</span>umol_h)</span>
+<span id="cb114-9"><a href="#cb114-9" aria-hidden="true" tabindex="-1"></a>high_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 1 × 5
+#&gt;   start_min end_min umol_h mL_h_STPD times_resting
+#&gt;       &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1      40.3    45.3   95.1      2.13          4.25</code></pre>
+</div>
+</div>
+<p>The highest 5-min rate occurred between 40.3 and 45.3 min, during the activity burst, and was about 4.2 times the resting rate. In a real study you would confirm activity with video or an activity sensor <span class="citation" data-cites="Wu2024">(<a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>, and note that a burst inside a closed chamber is not a standardised MMR protocol.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 7: How window width biases “lowest” rates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Many studies estimate SMR as the <em>lowest</em> rate over a fixed window. Use <code>auto_rate(method = "lowest")</code> with windows of 5, 10, 15 and 20 min, adjust for background, and convert to µmol O<sub>2</sub> h<sup>-1</sup>. Plot the result against window width. What happens as the window gets shorter, and why?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 7
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a>lowest_by_width <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">width_min =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rate =</span> <span class="fu">map_dbl</span>(width_min, \(w) {</span>
+<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">auto_rate</span>(spec_insp, <span class="at">method =</span> <span class="st">"lowest"</span>, <span class="at">width =</span> w, <span class="at">by =</span> <span class="st">"time"</span>,</span>
+<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">plot =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>rate[<span class="dv">1</span>]</span>
+<span id="cb116-6"><a href="#cb116-6" aria-hidden="true" tabindex="-1"></a>    }),</span>
+<span id="cb116-7"><a href="#cb116-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">umol_h =</span> <span class="fu">abs</span>((rate <span class="sc">-</span> blank_rate<span class="sc">$</span>rate.bg.mean) <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> aerial_meta<span class="sc">$</span>air_L)</span>
+<span id="cb116-8"><a href="#cb116-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb116-9"><a href="#cb116-9" aria-hidden="true" tabindex="-1"></a>lowest_by_width</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 4 × 3
+#&gt;   width_min  rate umol_h
+#&gt;       &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+#&gt; 1         5 -1.25   8.57
+#&gt; 2        10 -2.19  16.8 
+#&gt; 3        15 -2.48  19.3 
+#&gt; 4        20 -2.61  20.5</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lowest_by_width, <span class="fu">aes</span>(<span class="at">x =</span> width_min, <span class="at">y =</span> umol_h)) <span class="sc">+</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">22.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fl">22.5</span>, <span class="at">label =</span> <span class="st">"true resting rate"</span>,</span>
+<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"#e12744"</span>) <span class="sc">+</span></span>
+<span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb118-6"><a href="#cb118-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb118-7"><a href="#cb118-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Window width (min)"</span>,</span>
+<span id="cb118-8"><a href="#cb118-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">expression</span>(<span class="st">"Lowest "</span><span class="sc">*</span><span class="fu">dot</span>(V)<span class="sc">*</span>O[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"(µmol h"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>)) <span class="sc">+</span></span>
+<span id="cb118-9"><a href="#cb118-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="phys_respirometry_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Shorter windows give <em>lower</em> “lowest” rates. With noisy data, each short regression has a wide sampling error, and searching for the minimum across many overlapping windows picks the one where noise happened to flatten the slope. This is the same reason sampling interval changes BMR estimates <span class="citation" data-cites="Hayes1992 Jacobs2014">(<a href="#ref-Hayes1992" role="doc-biblioref">Hayes et al., 1992</a>; <a href="#ref-Jacobs2014" role="doc-biblioref">Jacobs and McKechnie, 2014</a>)</span> and window width changes MMR estimates <span class="citation" data-cites="Prinzing2021">(<a href="#ref-Prinzing2021" role="doc-biblioref">Prinzing et al., 2021</a>)</span>. Choose a window long enough for a precise slope, justify it, and report it.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Activity 8: How big are common mistakes?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using the resting rate (<code>spec_rate</code>) and <code>blank_rate</code>, calculate the percentage error in µmol O<sub>2</sub> h<sup>-1</sup> when you:</p>
+<ol type="a">
+<li>use the chamber volume (0.150 L) instead of the air volume;</li>
+<li>skip the background correction;</li>
+<li>convert the hPa trace with <code>respR</code>’s water-based units (<code>convert_DO(..., from = "hPa", to = "umol/L", S = 0, t = 25)</code>) instead of the gas law.</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer 8
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>correct <span class="ot">&lt;-</span> <span class="fu">abs</span>((spec_rate<span class="sc">$</span>rate <span class="sc">-</span> blank_rate<span class="sc">$</span>rate.bg.mean) <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> aerial_meta<span class="sc">$</span>air_L)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a>err_volume     <span class="ot">&lt;-</span> <span class="fu">abs</span>((spec_rate<span class="sc">$</span>rate <span class="sc">-</span> blank_rate<span class="sc">$</span>rate.bg.mean) <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> aerial_meta<span class="sc">$</span>chamber_L)</span>
+<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a>err_background <span class="ot">&lt;-</span> <span class="fu">abs</span>(spec_rate<span class="sc">$</span>rate <span class="sc">*</span> <span class="dv">60</span> <span class="sc">*</span> aerial_meta<span class="sc">$</span>air_L)</span>
+<span id="cb119-5"><a href="#cb119-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb119-6"><a href="#cb119-6" aria-hidden="true" tabindex="-1"></a><span class="co"># (c) treat the gas-phase pO2 as if it were dissolved O2 in water</span></span>
+<span id="cb119-7"><a href="#cb119-7" aria-hidden="true" tabindex="-1"></a>water_factor <span class="ot">&lt;-</span> <span class="fu">convert_DO</span>(<span class="dv">200</span>, <span class="at">from =</span> <span class="st">"hPa"</span>, <span class="at">to =</span> <span class="st">"umol/L"</span>, <span class="at">S =</span> <span class="dv">0</span>, <span class="at">t =</span> <span class="dv">25</span>) <span class="sc">/</span> <span class="dv">200</span></span>
+<span id="cb119-8"><a href="#cb119-8" aria-hidden="true" tabindex="-1"></a>gas_factor   <span class="ot">&lt;-</span> <span class="fl">1e5</span> <span class="sc">/</span> (R_gas <span class="sc">*</span> (<span class="dv">25</span> <span class="sc">+</span> <span class="fl">273.15</span>))</span>
+<span id="cb119-9"><a href="#cb119-9" aria-hidden="true" tabindex="-1"></a>err_water    <span class="ot">&lt;-</span> correct <span class="sc">*</span> water_factor <span class="sc">/</span> gas_factor</span>
+<span id="cb119-10"><a href="#cb119-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb119-11"><a href="#cb119-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">mistake   =</span> <span class="fu">c</span>(<span class="st">"chamber instead of air volume"</span>,</span>
+<span id="cb119-12"><a href="#cb119-12" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"no background correction"</span>,</span>
+<span id="cb119-13"><a href="#cb119-13" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"water solubility conversion"</span>),</span>
+<span id="cb119-14"><a href="#cb119-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">umol_h    =</span> <span class="fu">c</span>(err_volume, err_background, err_water),</span>
+<span id="cb119-15"><a href="#cb119-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">error_pct =</span> <span class="fu">round</span>((umol_h <span class="sc">/</span> correct <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   mistake                       umol_h error_pct
+#&gt;   &lt;chr&gt;                          &lt;dbl&gt;     &lt;dbl&gt;
+#&gt; 1 chamber instead of air volume 23.1         2.9
+#&gt; 2 no background correction      24.8        10.5
+#&gt; 3 water solubility conversion    0.686     -96.9</code></pre>
+</div>
+</div>
+<p>Forgetting to subtract the animal volume is small here (the lizard is ~3% of the chamber) but grows with larger animals or smaller chambers. Skipping the background correction overestimates the rate by roughly the size of the blank signal. Using water solubility for an air-phase measurement underestimates the rate about 33-fold, an error you would only catch by sanity-checking against published values.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="reporting-the-workflow" class="level1 unnumbered">
+<h1 class="unnumbered">Reporting the Workflow</h1>
+<p>Two complementary checklists exist: <span class="citation" data-cites="Killen2021">Killen et al. (<a href="#ref-Killen2021" role="doc-biblioref">2021</a>)</span> for aquatic intermittent-flow respirometry and <span class="citation" data-cites="Wu2024">Wu et al. (<a href="#ref-Wu2024" role="doc-biblioref">2024</a>)</span> for terrestrial (aerial) respirometry. Both are organised around the same ideas: describe the <strong>set-up</strong>, the <strong>animals</strong>, the <strong>measurement conditions</strong>, the <strong>data processing</strong> and the <strong>statistics</strong>, and share data and code <span class="citation" data-cites="Parker2018 Whitlock2011">(<a href="#ref-Parker2018" role="doc-biblioref">Parker et al., 2018</a>; <a href="#ref-Whitlock2011" role="doc-biblioref">Whitlock, 2011</a>)</span>. For the processing steps covered here, report:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Report</th>
+<th>Where it lives in <code>respR</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data acquisition</td>
+<td>Sensor/analyser type and model, sampling interval, calibration</td>
+<td>Your metadata</td>
+</tr>
+<tr class="even">
+<td>Quality control</td>
+<td>Data excluded and why (artefacts, activity, drop-outs)</td>
+<td><code>inspect()</code> plots, your code</td>
+</tr>
+<tr class="odd">
+<td>Rate extraction</td>
+<td>Method (manual window, <code>auto_rate()</code> method), window width, wait/measure phases, number of slopes used, any r<sup>2</sup> criterion</td>
+<td><code>$summary</code> (<code>time</code>, <code>endtime</code>, <code>rsq</code>)</td>
+</tr>
+<tr class="even">
+<td>Background</td>
+<td>How and when measured, how applied, its size relative to animal rates</td>
+<td><code>adjust_rate()</code> (<code>adjustment</code>)</td>
+</tr>
+<tr class="odd">
+<td>Conversion</td>
+<td>Units, effective volume, mass (and how measured), t, S, P, STP definition, equations used</td>
+<td><code>convert_rate()</code> (<code>volume</code>, <code>mass</code>, <code>S</code>, <code>t</code>, <code>P</code>)</td>
+</tr>
+<tr class="even">
+<td>Final metric</td>
+<td>SMR/RMR/MMR definition and estimator</td>
+<td>Your code</td>
+</tr>
+<tr class="odd">
+<td>Software</td>
+<td>R and package versions, citations</td>
+<td><code>sessionInfo()</code>, <code>citation()</code></td>
+</tr>
+<tr class="even">
+<td>Data and code</td>
+<td>Raw traces + processing scripts + README/metadata in a public repository</td>
+<td>Dryad, Zenodo, OSF, Figshare</td>
+</tr>
+</tbody>
+</table>
+<p>A methods paragraph can be generated directly from the analysis objects, so the text always matches the numbers:</p>
+<blockquote class="blockquote">
+<p>Oxygen uptake of urchin <em>n</em> was calculated in R (R version 4.6.0 (2026-04-24)) with <code>respR</code> v2.3.4 <span class="citation" data-cites="Harianto2019">(<a href="#ref-Harianto2019" role="doc-biblioref">Harianto et al., 2019</a>)</span> as the slope of a linear regression of oxygen concentration against time between 4 and 29 min (r<sup>2</sup> = 0.987), adjusted for the mean background rate of two blank chambers (-8.33^{-4} mg L<sup>-1</sup> min<sup>-1</sup>), and converted to mLO2/hr/kg using an effective volume of 1.09 L and a mass of 0.19 kg.</p>
+</blockquote>
+</section>
+<section id="caveats" class="level1 unnumbered">
+<h1 class="unnumbered">Caveats</h1>
+<ul>
+<li><strong>Linearity is an assumption.</strong> Rates assume a linear decline within the window. Curvature from mixing lag, sensor response time or falling O<sub>2</sub> violates this; keep closed-phase O<sub>2</sub> high (often &gt; 80% air saturation) unless hypoxia is the treatment <span class="citation" data-cites="Svendsen2016">(<a href="#ref-Svendsen2016" role="doc-biblioref">Svendsen et al., 2016</a>)</span>.</li>
+<li><strong>Temperature control.</strong> Rates are only interpretable at a stable, reported temperature; in air, temperature changes also change <span class="math inline">\(p\text{O}_2\)</span> directly.</li>
+<li><strong>Effective volume</strong> must include tubing and exclude the animal; errors scale linearly into the final rate.</li>
+<li><strong>Background</strong> changes over time and with feeding or biofilm; measure it more than once and report how it was modelled <span class="citation" data-cites="Killen2021">(<a href="#ref-Killen2021" role="doc-biblioref">Killen et al., 2021</a>)</span>.</li>
+<li><strong>Window width and selection rules</strong> (lowest, highest, quantiles, r<sup>2</sup> filters) systematically change estimates; justify and report them <span class="citation" data-cites="Hayes1992 Chabot2021 Prinzing2021">(<a href="#ref-Chabot2021" role="doc-biblioref">Chabot et al., 2021</a>; <a href="#ref-Hayes1992" role="doc-biblioref">Hayes et al., 1992</a>; <a href="#ref-Prinzing2021" role="doc-biblioref">Prinzing et al., 2021</a>)</span>.</li>
+<li><strong>SMR needs time and replication.</strong> Use long trials, many slopes and an established estimator (e.g.&nbsp;a low quantile or the mean of the lowest normal distribution) rather than a single lowest slope <span class="citation" data-cites="Chabot2016">(<a href="#ref-Chabot2016" role="doc-biblioref">Chabot et al., 2016</a>)</span>.</li>
+<li><strong>Animal state.</strong> Handling stress, digestion, time of day, activity, reproductive state and acclimation all affect MR; record and report them <span class="citation" data-cites="Wu2024">(<a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>.</li>
+<li><strong>Unit conversions in <code>respR</code> are aquatic.</strong> For gas-phase data, convert with the gas law, account for water vapour and CO<sub>2</sub> where fractions are measured, and define STP <span class="citation" data-cites="Withers2001 Lighton2019 Wu2024">(<a href="#ref-Lighton2019" role="doc-biblioref">Lighton, 2019</a>; <a href="#ref-Withers2001" role="doc-biblioref">Withers, 2001</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>.</li>
+<li><strong>Mass-specific rates</strong> remove the effect of mass only when MR scales isometrically; model mass as a covariate instead of dividing by it <span class="citation" data-cites="Packard1988 Wu2024">(<a href="#ref-Packard1988" role="doc-biblioref">Packard and Boardman, 1988</a>; <a href="#ref-Wu2024" role="doc-biblioref">Wu et al., 2024</a>)</span>.</li>
+<li><strong>Sanity-check every new dataset</strong> against published values for similar species, sizes and temperatures.</li>
+</ul>
+</section>
+<section id="citation" class="level1">
+<h1>Citation</h1>
+<p>When using <code>respR</code>, please cite <span class="citation" data-cites="Harianto2019">Harianto et al. (<a href="#ref-Harianto2019" role="doc-biblioref">2019</a>)</span>. If you have raw oxygen traces that are not yet supported, contact the package maintainer, Nicholas Carey.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Carey2016" class="csl-entry" role="listitem">
+<strong>Carey, N., Harianto, J. and Byrne, M.</strong> (2016). <a href="https://doi.org/10.1242/jeb.136101">Sea urchins in a high-<span>CO</span><span class="math inline">\(_2\)</span> world: Partitioned effects of body size, ocean warming and acidification on metabolic rate</a>. <em>Journal of Experimental Biology</em> <strong>219</strong>, 1178–1186.
+</div>
+<div id="ref-Chabot2016" class="csl-entry" role="listitem">
+<strong>Chabot, D., Steffensen, J. F. and Farrell, A. P.</strong> (2016). <a href="https://doi.org/10.1111/jfb.12845">The determination of standard metabolic rate in fishes</a>. <em>Journal of Fish Biology</em> <strong>88</strong>, 81–121.
+</div>
+<div id="ref-Chabot2021" class="csl-entry" role="listitem">
+<strong>Chabot, D., Zhang, Y. and Farrell, A. P.</strong> (2021). <a href="https://doi.org/10.1111/jfb.14650">Valid oxygen uptake measurements: Using high r<span class="math inline">\(^2\)</span> values with good intentions can bias upward the determination of standard metabolic rate</a>. <em>Journal of Fish Biology</em> <strong>98</strong>, 1206–1216.
+</div>
+<div id="ref-Clark2013" class="csl-entry" role="listitem">
+<strong>Clark, T. D., Sandblom, E. and Jutfelt, F.</strong> (2013). <a href="https://doi.org/10.1242/jeb.084251">Aerobic scope measurements of fishes in an era of climate change: Respirometry, relevance and recommendations</a>. <em>Journal of Experimental Biology</em> <strong>216</strong>, 2771–2782.
+</div>
+<div id="ref-Harianto2019" class="csl-entry" role="listitem">
+<strong>Harianto, J., Carey, N. and Byrne, M.</strong> (2019). <a href="https://doi.org/10.1111/2041-210X.13162">respR—an r package for the manipulation and analysis of respirometry data</a>. <em>Methods in Ecology and Evolution</em> <strong>10</strong>, 912–920.
+</div>
+<div id="ref-Hayes1992" class="csl-entry" role="listitem">
+<strong>Hayes, J. P., Speakman, J. R. and Racey, P. A.</strong> (1992). Sampling bias in respirometry. <em>Physiological Zoology</em> <strong>65</strong>, 604–619.
+</div>
+<div id="ref-Jacobs2014" class="csl-entry" role="listitem">
+<strong>Jacobs, P. J. and McKechnie, A. E.</strong> (2014). <a href="https://doi.org/10.1086/676933">Experimental sources of variation in avian energetics: Estimated basal metabolic rate decreases with successive measurements</a>. <em>Physiological and Biochemical Zoology</em> <strong>87</strong>, 762–769.
+</div>
+<div id="ref-Killen2021" class="csl-entry" role="listitem">
+<strong>Killen, S. S., Christensen, E. A. F., Cortese, D., Závorka, L., Norin, T., Cotgrove, L., Crespel, A., Munson, A., Nati, J. J. H., Papatheodoulou, M., et al.</strong> (2021). <a href="https://doi.org/10.1242/jeb.242522">Guidelines for reporting methods to estimate metabolic rates by aquatic intermittent-flow respirometry</a>. <em>Journal of Experimental Biology</em> <strong>224</strong>, jeb242522.
+</div>
+<div id="ref-Lighton2019" class="csl-entry" role="listitem">
+<strong>Lighton, J. R. B.</strong> (2019). <em>Measuring metabolic rates: A manual for scientists</em>. 2nd ed. New York: Oxford University Press.
+</div>
+<div id="ref-Lighton2011" class="csl-entry" role="listitem">
+<strong>Lighton, J. R. B. and Halsey, L. G.</strong> (2011). <a href="https://doi.org/10.1016/j.cbpa.2010.11.024">Flow-through respirometry applied to chamber systems: Pros and cons, hints and tips</a>. <em>Comparative Biochemistry and Physiology Part A: Molecular &amp; Integrative Physiology</em> <strong>158</strong>, 265–275.
+</div>
+<div id="ref-Olito2017" class="csl-entry" role="listitem">
+<strong>Olito, C., White, C. R., Marshall, D. J. and Barneche, D. R.</strong> (2017). <a href="https://doi.org/10.1242/jeb.148775">Estimating monotonic rates from biological data using local linear regression</a>. <em>Journal of Experimental Biology</em> <strong>220</strong>, 759–764.
+</div>
+<div id="ref-Packard1988" class="csl-entry" role="listitem">
+<strong>Packard, G. C. and Boardman, T. J.</strong> (1988). <a href="https://doi.org/10.1086/physzool.61.1.30163730">The misuse of ratios, indices, and percentages in ecophysiological research</a>. <em>Physiological Zoology</em> <strong>61</strong>, 1–9.
+</div>
+<div id="ref-Parker2018" class="csl-entry" role="listitem">
+<strong>Parker, T. H., Griffith, S. C., Bronstein, J. L., Fidler, F., Foster, S., Fraser, H., Forstmeier, W., Gurevitch, J., Koricheva, J., Seppelt, R., et al.</strong> (2018). <a href="https://doi.org/10.1038/s41559-018-0545-z">Empowering peer reviewers with a checklist to improve transparency</a>. <em>Nature Ecology &amp; Evolution</em> <strong>2</strong>, 929–935.
+</div>
+<div id="ref-Prinzing2021" class="csl-entry" role="listitem">
+<strong>Prinzing, T. S., Zhang, Y., Wegner, N. C. and Dulvy, N. K.</strong> (2021). <a href="https://doi.org/10.1002/ece3.7732">Analytical methods matter too: Establishing a framework for estimating maximum metabolic rate for fishes</a>. <em>Ecology and Evolution</em> <strong>11</strong>, 9987–10003.
+</div>
+<div id="ref-Steffensen1989" class="csl-entry" role="listitem">
+<strong>Steffensen, J. F.</strong> (1989). <a href="https://doi.org/10.1007/BF02995809">Some errors in respirometry of aquatic breathers: How to avoid and correct for them</a>. <em>Fish Physiology and Biochemistry</em> <strong>6</strong>, 49–59.
+</div>
+<div id="ref-Svendsen2016" class="csl-entry" role="listitem">
+<strong>Svendsen, M. B. S., Bushnell, P. G. and Steffensen, J. F.</strong> (2016). <a href="https://doi.org/10.1111/jfb.12797">Design and setup of intermittent-flow respirometry system for aquatic organisms</a>. <em>Journal of Fish Biology</em> <strong>88</strong>, 26–50.
+</div>
+<div id="ref-Vleck1987" class="csl-entry" role="listitem">
+<strong>Vleck, D.</strong> (1987). <a href="https://doi.org/10.1152/jappl.1987.62.5.2103">Measurement of <span>O</span><span class="math inline">\(_2\)</span> consumption, <span>CO</span><span class="math inline">\(_2\)</span> production, and water vapor production in a closed system</a>. <em>Journal of Applied Physiology</em> <strong>62</strong>, 2103–2106.
+</div>
+<div id="ref-Whitlock2011" class="csl-entry" role="listitem">
+<strong>Whitlock, M. C.</strong> (2011). <a href="https://doi.org/10.1016/j.tree.2010.11.006">Data archiving in ecology and evolution: Best practices</a>. <em>Trends in Ecology &amp; Evolution</em> <strong>26</strong>, 61–65.
+</div>
+<div id="ref-Withers2001" class="csl-entry" role="listitem">
+<strong>Withers, P. C.</strong> (2001). <a href="https://doi.org/10.1071/ZO00057">Design, calibration and calculation for flow-through respirometry systems</a>. <em>Australian Journal of Zoology</em> <strong>49</strong>, 445–461.
+</div>
+<div id="ref-Wu2024" class="csl-entry" role="listitem">
+<strong>Wu, N. C., Alton, L. A., Bovo, R. P., Carey, N., Currie, S. E., Lighton, J. R. B., McKechnie, A. E., Pottier, P., Rossi, G., White, C. R., et al.</strong> (2024). <a href="https://doi.org/10.1016/j.cbpa.2024.111688">Reporting guidelines for terrestrial respirometry: Building openness, transparency of metabolic rate and evaporative water loss data</a>. <em>Comparative Biochemistry and Physiology Part A: Molecular &amp; Integrative Physiology</em> <strong>296</strong>, 111688.
+</div>
+</div>
+<p><br></p>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -727,13 +2440,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./summary.html" class="pagination-link" aria-label="Summary">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      <a href="./env_heatwaves.html" class="pagination-link" aria-label="Heatwaves and Cold-spells">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Heatwaves and Cold-spells</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./behav_torpor.html" class="pagination-link" aria-label="Torpor/arousal patterns">
-        <span class="nav-page-text">Torpor/arousal patterns</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./behav_torpor.html" class="pagination-link" aria-label="Torpor/Arousal">
+        <span class="nav-page-text">Torpor/Arousal</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

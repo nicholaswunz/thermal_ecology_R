@@ -2,58 +2,1114 @@
 
 Authors: Nicholas Wu
 
-Estimating metabolic rate
+Estimating metabolic rate from raw oxygen traces with a structured, reproducible 
+workflow following the [`respR`](https://januarharianto.github.io/respR/) R package 
+[@Harianto2019].
 
+::: {.callout-note icon="false"}
+## Workshop overview
 
-# Aquatic Respirometry {.unnumbered}
+**By the end of this workshop you will be able to:**
 
-We will use the [`respR`](https://januarharianto.github.io/respR/) 
-package to illustrate how to process and tidy raw oxygen traces from a respirometry 
-experiment. The package has also been peer reviewed and published in 
-[Methods in Ecology and Evolution](https://doi.org/10.1111/2041-210X.13162). 
+1. Recognise common problems in raw oxygen traces before they bias your results.
+2. Import, quality check, extract, background-correct and convert oxygen uptake
+   rates with the [`respR`](https://januarharianto.github.io/respR/) package
+   [@Harianto2019] in a `tidyverse` workflow.
+3. Adapt the same workflow to **aerial** (gas-phase) respirometry.
+4. Report your workflow so it can be reproduced and synthesised by others.
+:::
 
-The tutorial will use data from a close-chamber respiromety experiment, but the 
-package is able to handle intermittent-flow and open-flow respirometry, and critical
-oxygen values (P~crit~).
+```{r}
+#| include: false
+knitr::opts_chunk$set(fig.align = "center", comment = "#>")
+```
 
-## Setting up {.unnumbered}
+## Background {.unnumbered}
 
-Load R packages and set up directory and load your raw data. 
+### Why measure oxygen? {.unnumbered}
 
-At minimum, the raw data should contain: 
+Metabolic rate (MR), the rate at which an organism uses energy, underpins
+almost every question in thermal ecology: how much energy an animal needs at a
+given temperature, how much it has left for growth and reproduction, and how
+close it is to its physiological limits. Because aerobic metabolism consumes
+oxygen in near-fixed proportion to the energy released, the most common way to
+estimate MR is **indirect calorimetry**: measuring the rate of oxygen
+consumption ($\dot{M}\text{O}_2$ in water breathers, $\dot{V}\text{O}_2$ in air
+breathers) and/or carbon dioxide production [@Lighton2019; @Wu2024].
 
-- a time column
-- an oxygen column. 
+Depending on the state of the animal, the rate is interpreted as a different
+**metabolic rate metric**:
 
-In this example, we have xxxx.
+| Metric | Definition (short) |
+|----|----|
+| Standard metabolic rate (SMR) | MR of an inactive, unstressed, post-absorptive adult **ectotherm** in its inactive phase [@Chabot2016; @Wu2024] |
+| Basal metabolic rate (BMR) | The **endotherm** equivalent of SMR, measured within the thermoneutral zone [@Wu2024] |
+| Resting / routine metabolic rate (RMR) | MR of a resting animal when one or more SMR/BMR conditions cannot be met; *routine* MR includes spontaneous activity [@Killen2021; @Wu2024] |
+| Maximum metabolic rate (MMR) | Maximum aerobic O~2~ uptake, e.g. during or immediately after exhaustive exercise [@Killen2021] |
+| Aerobic scope | MMR − SMR (absolute) or MMR / SMR (factorial) [@Clark2013] |
 
-```{r, warning=FALSE, message=FALSE}
-#install.packages("respR")
+### Types of respirometry {.unnumbered}
 
-# Load libraries
-library(respR)
+All respirometry methods record oxygen over time; they differ in how oxygen is
+supplied to the animal (@fig-resp-methods).
+
+![Four common respirometry designs and the idealised oxygen traces they produce. In closed and intermittent-flow systems the metabolic rate is proportional to the **slope** of oxygen against time; in flow-through systems it is proportional to the **difference** between inflow and outflow oxygen multiplied by the flow rate; in an aerial closed system the slope of O~2~ partial pressure is converted to moles with the gas law.](images/resp_methods.svg){#fig-resp-methods fig-alt="Schematic of closed, intermittent-flow, flow-through and aerial closed-system respirometers with idealised oxygen traces." width="100%"}
+
+For **closed** and **intermittent-flow** respirometry, the oxygen uptake rate is
+
+$$
+\dot{M}\text{O}_2 = -\left(\beta_{\text{animal}} - \beta_{\text{blank}}\right) \times V_{\text{eff}}
+$$
+
+where $\beta$ is the slope of a linear regression of oxygen concentration
+against time for the animal chamber and for an empty ("blank") chamber that
+measures background (microbial) oxygen use, and $V_{\text{eff}}$ is the
+*effective* volume of water (respirometer + tubing − animal volume)
+[@Steffensen1989; @Svendsen2016]. For **flow-through** respirometry,
+$\dot{M}\text{O}_2 = (C_{\text{in}} - C_{\text{out}}) \times FR$, where $FR$ is
+the flow rate [@Lighton2019].
+
+### Why a structured, reproducible workflow? {.unnumbered}
+
+Turning a raw oxygen trace into a single number involves many decisions:
+which part of the trace to use, how long the regression window is, how to
+correct for background, which volume and which units. Each decision can change
+the final value, and most are never reported. A survey of 202 aquatic intermittent-flow respirometry papers found reporting to be poor and inconsistent: only 71% clearly 
+stated body mass at the time of measurement, 34% how many measurements were used 
+to estimate SMR, and more than 30% did not mention background respiration at all 
+[@Killen2021].
+
+Analytical choices alone matter, where BMR estimates can be 12–30% higher when 
+calculated from 10–15 min windows rather than 60 min windows [@Hayes1992; @Jacobs2014], 
+shorter regression windows inflate MMR [@Prinzing2021], and filtering slopes by a 
+high r^2^ threshold can bias SMR upward [@Chabot2021].
+
+Manually selecting regions in a spreadsheet makes these decisions invisible and
+impossible to audit. A **scripted, object-based workflow** records every
+parameter alongside the result, reduces transcription and unit-conversion
+errors, and lets a reviewer or meta-analyst rerun the analysis from raw data
+[@Harianto2019; @Wu2024]. Both the aquatic [@Killen2021] and terrestrial
+[@Wu2024] reporting guidelines recommend open-source, command-line tools such as
+`respR` [@Harianto2019] or `LoLinR` [@Olito2017] for exactly this reason.
+
+::: {.callout-tip icon="false"}
+## Reproducibility vs. replicability
+
+**Reproducibility** = getting the same result from the *same data and code*.
+**Replicability** = getting consistent results from a *new study* asking the same
+question. A scripted workflow guarantees the first and makes the second
+possible, because others can copy your exact methods [@Wu2024].
+:::
+
+## Common problems {.unnumbered}
+
+### Problems in the raw data {.unnumbered}
+
+| Problem | What it looks like | Why it matters | Where `respR` helps |
+|----|----|----|----|
+| Non-numeric, missing (`NA`), infinite, duplicated or out-of-order time values | Import errors, gaps, sensor drop-outs | Regressions fail or silently use the wrong rows | `inspect()` |
+| Initial disturbance | Steep or curved section at the start | Handling stress, thermal and mixing equilibration inflate rates | `inspect()`, `subset_data()`, `calc_rate(from, to)` |
+| Sensor interference / spikes | Sudden drops or jumps | One artefact can dominate a regression | `inspect()` rolling-rate plot |
+| Activity bursts | Short steep sections | Fine for MMR, wrong for SMR/RMR | `auto_rate()` methods |
+| Flush periods | Saw-tooth oxygen rises | Must be excluded from rate windows | `calc_rate.int()`, `auto_rate.int()` |
+| Very low oxygen | Curvature as O~2~ falls | Animals may change behaviour or become O~2~-conformers | `calc_rate(by = "oxygen")`, `oxy_crit()` |
+| Background respiration or sensor drift | Slow decline in a blank chamber | Animal rate is overestimated | `calc_rate.bg()`, `adjust_rate()` |
+| Wrong volume or units | Rates orders of magnitude off | Classic source of published errors | `convert_rate()`, `convert_MR()` |
+
+Here are some real examples from the data that come with `respR` (we load the
+packages properly in the next section).
+
+```{r}
+#| label: fig-resp-problems
+#| echo: false
+#| fig-cap: "Common problems in raw oxygen traces, all from datasets supplied with `respR`. (A) unstable start; (B) a sensor artefact mid-trial; (C) irregularities near the end; (D) flushes in an intermittent-flow trial."
+#| fig-width: 9
+#| fig-height: 6
+#| message: false
+#| warning: false
+#| 
 library(tidyverse)
+library(respR)
 
-# load data
+problem_traces <- bind_rows(
+  urchins.rd |> as_tibble() |>
+    transmute(time = time.min, o2 = b, panel = "A. Initial disturbance (urchins.rd, b)"),
+  urchins.rd |> as_tibble() |>
+    transmute(time = time.min, o2 = h, panel = "B. Sensor interference (urchins.rd, h)"),
+  urchins.rd |> as_tibble() |>
+    transmute(time = time.min, o2 = n, panel = "C. Irregular end of trial (urchins.rd, n)"),
+  intermittent.rd |> as_tibble() |>
+    transmute(time = Time / 60, o2 = O2, panel = "D. Flush periods (intermittent.rd)")
+)
 
-
+ggplot(problem_traces, aes(x = time, y = o2)) +
+  geom_point(size = 0.5, alpha = 0.6) +
+  facet_wrap(~ panel, scales = "free") +
+  labs(x = "Time (min)", y = expression(O[2]~"(mg L"^-1*")")) +
+  theme_bw()
 ```
 
 
-## Workflow {.unnumbered}
+## Example Workflow {.unnumbered}
 
-### Quality check {.unnumbered}
+At minimum, your raw data need:
 
-### Calculate O~2~ uptake rate {.unnumbered}
+- a **numeric time** column (e.g. seconds or minutes since the start), and
+- one or more **oxygen** columns (any unit).
 
-### Background O~2~ rate {.unnumbered}
+Everything up to the conversion step in `respR` is unitless, so it works for
+water or air, for uptake or production. Metadata you will need at the
+conversion step: oxygen and time units, effective volume, specimen mass, and
+(for some units) temperature, salinity and atmospheric pressure.
 
-### Conversions {.unnumbered}
+```{r}
+#| eval: false
+# Run once to install
+install.packages(c("tidyverse", "respR"))
+```
 
-### Final O~2~ uptake rate {.unnumbered}
+```{r}
+#| message: false
+# Load libraries
+library(tidyverse) # data wrangling and plotting
+library(respR)     # respirometry processing
+```
+
+The workflow we will follow is shown as below. Each `respR`
+function returns an object that the next function understands, so the
+parameters of every step travel with the result.
 
 
-If you have some raw oxygen traces that you would like to be implemented in `respR`,
-please contact the package maintainer Nicholas Carey.
+::: {.panel-tabset .nav-pills}
+
+# Aquatic Respirometry {.unnumbered}
+
+We will analyse `urchins.rd`, a closed-chamber experiment on the sea urchin
+*Heliocidaris erythrogramma* [@Carey2016] that is supplied with [`respR`](https://januarharianto.github.io/respR/). It
+contains time in **minutes**, dissolved oxygen in **mg L^-1^** for 16 urchins
+(columns `a` to `p`), and two blank chambers (`b1`, `b2`). The experiment was
+run at 20 °C, salinity 30 and 1.01 bar in 1.09 L respirometers.
+
+The tutorial will use data from a close-chamber respiromety experiment, but the 
+package is able to handle intermittent-flow and open-flow respirometry, and 
+critical oxygen values (P~crit~).
+
+## Import {.unnumbered}
+
+The data are already in R. For your own files you would use `read_csv()`
+(see the aerial example below). It is good practice to store the experimental
+metadata in one place rather than typing numbers into later functions.
+
+```{r}
+urchins <- as_tibble(urchins.rd)
+urchins
+
+# Metadata for the experiment (from ?urchins.rd)
+urchin_meta <- list(
+  oxy_unit  = "mg/L",
+  time_unit = "min",
+  volume_L  = 1.09,  # effective volume of water (L)
+  temp_C    = 20,
+  sal       = 30,
+  pres_bar  = 1.01,
+  mass_kg   = 0.19   # example specimen mass used in the respR vignette
+)
+```
+
+A quick tidy plot of every chamber is the fastest way to spot problems.
+
+```{r}
+#| label: fig-urchins-all
+#| fig-cap: "Oxygen traces of 16 urchins and two blank chambers."
+#| fig-width: 9
+#| fig-height: 5
+urchins |>
+  pivot_longer(-time.min, names_to = "chamber", values_to = "o2_mgL") |>
+  mutate(type = if_else(chamber %in% c("b1", "b2"), "Blank", "Urchin")) |>
+  ggplot(aes(x = time.min, y = o2_mgL, colour = type)) +
+  geom_point(size = 0.4) +
+  facet_wrap(~ chamber, ncol = 6, scales = "free_y") +
+  scale_colour_manual(values = c(Blank = "#2b6cb0", Urchin = "black")) +
+  labs(x = "Time (min)", y = expression(O[2]~"(mg L"^-1*")"), colour = NULL) +
+  theme_bw() +
+  theme(legend.position = "top")
+```
+
+## Quality check {.unnumbered}
+
+`inspect()` checks that the time and oxygen columns are numeric, finite, free of
+`NA`s, sequential, not duplicated and evenly spaced, and plots the data with a
+rolling rate.
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+inspect(urchins, time = 1, oxygen = 2:19)
+```
+
+The only warning is that time is not evenly spaced. That is expected here
+(decimal minutes are rounded to 0.1 or 0.2 min), and `respR` uses actual time
+values, so it is safe. Now inspect a single urchin and save the result:
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+urchin <- inspect(urchins, time = "time.min", oxygen = "n")
+```
+
+The bottom panel (rolling rate across 10% of the data) shows a stable rate of
+about −0.02 mg L^-1^ min^-1^ for the first ~29 minutes, after which the trace
+becomes irregular (the urchin interfered with the sensor). A regression across
+the whole trace would not represent routine metabolism.
+
+## Calculate O~2~ uptake rate {.unnumbered}
+
+### Manual selection with `calc_rate()` {.unnumbered}
+
+Without extra arguments, `calc_rate()` fits a regression to the whole dataset (see 
+below).
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+calc_rate(urchin)                           # whole trace (not appropriate here)
+```
+
+Use `from`, `to` and `by` (`"time"`, `"row"` or `"oxygen"`) to choose a region. 
+In this case, from 4 to 29 time points.
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+urch_rate <- calc_rate(urchin, from = 4, to = 29, by = "time")
+```
+
+Show summary of the rate with the `summary()` function.
+
+```{r}
+summary(urch_rate)
+```
+
+Note the **negative** rate: in `respR`, oxygen *uptake* is a negative slope.
+The r^2^ of `r round(urch_rate$summary$rsq, 3)` indicates a good linear fit.
+
+### Objective selection with `auto_rate()` {.unnumbered}
+
+Hand-picking a window is subjective. `auto_rate()` runs rolling regressions and,
+with the default `method = "linear"`, uses kernel density estimation to find the
+most consistently linear regions. Other methods return the `"lowest"` or
+`"highest"` rates for a given window width (useful for SMR and MMR).
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+urch_auto <- auto_rate(urchin)
+```
+
+```{r}
+summary(urch_auto)
+```
+
+::: {.callout-warning}
+`auto_rate()` is a tool, **not an oracle**. Always look at the plot and the summary,
+and check that the regions it chooses make biological sense (e.g. not right
+after handling, not during an artefact).
+:::
+
+## Background O~2~ rate {.unnumbered}
+
+Microbes in the water also consume oxygen. Blank chambers run under identical
+conditions estimate this background rate. `calc_rate.bg()` calculates the rate
+in one or more blank columns.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+bg_rate <- calc_rate.bg(urchins, time = 1, oxygen = 18:19)
+bg_rate
+```
+
+Then subtract it from the specimen rate with `adjust_rate()`. The default
+`method = "mean"` uses the mean of the two blanks. (For backgrounds that change
+over a long experiment, see the `"linear"`, `"exponential"` and `"paired"`
+methods in `?adjust_rate`.)
+
+```{r}
+urch_rate_adj <- adjust_rate(urch_rate, by = bg_rate, method = "mean")
+```
+
+::: {.callout-note}
+Background was `r round(abs(bg_rate$rate.bg.mean / urch_rate$rate) * 100, 1)`%
+of the urchin's uptake here. Background typically grows over a long experiment
+(biofilm), so measure it at the start **and** end, and report how it was
+applied [@Killen2021].
+:::
+
+## Conversions {.unnumbered}
+
+Until now nothing has had units. `convert_rate()` needs the units of the raw
+data, the effective volume (L), and optionally mass (kg) or area (m^2^). Some
+oxygen units (e.g. `%Air`, `mL/L`) also need temperature (`t`), salinity (`S`)
+and pressure (`P`, bar).
+
+```{r}
+# Absolute rate: whole-animal mg O2 per hour
+convert_rate(urch_rate_adj,
+             oxy.unit    = urchin_meta$oxy_unit,
+             time.unit   = urchin_meta$time_unit,
+             output.unit = "mg/h",
+             volume      = urchin_meta$volume_L)
+```
+
+```{r}
+# Mass-specific rate, saved as the final object
+urch_rate_final <- convert_rate(urch_rate_adj,
+                                oxy.unit    = urchin_meta$oxy_unit,
+                                time.unit   = urchin_meta$time_unit,
+                                output.unit = "mL/h/kg",
+                                volume      = urchin_meta$volume_L,
+                                mass        = urchin_meta$mass_kg,
+                                t = urchin_meta$temp_C,
+                                S = urchin_meta$sal,
+                                P = urchin_meta$pres_bar)
+urch_rate_final
+```
+
+Use `unit_args()` to see every unit `respR` understands. Units are matched
+flexibly, so `"mg/L"`, `"mg l-1"` and `"mg per litre"` are equivalent.
+
+::: {.callout-important}
+The `volume` is the volume of **water**, not of the respirometer. Subtract the
+animal's volume (for most aquatic animals, mass in kg ≈ volume in L) and add the
+volume of any recirculation tubing.
+:::
+
+## Final O~2~ uptake rate {.unnumbered}
+
+`summary(..., export = TRUE)` returns a data frame with every parameter used:
+the regression window, r^2^, background, units, volume, mass and the final rate.
+This one row is your **analysis record**.
+
+```{r}
+#| results: hide
+urch_final_df <- summary(urch_rate_final, export = TRUE) |> as_tibble()
+```
+
+```{r}
+urch_final_df |>
+  select(time, endtime, rsq, rate, adjustment, rate.adjusted,
+         volume, mass, rate.output, output.unit)
+```
+
+**Sanity-check the result.** A misplaced decimal or wrong unit is easy to miss,
+so compare your value with published rates of similar species, sizes and
+temperatures. `convert_MR()` converts between metabolic rate units:
+
+```{r}
+convert_MR(urch_rate_final, to = "umol/h/g",
+           t = urchin_meta$temp_C, S = urchin_meta$sal, P = urchin_meta$pres_bar)
+```
+
+The `respR` closed-chamber vignette compares this value with published sea
+urchin rates of roughly 0.2–0.6 µmol O~2~ h^-1^ g^-1^ at 22–25 °C, so the result
+is in the right ballpark.
+
+### The whole workflow in one pipe {.unnumbered}
+
+Because each function passes its object to the next, the entire analysis is a
+few readable lines, which is exactly what you would archive alongside the raw
+data:
+
+```{r}
+#| results: hide
+#| fig-show: hide
+#| message: false
+#| warning: false
+urchin_n_result <- urchins |>
+  inspect(time = "time.min", oxygen = "n") |>
+  calc_rate(from = 4, to = 29, by = "time") |>
+  adjust_rate(by = calc_rate.bg(urchins, time = 1, oxygen = 18:19)) |>
+  convert_rate(oxy.unit = "mg/L", time.unit = "min",
+               output.unit = "mL/h/kg", volume = 1.09, mass = 0.19,
+               t = 20, S = 30, P = 1.01) |>
+  summary(export = TRUE)
+```
 
 
+# Aerial Respirometry
+
+`respR` was designed for aquatic respirometry, but its rate functions are
+unitless, so the same `inspect()` → `calc_rate()` → `adjust_rate()` →
+`convert_rate()` chain works for **air**. The key difference is the
+conversion from the oxygen signal to an amount of oxygen.
+
+::: {.callout-important}
+## Do not use `respR`'s pressure or %-saturation units for air
+
+`respR` conversions of `"%Air"`, `"%Oxy"`, `"hPa"`, `"kPa"`, `"Torr"` and similar
+units use the **solubility of oxygen in water**. In air, a given partial
+pressure contains about 30 times more oxygen per litre than water at the same
+partial pressure. For gas-phase data, convert partial pressure to a molar
+concentration yourself with the ideal gas law, then give `respR` a unit that
+does not depend on solubility (e.g. `"umol/L"`).
+:::
+
+For a sealed, rigid chamber at constant temperature, the oxygen concentration in
+the air is
+
+$$
+C_{\text{O}_2} = \frac{p\text{O}_2}{R\,T}
+$$
+
+where $p\text{O}_2$ is the oxygen partial pressure (Pa), $R$ = 8.314 J mol^-1^
+K^-1^ and $T$ is temperature (K). With $p\text{O}_2$ in hPa,
+$C_{\text{O}_2}$ (µmol L^-1^) $= p\text{O}_2 \times 10^5 / (R\,T)$. The uptake rate
+is then the slope of $C_{\text{O}_2}$ against time multiplied by the **air**
+volume (chamber volume − animal volume). Because moles of oxygen are counted
+directly from the partial pressure, CO~2~ accumulating in the chamber does not
+dilute the signal, and the result can be expressed as a gas volume at standard
+temperature and pressure (STPD: 0 °C, 101.325 kPa; 1 mol ≈ 22.414 L)
+[@Lighton2019].
+
+::: {.callout-note}
+The example data below are **simulated** for teaching (see
+`data/simulate_resp_aerial.py` in the book repository): a 4.2 g lizard in a
+150 mL glass chamber at 25 °C, with an optical oxygen sensor reading $p\text{O}_2$
+(hPa) every 10 s for 100 min, plus an empty blank chamber run in parallel. The
+true resting uptake used in the simulation is 22.5 µmol O~2~ h^-1^, so you can
+check how close the workflow gets.
+:::
+
+## Import {.unnumbered}
+
+Instrument exports typically have metadata lines at the top, column names with
+spaces and units, and separate date and time columns. Read the file, then
+rename columns and build a numeric time column.
+
+```{r}
+#| message: false
+# Use the local copy if you cloned the repository, otherwise read from GitHub
+aerial_file <- "data/resp_aerial_lizard.csv"
+if (!file.exists(aerial_file)) {
+  aerial_file <- "https://raw.githubusercontent.com/nicholaswunz/thermal_ecology_R/refs/heads/main/data/resp_aerial_lizard.csv"
+}
+
+aerial_raw <- read_csv(aerial_file,
+                       comment = "#",                 # skip metadata lines
+                       na = c("", "NA", "NaN"),       # sensor drop-outs
+                       show_col_types = FALSE)
+glimpse(aerial_raw)
+```
+
+```{r}
+aerial <- aerial_raw |>
+  rename(date         = Date,
+         clock        = Time,
+         dt_s         = `dt (s)`,
+         o2_spec_hpa  = `Ch1 Oxygen (hPa)`,
+         o2_blank_hpa = `Ch2 Oxygen (hPa)`,
+         temp_c       = `Temp (degC)`,
+         baro_hpa     = `Pressure (hPa)`) |>
+  mutate(date_time = dmy_hms(paste(date, clock)),
+         time_min  = as.numeric(difftime(date_time, first(date_time),
+                                         units = "mins")))
+
+aerial_meta <- list(
+  chamber_L = 0.150,
+  mass_g    = 4.2,
+  air_L     = 0.150 - 4.2 / 1000  # chamber minus animal volume (density ~1 g/mL)
+)
+```
+
+::: {.callout-tip}
+`respR::format_time()` is an alternative way to turn date-time strings into
+numeric time (in seconds from the first value).
+:::
+
+## Quality check {.unnumbered}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+inspect(aerial, time = "time_min", oxygen = c("o2_spec_hpa", "o2_blank_hpa"))
+```
+
+`inspect()` reports `NA` values in the specimen channel (two sensor drop-outs)
+and uneven time spacing (a 1-min logger pause near 70 min). Neither biases a
+regression on real time values once the `NA`s are removed. Also check the
+environmental columns: a sealed chamber is only valid if temperature is stable.
+
+```{r}
+aerial |>
+  summarise(across(c(temp_c, baro_hpa),
+                   list(mean = mean, min = min, max = max)))
+```
+
+```{r}
+aerial_clean <- aerial |>
+  drop_na(o2_spec_hpa)
+```
+
+## Convert partial pressure to concentration {.unnumbered}
+
+```{r}
+R_gas <- 8.314462618  # J mol-1 K-1
+
+aerial_clean <- aerial_clean |>
+  mutate(temp_K        = temp_c + 273.15,
+         o2_spec_umol  = o2_spec_hpa  * 1e5 / (R_gas * temp_K),  # umol O2 per L air
+         o2_blank_umol = o2_blank_hpa * 1e5 / (R_gas * temp_K))
+```
+
+## Calculate O~2~ uptake rate {.unnumbered}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+spec_insp <- inspect(aerial_clean, time = "time_min", oxygen = "o2_spec_umol")
+```
+
+The rolling rate shows elevated uptake for the first ~8 min (handling), a burst
+of activity around 40–47 min, and stable resting uptake elsewhere. For a
+resting rate, use a window after settling and before the activity:
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+spec_rate <- calc_rate(spec_insp, from = 10, to = 40, by = "time")
+```
+
+## Background O~2~ rate {.unnumbered}
+
+In air there is little microbial respiration, but blanks still capture sensor
+drift, small leaks and respiration of any substrate in the chamber.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 4
+blank_insp <- inspect(aerial_clean, time = "time_min", oxygen = "o2_blank_umol",
+                      plot = FALSE)
+blank_rate <- calc_rate.bg(blank_insp)
+
+spec_rate_adj <- adjust_rate(spec_rate, by = blank_rate)
+```
+
+## Conversions {.unnumbered}
+
+Because the data are now in µmol L^-1^, `convert_rate()` needs no temperature,
+salinity or pressure, and the `volume` is the **air** volume.
+
+```{r}
+#| message: false
+aerial_final <- convert_rate(spec_rate_adj,
+                             oxy.unit    = "umol/L",
+                             time.unit   = "min",
+                             output.unit = "umol/h",
+                             volume      = aerial_meta$air_L)
+
+aerial_final_mass <- convert_rate(spec_rate_adj,
+                                  oxy.unit    = "umol/L",
+                                  time.unit   = "min",
+                                  output.unit = "umol/h/g",
+                                  volume      = aerial_meta$air_L,
+                                  mass        = aerial_meta$mass_g / 1000)  # kg
+```
+
+## Final O~2~ consumption {.unnumbered}
+
+Terrestrial studies usually report $\dot{V}\text{O}_2$ as mL O~2~ h^-1^ at STPD.
+
+```{r}
+aerial_result <- tibble(
+  umol_h      = abs(aerial_final$rate.output),
+  umol_h_g    = abs(aerial_final_mass$rate.output),
+  mL_h_STPD   = umol_h * 22.414 / 1000,
+  mL_h_g_STPD = umol_h_g * 22.414 / 1000
+)
+aerial_result
+```
+
+The workflow recovers `r round(aerial_result$umol_h, 1)` µmol O~2~ h^-1^,
+close to the true value of 22.5 µmol h^-1^ used in the simulation.
+
+::: {.callout-note collapse="true" icon="false"}
+## Going further: flow-through aerial respirometry
+
+Most terrestrial work uses **flow-through** (open-flow) respirometry, where air
+flows through the chamber at a known rate and O~2~ is measured as a *fractional*
+concentration. The equation depends on where the flow is measured and which
+gases are scrubbed. The standard equation, for flow ($\dot{V}_I$) measured
+*before* the chamber with CO~2~ and water vapour removed before the O~2~
+analyser, is [@Withers2001]:
+
+$$
+\dot{V}\text{O}_2 = \frac{\dot{V}_I\,(F_I\text{O}_2 - F_E\text{O}_2)}{1 - F_E\text{O}_2}
+$$
+
+If CO~2~ is *not* removed from the excurrent air, using this equation
+overestimates $\dot{V}\text{O}_2$ by about 21% in Withers' worked example, and
+other flow-meter positions need different equations [@Withers2001]. Flow-through
+data also need baseline drift and lag corrections [@Lighton2011; @Lighton2019].
+`respR` is not designed for these corrections, so whatever tool you use for
+aerial flow-through data, state exactly which equation was applied. For closed
+systems where gas *fractions* are measured from syringe samples, the dilution
+and CO~2~ corrections of @Vleck1987 apply.
+:::
+
+:::
+
+# Activities {.unnumbered}
+
+::: {.panel-tabset .nav-pills}
+
+# Aquatic {.unnumbered}
+
+::: {.callout-tip icon="false"}
+## Activity 1: Inspect before you analyse
+
+Inspect urchin `h` with `inspect()`. (a) What problem do you see, and roughly
+when does it occur? (b) Which time window(s) would you use to estimate its
+routine metabolic rate?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 1
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+urchin_h <- inspect(urchins, time = "time.min", oxygen = "h")
+```
+
+(a) Oxygen drops sharply between about 22 and 30 min and then jumps back up,
+which is physically impossible for a sealed chamber. It is a sensor artefact
+(e.g. the urchin covering the sensor spot), not respiration.
+
+(b) Any window clear of the artefact, for example 2–20 min (after the start-up
+period) or 31–45 min. The earlier window is longer and starts after handling,
+so it is a sensible choice.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 2: Why you must not apply one window to every chamber
+
+Calculate the rate of urchin `h` (a) over the whole trace, (b) using the same
+4–29 min window we used for urchin `n`, and (c) over 2–20 min. Compare the rates
+and r^2^ values. Which is correct, and why are the other two wrong?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 2
+
+```{r}
+#| fig-show: hide
+#| results: hide
+h_whole <- calc_rate(urchin_h)
+h_4_29  <- calc_rate(urchin_h, from = 4, to = 29, by = "time")
+h_2_20  <- calc_rate(urchin_h, from = 2, to = 20, by = "time")
+```
+
+```{r}
+tibble(window = c("whole trace", "4-29 min", "2-20 min"),
+       rate   = c(h_whole$rate, h_4_29$rate, h_2_20$rate),
+       rsq    = c(h_whole$summary$rsq, h_4_29$summary$rsq, h_2_20$summary$rsq))
+```
+
+The 2–20 min window gives the valid estimate (high r^2^, no artefact). The 4–29
+min window *includes* the artefact and overestimates uptake by roughly
+`r round((h_4_29$rate / h_2_20$rate - 1) * 100)`%; the whole-trace regression is
+pulled the other way by the post-artefact jump. A window that is right for one
+chamber can be badly wrong for another, so inspect every trace.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 3: Scale up with the tidyverse
+
+Use `purrr::map()` to process all 16 urchins with the same pipeline
+(`inspect()` → `calc_rate()` from 4 to 29 min → `adjust_rate()` with `bg_rate`
+→ `convert_rate()` to mg h^-1^) and collect the results in one tibble. Which
+urchin would an r^2^ ≥ 0.95 filter flag, and why does that matter?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 3
+
+```{r}
+#| results: hide
+#| message: false
+#| warning: false
+urchin_rates <- tibble(chamber = letters[1:16]) |>
+  mutate(
+    insp = map(chamber, \(x) inspect(urchins, time = "time.min",
+                                     oxygen = x, plot = FALSE)),
+    rate = map(insp, \(x) calc_rate(x, from = 4, to = 29, by = "time",
+                                    plot = FALSE)),
+    adj  = map(rate, \(x) adjust_rate(x, by = bg_rate)),
+    conv = map(adj, \(x) convert_rate(x, oxy.unit = "mg/L", time.unit = "min",
+                                      output.unit = "mg/h", volume = 1.09)),
+    res  = map(conv, \(x) summary(x, export = TRUE))
+  ) |>
+  select(chamber, res) |>
+  unnest(res)
+```
+
+```{r}
+urchin_rates |>
+  select(chamber, rsq, rate.adjusted, rate.output, output.unit) |>
+  mutate(flag = if_else(rsq < 0.95, "check trace!", ""))
+```
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3.5
+urchin_rates |>
+  ggplot(aes(x = fct_reorder(chamber, abs(rate.output)), y = abs(rate.output),
+             fill = rsq < 0.95)) +
+  geom_col() +
+  scale_fill_manual(values = c(`FALSE` = "grey50", `TRUE` = "#e12744"),
+                    labels = c("r² ≥ 0.95", "r² < 0.95")) +
+  labs(x = "Urchin", y = expression(dot(M)*O[2]~"(mg h"^-1*")"), fill = NULL) +
+  theme_bw()
+```
+
+Urchin `h` is flagged, because its 4–29 min window contains the artefact
+(Activity 2). Automation makes processing fast and consistent, but it does not
+replace looking at the data. Note also that a low r^2^ is not always a sign of a
+bad slope (it can simply reflect a low signal-to-noise ratio), so filtering on
+r^2^ alone can bias results [@Chabot2021]. Use r^2^ as a prompt to look, not as
+an automatic exclusion rule.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 4: Lowest and highest rates in a swim-tunnel trial
+
+`sardine.rd` is a ~2 h swim-tunnel trial on a sardine (*Sardinops sagax*) with
+time in seconds and oxygen in **% air saturation**. Metadata: volume 12.3 L,
+mass 0.0477 kg, 14.8 °C, salinity 35, 1.013253 bar.
+
+(a) Use `auto_rate()` to find the **lowest** and **highest** rates over a
+15-minute window. (b) Convert both to mg O~2~ h^-1^ kg^-1^. (c) What is the ratio
+of the highest to the lowest rate? Can you call this an aerobic scope?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 4
+
+```{r}
+#| results: hide
+#| fig-show: hide
+#| message: false
+#| warning: false
+sardine <- inspect(sardine.rd, time = 1, oxygen = 2)
+
+sard_low  <- auto_rate(sardine, method = "lowest",  width = 900, by = "time")
+sard_high <- auto_rate(sardine, method = "highest", width = 900, by = "time")
+
+convert_sardine <- function(x) {
+  convert_rate(x, oxy.unit = "%Air", time.unit = "sec",
+               output.unit = "mg/h/kg", volume = 12.3, mass = 0.0477,
+               t = 14.8, S = 35, P = 1.013253)
+}
+sard_low_conv  <- convert_sardine(sard_low)
+sard_high_conv <- convert_sardine(sard_high)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+plot(sard_low, pos = 1)
+```
+
+```{r}
+sardine_summary <- tibble(
+  rate    = c("lowest 15 min", "highest 15 min"),
+  mg_h_kg = abs(c(sard_low_conv$rate.output[1], sard_high_conv$rate.output[1]))
+)
+sardine_summary
+sardine_summary$mg_h_kg[2] / sardine_summary$mg_h_kg[1]
+```
+
+The highest rate is about
+`r round(sardine_summary$mg_h_kg[2] / sardine_summary$mg_h_kg[1], 1)` times the
+lowest. This is **not** a proper aerobic scope: the lowest 15-min window in a
+2-h trial is not SMR (SMR needs many hours of post-absorptive rest and a
+statistical estimator such as a low quantile of many measurements;
+@Chabot2016), the highest rate was not produced by an exhaustion protocol, and
+both depend strongly on the window width [@Prinzing2021]. Also note that no
+background was measured in this dataset, which should be reported.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 5: Intermittent-flow respirometry
+
+`intermittent.rd` contains three closed phases separated by flushes (time in
+seconds, O~2~ in mg L^-1^; volume 2.379 L; ash-free dry mass 0.006955 kg). The
+closed phases start at rows 1, 2101 and 3901.
+
+Use `calc_rate.int()` to estimate one rate per replicate, ignoring the first
+300 s after each closure (`wait`) and measuring over the next 900 s
+(`measure`). Convert to mg O~2~ h^-1^ g^-1^ and report the mean ± SD.
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 5
+
+```{r}
+#| results: hide
+#| fig-show: hide
+#| message: false
+#| warning: false
+urchin_int <- inspect(intermittent.rd)
+
+int_rates <- calc_rate.int(urchin_int,
+                           starts  = c(1, 2101, 3901),
+                           wait    = 300,
+                           measure = 900)
+
+int_conv <- convert_rate(int_rates,
+                         oxy.unit = "mg/L", time.unit = "s",
+                         output.unit = "mg/h/g",
+                         volume = 2.379, mass = 0.006955)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+plot(int_rates, type = "full")
+```
+
+```{r}
+summary(int_conv, export = TRUE) |>
+  as_tibble() |>
+  summarise(mean_mg_h_g = mean(abs(rate.output)),
+            sd_mg_h_g   = sd(abs(rate.output)),
+            n_reps      = n())
+```
+
+The `wait` phase excludes the mixing and equilibration period right after the
+flush closes, and fixing `measure` gives every replicate the same window
+length, which is a reportable, reproducible rule [@Svendsen2016; @Killen2021].
+Background respiration was not measured for this dataset, which would need to be
+stated in a write-up.
+:::
+
+# Aerial
+
+::: {.callout-tip icon="false"}
+## Activity 6: Activity metabolism
+
+Use `auto_rate()` to find the **highest** 5-min rate in the lizard trial, adjust
+it for background, and convert it to mL O~2~ h^-1^ (STPD). How many times higher
+is it than the resting rate? When did it occur?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 6
+
+```{r}
+#| results: hide
+#| fig-show: hide
+#| message: false
+#| warning: false
+spec_high <- auto_rate(spec_insp, method = "highest", width = 5, by = "time")
+spec_high_conv <- spec_high |>
+  adjust_rate(by = blank_rate) |>
+  convert_rate(oxy.unit = "umol/L", time.unit = "min",
+               output.unit = "umol/h", volume = aerial_meta$air_L)
+```
+
+```{r}
+#| results: hide
+high_df <- summary(spec_high_conv, export = TRUE)
+```
+
+```{r}
+high_summary <- high_df |>
+  as_tibble() |>
+  slice(1) |>
+  transmute(start_min     = time,
+            end_min       = endtime,
+            umol_h        = abs(rate.output),
+            mL_h_STPD     = umol_h * 22.414 / 1000,
+            times_resting = umol_h / aerial_result$umol_h)
+high_summary
+```
+
+The highest 5-min rate occurred between
+`r round(high_summary$start_min, 1)` and `r round(high_summary$end_min, 1)` min,
+during the activity burst, and was about
+`r round(high_summary$times_resting, 1)` times the resting rate. In a real
+study you would confirm activity with video or an activity sensor
+[@Wu2024], and note that a burst inside a closed chamber is not a standardised
+MMR protocol.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 7: How window width biases "lowest" rates
+
+Many studies estimate SMR as the *lowest* rate over a fixed window. Use
+`auto_rate(method = "lowest")` with windows of 5, 10, 15 and 20 min, adjust for
+background, and convert to µmol O~2~ h^-1^. Plot the result against window width.
+What happens as the window gets shorter, and why?
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 7
+
+```{r}
+#| message: false
+#| warning: false
+lowest_by_width <- tibble(width_min = c(5, 10, 15, 20)) |>
+  mutate(
+    rate = map_dbl(width_min, \(w) {
+      auto_rate(spec_insp, method = "lowest", width = w, by = "time",
+                plot = FALSE)$rate[1]
+    }),
+    umol_h = abs((rate - blank_rate$rate.bg.mean) * 60 * aerial_meta$air_L)
+  )
+lowest_by_width
+```
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3.5
+ggplot(lowest_by_width, aes(x = width_min, y = umol_h)) +
+  geom_hline(yintercept = 22.5, linetype = "dashed", colour = "#e12744") +
+  annotate("text", x = 5, y = 22.5, label = "true resting rate",
+           vjust = -0.5, hjust = 0, colour = "#e12744") +
+  geom_line() +
+  geom_point(size = 2) +
+  labs(x = "Window width (min)",
+       y = expression("Lowest "*dot(V)*O[2]~"(µmol h"^-1*")")) +
+  theme_bw()
+```
+
+Shorter windows give *lower* "lowest" rates. With noisy data, each short
+regression has a wide sampling error, and searching for the minimum across many
+overlapping windows picks the one where noise happened to flatten the slope.
+This is the same reason sampling interval changes BMR estimates
+[@Hayes1992; @Jacobs2014] and window width changes MMR estimates
+[@Prinzing2021]. Choose a window long enough for a precise slope, justify it,
+and report it.
+:::
+
+::: {.callout-tip icon="false"}
+## Activity 8: How big are common mistakes?
+
+Using the resting rate (`spec_rate`) and `blank_rate`, calculate the percentage
+error in µmol O~2~ h^-1^ when you:
+
+(a) use the chamber volume (0.150 L) instead of the air volume;
+(b) skip the background correction;
+(c) convert the hPa trace with `respR`'s water-based units
+(`convert_DO(..., from = "hPa", to = "umol/L", S = 0, t = 25)`) instead of the
+gas law.
+:::
+
+::: {.callout-note collapse="true" icon="false"}
+## Answer 8
+
+```{r}
+#| message: false
+#| warning: false
+correct <- abs((spec_rate$rate - blank_rate$rate.bg.mean) * 60 * aerial_meta$air_L)
+
+err_volume     <- abs((spec_rate$rate - blank_rate$rate.bg.mean) * 60 * aerial_meta$chamber_L)
+err_background <- abs(spec_rate$rate * 60 * aerial_meta$air_L)
+
+# (c) treat the gas-phase pO2 as if it were dissolved O2 in water
+water_factor <- convert_DO(200, from = "hPa", to = "umol/L", S = 0, t = 25) / 200
+gas_factor   <- 1e5 / (R_gas * (25 + 273.15))
+err_water    <- correct * water_factor / gas_factor
+
+tibble(mistake   = c("chamber instead of air volume",
+                     "no background correction",
+                     "water solubility conversion"),
+       umol_h    = c(err_volume, err_background, err_water),
+       error_pct = round((umol_h / correct - 1) * 100, 1))
+```
+
+Forgetting to subtract the animal volume is small here (the lizard is ~3% of
+the chamber) but grows with larger animals or smaller chambers. Skipping the
+background correction overestimates the rate by roughly the size of the blank
+signal. Using water solubility for an air-phase measurement underestimates the
+rate about `r round(gas_factor / water_factor)`-fold, an error you would only
+catch by sanity-checking against published values.
+:::
+
+:::
+
+# Reporting the Workflow {.unnumbered}
+
+Two complementary checklists exist: @Killen2021 for aquatic intermittent-flow
+respirometry and @Wu2024 for terrestrial (aerial) respirometry. Both are
+organised around the same ideas: describe the **set-up**, the **animals**, the
+**measurement conditions**, the **data processing** and the **statistics**, and
+share data and code [@Parker2018; @Whitlock2011]. For the processing steps
+covered here, report:
+
+| Step | Report | Where it lives in `respR` |
+|----|----|----|
+| Data acquisition | Sensor/analyser type and model, sampling interval, calibration | Your metadata |
+| Quality control | Data excluded and why (artefacts, activity, drop-outs) | `inspect()` plots, your code |
+| Rate extraction | Method (manual window, `auto_rate()` method), window width, wait/measure phases, number of slopes used, any r^2^ criterion | `$summary` (`time`, `endtime`, `rsq`) |
+| Background | How and when measured, how applied, its size relative to animal rates | `adjust_rate()` (`adjustment`) |
+| Conversion | Units, effective volume, mass (and how measured), t, S, P, STP definition, equations used | `convert_rate()` (`volume`, `mass`, `S`, `t`, `P`) |
+| Final metric | SMR/RMR/MMR definition and estimator | Your code |
+| Software | R and package versions, citations | `sessionInfo()`, `citation()` |
+| Data and code | Raw traces + processing scripts + README/metadata in a public repository | Dryad, Zenodo, OSF, Figshare |
+
+
+A methods paragraph can be generated directly from the analysis objects, so the
+text always matches the numbers:
+
+> Oxygen uptake of urchin *n* was calculated in R (`r R.version.string`) with
+> `respR` v`r packageVersion("respR")` [@Harianto2019] as the slope of a linear
+> regression of oxygen concentration against time between
+> `r urch_final_df$time` and `r urch_final_df$endtime` min (r^2^ =
+> `r round(urch_final_df$rsq, 3)`), adjusted for the mean background rate of two
+> blank chambers (`r signif(urch_final_df$adjustment, 3)` mg L^-1^ min^-1^), and
+> converted to `r urch_final_df$output.unit` using an effective volume of
+> `r urch_final_df$volume` L and a mass of `r urch_final_df$mass` kg.
+
+# Caveats {.unnumbered}
+
+- **Linearity is an assumption.** Rates assume a linear decline within the
+  window. Curvature from mixing lag, sensor response time or falling O~2~
+  violates this; keep closed-phase O~2~ high (often > 80% air saturation) unless
+  hypoxia is the treatment [@Svendsen2016].
+- **Temperature control.** Rates are only interpretable at a stable, reported
+  temperature; in air, temperature changes also change $p\text{O}_2$ directly.
+- **Effective volume** must include tubing and exclude the animal; errors scale
+  linearly into the final rate.
+- **Background** changes over time and with feeding or biofilm; measure it more
+  than once and report how it was modelled [@Killen2021].
+- **Window width and selection rules** (lowest, highest, quantiles, r^2^
+  filters) systematically change estimates; justify and report them
+  [@Hayes1992; @Chabot2021; @Prinzing2021].
+- **SMR needs time and replication.** Use long trials, many slopes and an
+  established estimator (e.g. a low quantile or the mean of the lowest normal
+  distribution) rather than a single lowest slope [@Chabot2016].
+- **Animal state.** Handling stress, digestion, time of day, activity,
+  reproductive state and acclimation all affect MR; record and report them
+  [@Wu2024].
+- **Unit conversions in `respR` are aquatic.** For gas-phase data, convert with
+  the gas law, account for water vapour and CO~2~ where fractions are measured,
+  and define STP [@Withers2001; @Lighton2019; @Wu2024].
+- **Mass-specific rates** remove the effect of mass only when MR scales
+  isometrically; model mass as a covariate instead of dividing by it
+  [@Packard1988; @Wu2024].
+- **Sanity-check every new dataset** against published values for similar
+  species, sizes and temperatures.
+
+
+# Citation
+
+When using `respR`, please cite @Harianto2019. If you have raw oxygen traces
+that are not yet supported, contact the package maintainer, Nicholas Carey.
+
+# References
+
+<div id="refs"></div>
+
+<br>
