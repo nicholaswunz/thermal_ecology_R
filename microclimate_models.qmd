@@ -1,0 +1,21 @@
+# Microclimate models {.unnumbered}
+
+Authors: Lydia Soifer
+
+Modeling microclimates as points and grids with a structured, reproducible workflow following the [`micropoint`](https://github.com/ilyamaclean/micropoint) and [`microclimf`](https://github.com/ilyamaclean/microclimf) R packages [@maclean2026].
+
+::: {.callout-note icon="false"}
+## Workshop overview
+
+**By the end of this workshop you will be able to:**
+
+1.
+
+:::
+
+## Background
+
+
+# Caveats
+
+The microclimate models described here are column models, meaning that they account for the vegetation above the point being modeled, but do not consider neighboring vegetation or terrain shading. They should therefore not be used to study edge effects or other processes that depend on habitat structure surrounding the point of interest without manually adjusting inputs to capture the desired processes.
